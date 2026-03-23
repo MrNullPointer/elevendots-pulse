@@ -202,12 +202,13 @@ sources:
     policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
 
   - name: "The Information"
-    url: "https://www.theinformation.com/feed"
-    type: rss
+    url: "https://www.theinformation.com/"
+    type: html
+    selectors: { article: "article, .post", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [ai, software, ai-accelerator]
     tier: paid
-    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+    policy: { preview_mode: title_only, robots_txt_checked: true, tos_reviewed: true }
 
   - name: "The Chip Letter"
     url: "https://thechipletter.substack.com/feed"
@@ -510,20 +511,22 @@ sources:
   # ==========================================================================
 
   - name: "Laser Focus World"
-    url: "https://www.laserfocusworld.com/rss"
-    type: rss
+    url: "https://www.laserfocusworld.com/home/news"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [photonics]
     tier: free
-    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Photonics Media"
-    url: "https://www.photonics.com/rss"
-    type: rss
+    url: "https://www.photonics.com/"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [photonics]
     tier: free
-    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "optics.org"
     url: "https://optics.org/rss"
@@ -534,12 +537,13 @@ sources:
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Lightwave Online"
-    url: "https://www.lightwaveonline.com/rss"
-    type: rss
+    url: "https://www.lightwaveonline.com/home/news"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [photonics, networking]
     tier: free
-    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Ayar Labs News"
     url: "https://ayarlabs.com/news/"
@@ -560,19 +564,20 @@ sources:
     policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Ciena Blog"
-    url: "https://www.ciena.com/insights/blog/rss"
-    type: rss
+    url: "https://www.ciena.com/insights"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [photonics, networking]
     tier: free
-    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
 
   # ==========================================================================
   # GAP 3: ENERGY / DATACENTER INFRASTRUCTURE
   # ==========================================================================
 
   - name: "Canary Media"
-    url: "https://www.canarymedia.com/feed"
+    url: "https://www.canarymedia.com/rss.rss"
     type: rss
     section: tech
     subsections: [energy, datacenter]
@@ -612,12 +617,13 @@ sources:
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Data Center Frontier"
-    url: "https://www.datacenterfrontier.com/feed"
-    type: rss
+    url: "https://www.datacenterfrontier.com/"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [datacenter]
     tier: free
-    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Electrek"
     url: "https://electrek.co/feed/"
@@ -673,14 +679,13 @@ sources:
     tier: free
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
-  - name: "CISA Alerts"
-    url: "https://www.cisa.gov/news-events/alerts"
-    type: html
-    selectors: { article: "article, .views-row", title: "h2, h3, a", link: "a", date: "time, .date" }
+  - name: "CISA Advisories"
+    url: "https://www.cisa.gov/cybersecurity-advisories/all.xml"
+    type: rss
     section: misc
     subsections: [cybersecurity, policy]
     tier: free
-    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "CrowdStrike Blog"
     url: "https://www.crowdstrike.com/blog/feed/"
@@ -735,7 +740,7 @@ sources:
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "The Space Review"
-    url: "https://www.thespacereview.com/rss.xml"
+    url: "https://www.thespacereview.com/articles.xml"
     type: rss
     section: misc
     subsections: [space-exploration, policy]
@@ -801,12 +806,13 @@ sources:
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "SDxCentral"
-    url: "https://www.sdxcentral.com/feed/"
-    type: rss
+    url: "https://www.sdxcentral.com/"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [networking, servers]
     tier: free
-    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Light Reading"
     url: "https://www.lightreading.com/rss.xml"
@@ -886,12 +892,13 @@ sources:
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Yale Environment 360"
-    url: "https://e360.yale.edu/feed"
-    type: rss
+    url: "https://e360.yale.edu/digest"
+    type: html
+    selectors: { article: "article, .post, .digest-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: science
     subsections: [climate]
     tier: free
-    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "NASA Earth Observatory"
     url: "https://earthobservatory.nasa.gov/feeds/earth-observatory.rss"
@@ -1002,12 +1009,13 @@ sources:
   # ==========================================================================
 
   - name: "Lawfare"
-    url: "https://www.lawfaremedia.org/feed"
-    type: rss
+    url: "https://www.lawfaremedia.org/"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: misc
     subsections: [policy, cybersecurity]
     tier: free
-    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "War on the Rocks"
     url: "https://warontherocks.com/feed/"
@@ -1017,13 +1025,7 @@ sources:
     tier: free
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
-  - name: "Brookings TechStream"
-    url: "https://www.brookings.edu/series/techstream/feed/"
-    type: rss
-    section: misc
-    subsections: [policy]
-    tier: free
-    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+  # Brookings TechStream — removed (shut down)
 
   - name: "Rest of World"
     url: "https://restofworld.org/feed/"
@@ -1050,12 +1052,13 @@ sources:
   # ==========================================================================
 
   - name: "Compound Semiconductor"
-    url: "https://compoundsemiconductor.net/rss"
-    type: rss
+    url: "https://compoundsemiconductor.net/news"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [power-semiconductor, semiconductor, photonics]
     tier: free
-    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Power Electronics News"
     url: "https://www.powerelectronicsnews.com/feed/"
@@ -1130,7 +1133,7 @@ sources:
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Notre Dame Philosophical Reviews"
-    url: "https://ndpr.nd.edu/feed/"
+    url: "https://feeds2.feedburner.com/PhilosophicalReviews/News"
     type: rss
     section: philosophy
     subsections: [epistemology, metaphysics, ethics-of-ai]
@@ -1290,7 +1293,7 @@ sources:
   # ==========================================================================
 
   - name: "Acquired Podcast"
-    url: "https://feeds.pacific-content.com/acquired"
+    url: "https://feeds.transistor.fm/acquired"
     type: rss
     section: tech
     subsections: [software, semiconductor, podcast]
@@ -1314,7 +1317,7 @@ sources:
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Signals and Threads"
-    url: "https://signalsandthreads.com/rss"
+    url: "https://feeds.simplecast.com/L9810DOa"
     type: rss
     section: tech
     subsections: [developer, software, podcast]
@@ -1330,7 +1333,7 @@ sources:
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Philosophize This!"
-    url: "https://www.philosophizethis.org/feed"
+    url: "https://feeds.megaphone.fm/QCD6036500916"
     type: rss
     section: philosophy
     subsections: [epistemology, existentialism, podcast]
