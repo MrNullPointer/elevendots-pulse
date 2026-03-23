@@ -57,12 +57,32 @@ export default function ArticleCard({ article, compact = false, onPreview, isFoc
     }
   }
 
+  // 3D tilt on hover (desktop only, very subtle)
+  const handleTiltMove = (e) => {
+    if (window.innerWidth < 768) return
+    const el = ref.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const x = (e.clientX - rect.left) / rect.width - 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5
+    el.style.transform = `perspective(1000px) rotateY(${x * 2.5}deg) rotateX(${-y * 1.5}deg) translateY(-3px) scale(1.003)`
+  }
+  const handleTiltLeave = () => {
+    const el = ref.current
+    if (!el) return
+    el.style.transition = 'transform 500ms cubic-bezier(0.22,1,0.36,1)'
+    el.style.transform = ''
+    setTimeout(() => { if (el) el.style.transition = '' }, 500)
+  }
+
   return (
     <article
       ref={ref}
       id={id}
       className={`card-solid block p-3.5 transition-all group relative ${isFocused ? 'article-focus-ring' : ''}`}
       style={{ transitionTimingFunction: 'var(--spring)' }}
+      onMouseMove={handleTiltMove}
+      onMouseLeave={handleTiltLeave}
     >
       <a
         href={article.url}

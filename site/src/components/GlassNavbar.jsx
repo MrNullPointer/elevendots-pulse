@@ -1,28 +1,16 @@
-import { useNavigate } from 'react-router-dom'
 import { Search } from 'lucide-react'
 import SectionTabs from './SectionTabs'
 import ThemeToggle from './ThemeToggle'
+import NavLogo from './NavLogo'
 
 export default function GlassNavbar({ sections, activeSection, onSearchOpen }) {
-  const navigate = useNavigate()
-
   return (
     <header
-      className="glass sticky top-0 z-50 px-5 py-3"
+      className="glass sticky top-0 z-50 px-5 py-3 animate-nav"
       role="banner"
     >
       <div className="flex items-center justify-between gap-4">
-        <button
-          onClick={() => navigate('/')}
-          className="flex items-center shrink-0"
-          style={{ fontSize: '18px', fontWeight: 500, letterSpacing: '-0.3px' }}
-          aria-label="Go to homepage"
-        >
-          <span style={{ color: 'var(--accent-tech)' }}>eleven</span>
-          <span style={{ color: 'var(--accent-tech)' }}>.</span>
-          <span>dots</span>
-          <span style={{ color: 'var(--text-tertiary)' }}>.dev</span>
-        </button>
+        <NavLogo accentColor="var(--accent-current)" />
 
         <div className="hidden md:flex flex-1 justify-center">
           <SectionTabs sections={sections} activeSection={activeSection} />

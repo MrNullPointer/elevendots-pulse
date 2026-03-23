@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Routes, Route, useParams, useSearchParams } from 'react-router-dom'
 import { useArticles } from './hooks/useArticles'
 import { useFilters } from './hooks/useFilters'
+import NeuralBackground from './components/NeuralBackground'
+import AtmosphereOrbs from './components/AtmosphereOrbs'
 import GlassNavbar from './components/GlassNavbar'
 import GradientMesh from './components/GradientMesh'
 import HeroSection from './components/HeroSection'
@@ -17,17 +19,86 @@ import KeyboardHelp from './components/KeyboardHelp'
 import SourceHealth from './components/SourceHealth'
 import Footer from './components/Footer'
 
+const ACCENT_MAP = {
+  tech:       { color: '#4080ff', rgb: '64,128,255' },
+  science:    { color: '#a050ff', rgb: '160,80,255' },
+  philosophy: { color: '#e0a030', rgb: '224,160,48' },
+  misc:       { color: '#a0a0c0', rgb: '160,160,192' },
+}
+
+function useAccent(section) {
+  useEffect(() => {
+    const accent = ACCENT_MAP[section]
+    if (accent) {
+      document.documentElement.style.setProperty('--accent-current', accent.color)
+      document.documentElement.style.setProperty('--accent-rgb', accent.rgb)
+    } else {
+      document.documentElement.style.setProperty('--accent-current', '#6868e0')
+      document.documentElement.style.setProperty('--accent-rgb', '104,104,224')
+    }
+  }, [section])
+}
+
+// Cursor tracking for glass glow effect
+function useCursorGlow() {
+  useEffect(() => {
+    if (window.innerWidth < 768) return
+    const handler = (e) => {
+      document.documentElement.style.setProperty('--mx', e.clientX + 'px')
+      document.documentElement.style.setProperty('--my', e.clientY + 'px')
+    }
+    window.addEventListener('mousemove', handler, { passive: true })
+    return () => window.removeEventListener('mousemove', handler)
+  }, [])
+}
+
+// Scroll-linked specular shift
+function useScrollSpecular() {
+  useEffect(() => {
+    const handler = () => {
+      const pct = (window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight)) * 100
+      document.documentElement.style.setProperty('--scroll-pct', pct + '%')
+    }
+    window.addEventListener('scroll', handler, { passive: true })
+    return () => window.removeEventListener('scroll', handler)
+  }, [])
+}
+
 function App() {
   const { articles, sections, sectionsMetadata, subsectionsMetadata, sourceHealth, generatedAt, loading, error } = useArticles()
   const [searchOpen, setSearchOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
   const [previewArticle, setPreviewArticle] = useState(null)
+  const [currentSection, setCurrentSection] = useState('home')
 
+  useCursorGlow()
+  useScrollSpecular()
+
+  // ⌘K search shortcut
   useEffect(() => {
     const handler = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault()
         setSearchOpen(o => !o)
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
+
+  // Konami code: ↑↑↓↓←→←→BA → neural dots form "11"
+  useEffect(() => {
+    const code = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','KeyB','KeyA']
+    let pos = 0
+    const handler = (e) => {
+      if (e.code === code[pos]) {
+        pos++
+        if (pos === code.length) {
+          pos = 0
+          window.dispatchEvent(new CustomEvent('konami'))
+        }
+      } else {
+        pos = 0
       }
     }
     window.addEventListener('keydown', handler)
@@ -57,7 +128,9 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
+      <AtmosphereOrbs />
+      <NeuralBackground activeSection={currentSection} searchOpen={searchOpen} />
       <Routes>
         <Route
           path="/"
@@ -73,6 +146,7 @@ function App() {
               onPreview={handlePreview}
               previewArticle={previewArticle}
               onClosePreview={() => setPreviewArticle(null)}
+              onSectionChange={setCurrentSection}
             />
           }
         />
@@ -93,6 +167,7 @@ function App() {
               onHelpToggle={() => setHelpOpen(o => !o)}
               searchOpen={searchOpen}
               helpOpen={helpOpen}
+              onSectionChange={setCurrentSection}
             />
           }
         />
@@ -114,8 +189,11 @@ function App() {
 function HomePage({
   articles, sections, sectionsMetadata, subsectionsMetadata,
   sourceHealth, generatedAt, onSearchOpen, onPreview,
-  previewArticle, onClosePreview,
+  previewArticle, onClosePreview, onSectionChange,
 }) {
+  useAccent(null) // home accent
+  useEffect(() => { onSectionChange?.('home') }, [onSectionChange])
+
   return (
     <>
       <GradientMesh activeSection="tech" />
@@ -125,7 +203,7 @@ function HomePage({
         onSearchOpen={onSearchOpen}
       />
 
-      <main className="max-w-5xl mx-auto px-4 pt-6">
+      <main className="max-w-7xl mx-auto px-4 pt-6 relative z-10">
         <HeroSection articles={articles} sectionsMetadata={sectionsMetadata} />
         <TrendingStrip articles={articles} subsectionsMetadata={subsectionsMetadata} />
 
@@ -154,12 +232,15 @@ function SectionPage({
   articles, sections, sectionsMetadata, subsectionsMetadata,
   sourceHealth, generatedAt, onSearchOpen, onPreview,
   previewArticle, onClosePreview, onHelpToggle,
-  searchOpen, helpOpen,
+  searchOpen, helpOpen, onSectionChange,
 }) {
   const { section } = useParams()
   const [searchParams] = useSearchParams()
   const meta = sectionsMetadata[section]
   const [focusedIndex, setFocusedIndex] = useState(-1)
+
+  useAccent(section)
+  useEffect(() => { onSectionChange?.(section || 'home') }, [section, onSectionChange])
 
   const sectionArticles = useMemo(
     () => articles.filter(a => a.section === section),
@@ -227,7 +308,7 @@ function SectionPage({
         onSearchOpen={onSearchOpen}
       />
 
-      <main className="max-w-5xl mx-auto px-4 pt-4">
+      <main className="max-w-7xl mx-auto px-4 pt-4 relative z-10">
         <div className="mb-4 animate-fade-in">
           <div className="flex items-center gap-2 mb-3">
             <span
@@ -235,7 +316,7 @@ function SectionPage({
               style={{ background: meta.theme_color }}
               aria-hidden="true"
             />
-            <h1 className="font-medium" style={{ fontSize: '20px' }}>
+            <h1 className="font-medium section-title-gradient" style={{ fontSize: '22px' }}>
               {meta.display_name}
             </h1>
             <span className="font-mono opacity-50" style={{ fontSize: '11px' }}>

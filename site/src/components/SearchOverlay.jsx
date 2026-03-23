@@ -61,6 +61,11 @@ export default function SearchOverlay({ articles, isOpen, onClose }) {
     if (item) item.scrollIntoView({ block: 'nearest' })
   }, [])
 
+  // Scroll selected item into view whenever selectedIndex changes
+  useEffect(() => {
+    scrollSelectedIntoView(selectedIndex)
+  }, [selectedIndex, scrollSelectedIntoView])
+
   useEffect(() => {
     if (!isOpen) return
     const handler = (e) => {
@@ -68,25 +73,17 @@ export default function SearchOverlay({ articles, isOpen, onClose }) {
         onClose()
       } else if (e.key === 'ArrowDown') {
         e.preventDefault()
-        setSelectedIndex(i => {
-          const next = Math.min(i + 1, results.length - 1)
-          scrollSelectedIntoView(next)
-          return next
-        })
+        setSelectedIndex(i => Math.min(i + 1, results.length - 1))
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
-        setSelectedIndex(i => {
-          const next = Math.max(i - 1, 0)
-          scrollSelectedIntoView(next)
-          return next
-        })
+        setSelectedIndex(i => Math.max(i - 1, 0))
       } else if (e.key === 'Enter' && results[selectedIndex]) {
         window.open(results[selectedIndex].url, '_blank', 'noopener,noreferrer')
       }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isOpen, results, selectedIndex, onClose, scrollSelectedIntoView])
+  }, [isOpen, results, selectedIndex, onClose])
 
   if (!isOpen) return null
 
@@ -98,7 +95,7 @@ export default function SearchOverlay({ articles, isOpen, onClose }) {
       aria-modal="true"
       aria-label="Search articles"
     >
-      <div className="fixed inset-0" style={{ background: 'var(--overlay-bg)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }} />
+      <div className="fixed inset-0" style={{ background: 'var(--overlay-bg)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }} />
 
       <div
         className="glass relative w-full max-w-xl rounded-2xl overflow-hidden shadow-2xl animate-fade-in"
@@ -120,7 +117,7 @@ export default function SearchOverlay({ articles, isOpen, onClose }) {
             onClick={onClose}
             className="p-1 rounded-lg transition-colors"
             style={{ background: 'transparent' }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--glass-hover)'}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(var(--accent-rgb), 0.10)'}
             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             aria-label="Close search"
           >
@@ -140,7 +137,7 @@ export default function SearchOverlay({ articles, isOpen, onClose }) {
                 aria-selected={i === selectedIndex}
                 className="block px-4 py-2.5 transition-colors"
                 style={{
-                  background: i === selectedIndex ? 'var(--glass-hover)' : 'transparent',
+                  background: i === selectedIndex ? 'rgba(var(--accent-rgb), 0.10)' : 'transparent',
                 }}
                 onMouseEnter={() => setSelectedIndex(i)}
               >
