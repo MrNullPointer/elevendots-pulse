@@ -5,9 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>elevendots.dev — Knowledge Navigator</title>
     <meta name="description" content="A curated knowledge navigator for tech, science, and philosophy. Aggregated from 100+ sources, updated every 3 hours." />
-    <meta property="og:title" content="elevendots.dev" />
-    <meta property="og:description" content="A curated knowledge navigator for tech, science, and philosophy." />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#3b6bdf" />
+    <link rel="canonical" href="https://elevendots.dev/" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="elevendots.dev — Knowledge Navigator" />
+    <meta property="og:description" content="A curated knowledge navigator for tech, science, and philosophy. Aggregated from 100+ sources, updated every 3 hours." />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://elevendots.dev/" />
+    <meta property="og:site_name" content="elevendots.dev" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="elevendots.dev — Knowledge Navigator" />
+    <meta name="twitter:description" content="A curated knowledge navigator for tech, science, and philosophy." />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -15,9 +30,24 @@
   <body>
     <div id="root"></div>
     <noscript>
-      <p style="text-align:center;padding:2rem;font-family:sans-serif;">
-        This site requires JavaScript to display articles. Please enable JavaScript or visit the source links directly.
-      </p>
+      <style>
+        .noscript-container { max-width: 640px; margin: 0 auto; padding: 2rem; font-family: 'DM Sans', sans-serif; }
+        .noscript-container h1 { font-size: 20px; font-weight: 500; margin-bottom: 0.5rem; }
+        .noscript-container p { font-size: 14px; color: #555; line-height: 1.6; }
+      </style>
+      <div class="noscript-container">
+        <h1>elevendots.dev</h1>
+        <p>
+          A curated knowledge navigator for tech, science, and philosophy.
+          This site requires JavaScript to display the interactive article feed.
+          The feed aggregates articles from 100+ sources across technology, science,
+          philosophy, and miscellaneous topics, updated every 3 hours.
+        </p>
+        <p>
+          For direct access to sources, visit the publisher websites directly.
+          Sources can request removal: contact@elevendots.dev
+        </p>
+      </div>
     </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>

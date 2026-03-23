@@ -105,17 +105,17 @@ def crawl_source(source: dict) -> tuple[list[dict], str]:
 
 
 def _parse_max_age() -> float:
-    """Parse MAX_AGE_HOURS from env, defaulting to 72."""
-    raw = os.environ.get("MAX_AGE_HOURS", "72")
+    """Parse MAX_AGE_HOURS from env, defaulting to 168 (1 week)."""
+    raw = os.environ.get("MAX_AGE_HOURS", "168")
     try:
         value = float(raw)
         if value <= 0:
-            logger.warning("MAX_AGE_HOURS must be positive, using 72")
-            return 72.0
+            logger.warning("MAX_AGE_HOURS must be positive, using 168")
+            return 168.0
         return value
     except ValueError:
-        logger.warning("Invalid MAX_AGE_HOURS=%r, using 72", raw)
-        return 72.0
+        logger.warning("Invalid MAX_AGE_HOURS=%r, using 168", raw)
+        return 168.0
 
 
 def _atomic_write_json(path: Path, data: dict) -> None:

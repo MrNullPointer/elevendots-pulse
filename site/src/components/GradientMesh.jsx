@@ -10,7 +10,7 @@ export default function GradientMesh({ activeSection }) {
 
   return (
     <div
-      className={`fixed inset-0 -z-10 mesh-transition ${meshClass}`}
+      className={`fixed inset-0 -z-10 mesh-transition mesh-layer ${meshClass}`}
       aria-hidden="true"
     />
   )
