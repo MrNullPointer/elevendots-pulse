@@ -1,14 +1,27 @@
 import { X, ExternalLink } from 'lucide-react'
-import { TierBadge, formatAge } from './ArticleCard'
+import { TierBadge, formatAge, computeAge } from './ArticleCard'
+
+const ACCENT_MAP = {
+  tech: 'var(--accent-tech)',
+  science: 'var(--accent-science)',
+  philosophy: 'var(--accent-philosophy)',
+  misc: 'var(--accent-misc)',
+}
 
 export default function PreviewPanel({ article, onClose }) {
   if (!article) return null
 
+  const accent = ACCENT_MAP[article.section] || 'var(--accent-tech)'
+
   return (
-    <div className="glass rounded-2xl p-5 mb-6 relative">
+    <div className="glass rounded-2xl p-5 mb-6 relative animate-fade-in" role="dialog" aria-label="Article preview">
       <button
         onClick={onClose}
-        className="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-white/15 transition-colors"
+        className="absolute top-3 right-3 p-1.5 rounded-lg transition-colors"
+        style={{ background: 'transparent' }}
+        onMouseEnter={e => e.currentTarget.style.background = 'var(--glass-hover)'}
+        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        aria-label="Close preview"
       >
         <X size={14} style={{ color: 'var(--text-tertiary)' }} />
       </button>
@@ -45,7 +58,7 @@ export default function PreviewPanel({ article, onClose }) {
       <div className="flex items-center flex-wrap gap-2 mb-4" style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
         <span className="font-medium" style={{ color: 'var(--text-secondary)' }}>{article.source}</span>
         <TierBadge tier={article.tier} />
-        <span>{formatAge(article.age_hours)}</span>
+        <span>{formatAge(computeAge(article))}</span>
         {article.also_from?.length > 0 && (
           <span className="italic">
             Also from: {article.also_from.join(', ')}
@@ -59,7 +72,7 @@ export default function PreviewPanel({ article, onClose }) {
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm text-white transition-all hover:scale-105"
         style={{
-          background: 'var(--accent-tech)',
+          background: accent,
           transitionTimingFunction: 'var(--spring)',
         }}
       >

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Routes, Route, useParams, useSearchParams } from 'react-router-dom'
 import { useArticles } from './hooks/useArticles'
 import { useFilters } from './hooks/useFilters'
@@ -13,12 +13,14 @@ import AccessFilter from './components/AccessFilter'
 import ArticleGrid from './components/ArticleGrid'
 import PreviewPanel from './components/PreviewPanel'
 import SearchOverlay from './components/SearchOverlay'
+import KeyboardHelp from './components/KeyboardHelp'
 import SourceHealth from './components/SourceHealth'
 import Footer from './components/Footer'
 
 function App() {
-  const { articles, sections, sectionsMetadata, subsectionsMetadata, sourceHealth, generatedAt, articleCount, loading, error } = useArticles()
+  const { articles, sections, sectionsMetadata, subsectionsMetadata, sourceHealth, generatedAt, loading, error } = useArticles()
   const [searchOpen, setSearchOpen] = useState(false)
+  const [helpOpen, setHelpOpen] = useState(false)
   const [previewArticle, setPreviewArticle] = useState(null)
 
   useEffect(() => {
@@ -88,6 +90,9 @@ function App() {
               onPreview={handlePreview}
               previewArticle={previewArticle}
               onClosePreview={() => setPreviewArticle(null)}
+              onHelpToggle={() => setHelpOpen(o => !o)}
+              searchOpen={searchOpen}
+              helpOpen={helpOpen}
             />
           }
         />
@@ -97,6 +102,10 @@ function App() {
         articles={articles}
         isOpen={searchOpen}
         onClose={() => setSearchOpen(false)}
+      />
+      <KeyboardHelp
+        isOpen={helpOpen}
+        onClose={() => setHelpOpen(false)}
       />
     </div>
   )
@@ -144,13 +153,19 @@ function HomePage({
 function SectionPage({
   articles, sections, sectionsMetadata, subsectionsMetadata,
   sourceHealth, generatedAt, onSearchOpen, onPreview,
-  previewArticle, onClosePreview,
+  previewArticle, onClosePreview, onHelpToggle,
+  searchOpen, helpOpen,
 }) {
   const { section } = useParams()
   const [searchParams] = useSearchParams()
   const meta = sectionsMetadata[section]
+  const [focusedIndex, setFocusedIndex] = useState(-1)
 
-  const sectionArticles = articles.filter(a => a.section === section)
+  const sectionArticles = useMemo(
+    () => articles.filter(a => a.section === section),
+    [articles, section]
+  )
+
   const {
     filtered, activeSubsection, setActiveSubsection,
     timeFilter, setTimeFilter, accessFilter, setAccessFilter,
@@ -160,6 +175,36 @@ function SectionPage({
     const sub = searchParams.get('sub')
     if (sub) setActiveSubsection(sub)
   }, [searchParams, setActiveSubsection])
+
+  // Reset focus when filters change
+  useEffect(() => {
+    setFocusedIndex(-1)
+  }, [activeSubsection, timeFilter, accessFilter])
+
+  // Keyboard navigation: j/k/Enter/?
+  useEffect(() => {
+    if (searchOpen || helpOpen) return
+    const handler = (e) => {
+      // Don't capture when typing in an input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+
+      if (e.key === 'j') {
+        e.preventDefault()
+        setFocusedIndex(i => Math.min(i + 1, filtered.length - 1))
+      } else if (e.key === 'k') {
+        e.preventDefault()
+        setFocusedIndex(i => Math.max(i - 1, 0))
+      } else if (e.key === 'Enter' && focusedIndex >= 0 && filtered[focusedIndex]) {
+        e.preventDefault()
+        window.open(filtered[focusedIndex].url, '_blank', 'noopener,noreferrer')
+      } else if (e.key === '?') {
+        e.preventDefault()
+        onHelpToggle()
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [filtered, focusedIndex, searchOpen, helpOpen, onHelpToggle])
 
   if (!meta) {
     return (
@@ -183,11 +228,12 @@ function SectionPage({
       />
 
       <main className="max-w-5xl mx-auto px-4 pt-4">
-        <div className="mb-4">
+        <div className="mb-4 animate-fade-in">
           <div className="flex items-center gap-2 mb-3">
             <span
               className="w-2.5 h-2.5 rounded-full"
               style={{ background: meta.theme_color }}
+              aria-hidden="true"
             />
             <h1 className="font-medium" style={{ fontSize: '20px' }}>
               {meta.display_name}
@@ -212,7 +258,7 @@ function SectionPage({
 
           <div className="flex items-center gap-3 flex-wrap">
             <TimeFilter active={timeFilter} onSelect={setTimeFilter} />
-            <div className="w-px h-4 bg-white/20" />
+            <div className="w-px h-4" style={{ background: 'var(--glass-border)' }} />
             <AccessFilter active={accessFilter} onSelect={setAccessFilter} />
             <span className="font-mono ml-auto opacity-40" style={{ fontSize: '10px' }}>
               {filtered.length} article{filtered.length !== 1 ? 's' : ''}
@@ -224,7 +270,7 @@ function SectionPage({
           <PreviewPanel article={previewArticle} onClose={onClosePreview} />
         )}
 
-        <ArticleGrid articles={filtered} onPreview={onPreview} />
+        <ArticleGrid articles={filtered} onPreview={onPreview} focusedIndex={focusedIndex} />
 
         <div className="mt-8">
           <SourceHealth sources={sourceHealth} />

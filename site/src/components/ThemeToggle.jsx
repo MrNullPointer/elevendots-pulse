@@ -15,11 +15,11 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={() => setDark(d => !d)}
-      className="glass rounded-full p-2 transition-all hover:scale-105"
+      className="glass-pill rounded-full p-2 transition-all hover:scale-[1.06] active:scale-95"
       style={{ transitionTimingFunction: 'var(--spring)' }}
       aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      {dark ? <Sun size={16} /> : <Moon size={16} />}
+      {dark ? <Sun size={15} /> : <Moon size={15} />}
     </button>
   )
 }
