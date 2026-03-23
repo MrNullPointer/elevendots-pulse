@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Vite
+site/dist/
+site/.vite/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Claude worktrees
+.claude/worktrees/
+
+# Generated data (re-created by crawler)
+data/articles.json

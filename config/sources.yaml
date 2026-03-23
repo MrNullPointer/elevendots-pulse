@@ -1,0 +1,391 @@
+# ============================================================================
+# Elevendots-Pulse — Hierarchical Source Configuration
+# ============================================================================
+#
+# Developer: Parikshit Dubey
+# Contact:   support@elevendots.ai
+#
+# ADDING A SOURCE:   Append an entry below. Push. Next crawl picks it up.
+# ADDING A SUBSECTION: Use a new string in any source's `subsections` list.
+# ADDING A SECTION:  Add to sections_metadata + add sources with that section.
+#
+# ============================================================================
+
+sections_metadata:
+  tech:
+    display_name: "Tech"
+    description: "Computing, chips, AI, systems, and emerging hardware."
+    icon: "cpu"
+    order: 1
+    theme_color: "#3b6bdf"
+  science:
+    display_name: "Science"
+    description: "Astronomy, chemistry, biology, physics, and beyond."
+    icon: "flask-conical"
+    order: 2
+    theme_color: "#7c3aed"
+  philosophy:
+    display_name: "Philosophy"
+    description: "Ideas, ethics, mind, knowledge, and meaning."
+    icon: "book-open"
+    order: 3
+    theme_color: "#b45309"
+  misc:
+    display_name: "Miscellaneous"
+    description: "Essays, culture, long reads, and uncategorized gems."
+    icon: "sparkles"
+    order: 4
+    theme_color: "#525252"
+
+subsections_metadata:
+  # --- TECH ---
+  semiconductor: { display_name: "Semiconductor", section: tech, color: "#6366f1", order: 1 }
+  lithography: { display_name: "Lithography & EUV", section: tech, color: "#8b5cf6", order: 2 }
+  fab: { display_name: "Fab & Manufacturing", section: tech, color: "#a78bfa", order: 3 }
+  packaging: { display_name: "Packaging & Chiplets", section: tech, color: "#c084fc", order: 4 }
+  memory: { display_name: "Memory (DRAM/NAND/HBM)", section: tech, color: "#7c3aed", order: 5 }
+  cpu: { display_name: "CPU", section: tech, color: "#2563eb", order: 6 }
+  gpu: { display_name: "GPU", section: tech, color: "#16a34a", order: 7 }
+  ai: { display_name: "AI & LLMs", section: tech, color: "#f59e0b", order: 10 }
+  ml: { display_name: "Machine Learning", section: tech, color: "#f97316", order: 11 }
+  ai-accelerator: { display_name: "AI Accelerators", section: tech, color: "#ef4444", order: 12 }
+  autonomous: { display_name: "Autonomous Vehicles", section: tech, color: "#0891b2", order: 15 }
+  robotics: { display_name: "Robotics", section: tech, color: "#0d9488", order: 16 }
+  photonics: { display_name: "Photonics & CPO", section: tech, color: "#2dd4bf", order: 17 }
+  networking: { display_name: "Networking", section: tech, color: "#0ea5e9", order: 18 }
+  eda: { display_name: "EDA & Design", section: tech, color: "#64748b", order: 20 }
+  embedded: { display_name: "Embedded & IoT", section: tech, color: "#06b6d4", order: 22 }
+  software: { display_name: "Software", section: tech, color: "#3b82f6", order: 25 }
+  servers: { display_name: "Servers & Cloud", section: tech, color: "#475569", order: 26 }
+  # --- SCIENCE ---
+  astronomy: { display_name: "Astronomy & Space", section: science, color: "#1e40af", order: 1 }
+  biophysics: { display_name: "Biophysics", section: science, color: "#16a34a", order: 2 }
+  chemistry: { display_name: "Chemistry", section: science, color: "#9333ea", order: 3 }
+  quantum: { display_name: "Quantum Physics", section: science, color: "#ec4899", order: 4 }
+  materials: { display_name: "Materials Science", section: science, color: "#84cc16", order: 5 }
+  neuroscience: { display_name: "Neuroscience", section: science, color: "#f472b6", order: 6 }
+  biology: { display_name: "Biology & Evolution", section: science, color: "#15803d", order: 7 }
+  climate: { display_name: "Climate & Environment", section: science, color: "#22c55e", order: 8 }
+  # --- PHILOSOPHY ---
+  ethics-of-ai: { display_name: "Ethics of AI", section: philosophy, color: "#f59e0b", order: 1 }
+  consciousness: { display_name: "Consciousness", section: philosophy, color: "#8b5cf6", order: 2 }
+  epistemology: { display_name: "Epistemology", section: philosophy, color: "#06b6d4", order: 3 }
+  metaphysics: { display_name: "Metaphysics", section: philosophy, color: "#7c3aed", order: 4 }
+  stoicism: { display_name: "Stoicism", section: philosophy, color: "#64748b", order: 5 }
+  existentialism: { display_name: "Existentialism", section: philosophy, color: "#475569", order: 6 }
+  # --- MISC ---
+  maker: { display_name: "Maker & DIY", section: misc, color: "#f97316", order: 1 }
+  policy: { display_name: "Policy & Geopolitics", section: misc, color: "#64748b", order: 2 }
+  space-exploration: { display_name: "Space Exploration", section: misc, color: "#1e40af", order: 3 }
+  energy: { display_name: "Energy", section: misc, color: "#ea580c", order: 4 }
+  cybersecurity: { display_name: "Cybersecurity", section: misc, color: "#dc2626", order: 5 }
+  defense: { display_name: "Defense", section: misc, color: "#1e3a5f", order: 6 }
+
+# ============================================================================
+# SOURCES
+# ============================================================================
+
+sources:
+
+  # ---- TECH: Industry Publications ----
+  - name: "Semiconductor Engineering"
+    url: "https://semiengineering.com/feed/"
+    type: rss
+    section: tech
+    subsections: [semiconductor, fab, packaging, eda, lithography, memory, ai]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "EE Times"
+    url: "https://www.eetimes.com/feed/"
+    type: rss
+    section: tech
+    subsections: [semiconductor, embedded, ai]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Tom's Hardware"
+    url: "https://www.tomshardware.com/feeds/all"
+    type: rss
+    section: tech
+    subsections: [cpu, gpu, memory, servers]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "DigiTimes"
+    url: "https://www.digitimes.com/rss/daily.xml"
+    type: rss
+    section: tech
+    subsections: [semiconductor, memory, fab, ai, packaging]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Chips and Cheese"
+    url: "https://chipsandcheese.com/feed/"
+    type: rss
+    section: tech
+    subsections: [cpu, gpu, memory]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "IEEE Spectrum"
+    url: "https://spectrum.ieee.org/customfeeds/feed/all-topics/rss"
+    type: rss
+    section: tech
+    subsections: [semiconductor, ai, robotics, embedded]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Electronics Weekly"
+    url: "https://www.electronicsweekly.com/feed/"
+    type: rss
+    section: tech
+    subsections: [semiconductor, embedded]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "The Register"
+    url: "https://www.theregister.com/headlines.atom"
+    type: rss
+    section: tech
+    subsections: [servers, cpu, gpu, software]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Hackaday"
+    url: "https://hackaday.com/feed/"
+    type: rss
+    section: tech
+    subsections: [embedded, maker]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "EDN"
+    url: "https://www.edn.com/feed/"
+    type: rss
+    section: tech
+    subsections: [embedded, semiconductor]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "SciTechDaily"
+    url: "https://scitechdaily.com/feed/"
+    type: rss
+    section: tech
+    subsections: [materials, semiconductor]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  # ---- TECH: Premium / Paid ----
+  - name: "SemiAnalysis"
+    url: "https://www.semianalysis.com/feed"
+    type: rss
+    section: tech
+    subsections: [semiconductor, ai, gpu, memory, fab]
+    tier: paid
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Fabricated Knowledge"
+    url: "https://www.fabricatedknowledge.com/feed"
+    type: rss
+    section: tech
+    subsections: [semiconductor, fab, packaging]
+    tier: paid
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "The Information"
+    url: "https://www.theinformation.com/feed"
+    type: rss
+    section: tech
+    subsections: [ai, software, ai-accelerator]
+    tier: paid
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "The Chip Letter"
+    url: "https://thechipletter.substack.com/feed"
+    type: rss
+    section: tech
+    subsections: [semiconductor, cpu]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "More Than Moore"
+    url: "https://morethanmoore.substack.com/feed"
+    type: rss
+    section: tech
+    subsections: [packaging, semiconductor]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Chip Strat"
+    url: "https://www.chipstrat.com/feed"
+    type: rss
+    section: tech
+    subsections: [semiconductor]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "NYT Technology"
+    url: "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml"
+    type: rss
+    section: tech
+    subsections: [ai, software]
+    tier: paid
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "WSJ Tech"
+    url: "https://feeds.a.dj.com/rss/RSSWSJD.xml"
+    type: rss
+    section: tech
+    subsections: [ai, software, semiconductor]
+    tier: paid
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Ars Technica"
+    url: "https://feeds.arstechnica.com/arstechnica/index"
+    type: rss
+    section: tech
+    subsections: [software, ai]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "TechCrunch"
+    url: "https://techcrunch.com/feed/"
+    type: rss
+    section: tech
+    subsections: [ai, software, robotics, autonomous]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Semiconductor Today"
+    url: "https://semiconductor-today.com/"
+    type: html
+    selectors: { article: ".news_item, article", title: "a", link: "a", date: ".date" }
+    section: tech
+    subsections: [photonics, semiconductor, materials]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "TrendForce News"
+    url: "https://www.trendforce.com/news/"
+    type: html
+    selectors: { article: ".news-wrap li, .news_item", title: "a", link: "a", date: ".date, time" }
+    section: tech
+    subsections: [memory, semiconductor, fab]
+    tier: freemium
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ---- SCIENCE ----
+  - name: "Scientific American"
+    url: "http://rss.sciam.com/ScientificAmerican-Global"
+    type: rss
+    section: science
+    subsections: [biology, neuroscience, chemistry, quantum, climate]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "ScienceDaily"
+    url: "https://www.sciencedaily.com/rss/all.xml"
+    type: rss
+    section: science
+    subsections: [biology, chemistry, neuroscience, materials, climate, astronomy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Science News"
+    url: "https://www.sciencenews.org/feed"
+    type: rss
+    section: science
+    subsections: [quantum, astronomy, neuroscience, chemistry, biology]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "New Scientist"
+    url: "https://www.newscientist.com/feed/home/"
+    type: rss
+    section: science
+    subsections: [biology, astronomy, neuroscience, quantum, climate]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Live Science"
+    url: "https://www.livescience.com/feeds/all"
+    type: rss
+    section: science
+    subsections: [astronomy, biology, chemistry]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Phys.org Nano"
+    url: "https://phys.org/rss-feed/nanotech-news/"
+    type: rss
+    section: science
+    subsections: [materials, quantum]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "MIT News Nano"
+    url: "https://news.mit.edu/topic/mitmitnano-rss.xml"
+    type: rss
+    section: science
+    subsections: [materials, quantum]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "NASA Breaking News"
+    url: "https://www.nasa.gov/rss/dyn/breaking_news.rss"
+    type: rss
+    section: science
+    subsections: [astronomy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  # ---- PHILOSOPHY ----
+  - name: "Aeon"
+    url: "https://aeon.co/feed.rss"
+    type: rss
+    section: philosophy
+    subsections: [consciousness, epistemology, metaphysics, ethics-of-ai, existentialism]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Daily Stoic"
+    url: "https://dailystoic.com/feed/"
+    type: rss
+    section: philosophy
+    subsections: [stoicism]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "The Brains Blog"
+    url: "https://philosophyofbrains.com/feed"
+    type: rss
+    section: philosophy
+    subsections: [consciousness, neuroscience]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  # ---- MISC ----
+  - name: "Hackaday (Maker)"
+    url: "https://hackaday.com/feed/"
+    type: rss
+    section: misc
+    subsections: [maker]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Space.com"
+    url: "https://www.space.com/feeds/all"
+    type: rss
+    section: misc
+    subsections: [space-exploration]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "Krebs on Security"
+    url: "https://krebsonsecurity.com/feed/"
+    type: rss
+    section: misc
+    subsections: [cybersecurity]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
