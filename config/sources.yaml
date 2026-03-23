@@ -57,6 +57,12 @@ subsections_metadata:
   embedded: { display_name: "Embedded & IoT", section: tech, color: "#06b6d4", order: 22 }
   software: { display_name: "Software", section: tech, color: "#3b82f6", order: 25 }
   servers: { display_name: "Servers & Cloud", section: tech, color: "#475569", order: 26 }
+  quantum-computing: { display_name: "Quantum Computing", section: tech, color: "#d946ef", order: 27 }
+  datacenter: { display_name: "Datacenter Infrastructure", section: tech, color: "#334155", order: 28 }
+  power-semiconductor: { display_name: "Power Semiconductors (SiC/GaN)", section: tech, color: "#b91c1c", order: 29 }
+  risc-v: { display_name: "RISC-V", section: tech, color: "#059669", order: 30 }
+  open-hardware: { display_name: "Open Hardware", section: tech, color: "#0f766e", order: 31 }
+  developer: { display_name: "Systems Engineering", section: tech, color: "#6d28d9", order: 32 }
   # --- SCIENCE ---
   astronomy: { display_name: "Astronomy & Space", section: science, color: "#1e40af", order: 1 }
   biophysics: { display_name: "Biophysics", section: science, color: "#16a34a", order: 2 }
@@ -66,6 +72,7 @@ subsections_metadata:
   neuroscience: { display_name: "Neuroscience", section: science, color: "#f472b6", order: 6 }
   biology: { display_name: "Biology & Evolution", section: science, color: "#15803d", order: 7 }
   climate: { display_name: "Climate & Environment", section: science, color: "#22c55e", order: 8 }
+  biotech: { display_name: "Biotech & Pharma", section: science, color: "#0e7490", order: 9 }
   # --- PHILOSOPHY ---
   ethics-of-ai: { display_name: "Ethics of AI", section: philosophy, color: "#f59e0b", order: 1 }
   consciousness: { display_name: "Consciousness", section: philosophy, color: "#8b5cf6", order: 2 }
@@ -80,6 +87,7 @@ subsections_metadata:
   energy: { display_name: "Energy", section: misc, color: "#ea580c", order: 4 }
   cybersecurity: { display_name: "Cybersecurity", section: misc, color: "#dc2626", order: 5 }
   defense: { display_name: "Defense", section: misc, color: "#1e3a5f", order: 6 }
+  podcast: { display_name: "Podcasts", section: misc, color: "#9333ea", order: 7 }
 
 # ============================================================================
 # SOURCES
@@ -389,3 +397,966 @@ sources:
     subsections: [cybersecurity]
     tier: free
     policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  # ==========================================================================
+  # GAP 1: QUANTUM COMPUTING
+  # ==========================================================================
+
+  # ---- Quantum: News & Aggregators ----
+  - name: "The Quantum Insider"
+    url: "https://thequantuminsider.com/feed/"
+    type: rss
+    section: tech
+    subsections: [quantum-computing, semiconductor]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Quantum Computing Report"
+    url: "https://quantumcomputingreport.com/feed/"
+    type: rss
+    section: tech
+    subsections: [quantum-computing]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Quantum Zeitgeist"
+    url: "https://quantumzeitgeist.com/feed/"
+    type: rss
+    section: tech
+    subsections: [quantum-computing]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Inside Quantum Technology"
+    url: "https://www.insidequantumtechnology.com/feed/"
+    type: rss
+    section: tech
+    subsections: [quantum-computing]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ---- Quantum: Companies ----
+  - name: "IBM Quantum Blog"
+    url: "https://www.ibm.com/quantum/blog"
+    type: html
+    selectors: { article: "article, .blog-post", title: "h2, h3", link: "a", date: "time, .date" }
+    section: tech
+    subsections: [quantum-computing]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Google Quantum AI"
+    url: "https://quantumai.google/"
+    type: html
+    selectors: { article: "article, .post", title: "h2, h3", link: "a", date: "time, .date" }
+    section: tech
+    subsections: [quantum-computing, ai]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "IonQ Blog"
+    url: "https://ionq.com/blog/"
+    type: html
+    selectors: { article: "article, .post", title: "h2, h3", link: "a", date: "time, .date" }
+    section: tech
+    subsections: [quantum-computing]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Quantinuum News"
+    url: "https://www.quantinuum.com/news"
+    type: html
+    selectors: { article: "article, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
+    section: tech
+    subsections: [quantum-computing]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "AWS Quantum Computing Blog"
+    url: "https://aws.amazon.com/blogs/quantum-computing/feed/"
+    type: rss
+    section: tech
+    subsections: [quantum-computing, servers]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Microsoft Quantum Blog"
+    url: "https://cloudblogs.microsoft.com/quantum/feed/"
+    type: rss
+    section: tech
+    subsections: [quantum-computing]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ---- Quantum: Academic ----
+  - name: "Shtetl-Optimized (Scott Aaronson)"
+    url: "https://scottaaronson.blog/?feed=rss2"
+    type: rss
+    section: tech
+    subsections: [quantum-computing]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Quantum Frontiers (Caltech)"
+    url: "https://quantumfrontiers.com/feed/"
+    type: rss
+    section: tech
+    subsections: [quantum-computing]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 2: PHOTONICS / OPTICAL / CPO
+  # ==========================================================================
+
+  - name: "Laser Focus World"
+    url: "https://www.laserfocusworld.com/rss"
+    type: rss
+    section: tech
+    subsections: [photonics]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Photonics Media"
+    url: "https://www.photonics.com/rss"
+    type: rss
+    section: tech
+    subsections: [photonics]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "optics.org"
+    url: "https://optics.org/rss"
+    type: rss
+    section: tech
+    subsections: [photonics]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Lightwave Online"
+    url: "https://www.lightwaveonline.com/rss"
+    type: rss
+    section: tech
+    subsections: [photonics, networking]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Ayar Labs News"
+    url: "https://ayarlabs.com/news/"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
+    section: tech
+    subsections: [photonics, packaging]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Lightmatter News"
+    url: "https://lightmatter.co/news/"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
+    section: tech
+    subsections: [photonics, ai-accelerator]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Ciena Blog"
+    url: "https://www.ciena.com/insights/blog/rss"
+    type: rss
+    section: tech
+    subsections: [photonics, networking]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 3: ENERGY / DATACENTER INFRASTRUCTURE
+  # ==========================================================================
+
+  - name: "Canary Media"
+    url: "https://www.canarymedia.com/feed"
+    type: rss
+    section: tech
+    subsections: [energy, datacenter]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Utility Dive"
+    url: "https://www.utilitydive.com/feeds/news/"
+    type: rss
+    section: tech
+    subsections: [energy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Energy Storage News"
+    url: "https://www.energy-storage.news/feed/"
+    type: rss
+    section: tech
+    subsections: [energy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Data Center Dynamics"
+    url: "https://www.datacenterdynamics.com/en/rss/"
+    type: rss
+    section: tech
+    subsections: [datacenter, servers, energy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Data Center Knowledge"
+    url: "https://www.datacenterknowledge.com/rss.xml"
+    type: rss
+    section: tech
+    subsections: [datacenter, servers]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Data Center Frontier"
+    url: "https://www.datacenterfrontier.com/feed"
+    type: rss
+    section: tech
+    subsections: [datacenter]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Electrek"
+    url: "https://electrek.co/feed/"
+    type: rss
+    section: tech
+    subsections: [energy, autonomous]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ---- Power Semiconductors ----
+  - name: "Navitas Semiconductor News"
+    url: "https://navitassemi.com/news/"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
+    section: tech
+    subsections: [power-semiconductor]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 4: CYBERSECURITY
+  # ==========================================================================
+
+  - name: "The Hacker News"
+    url: "https://feeds.feedburner.com/TheHackersNews"
+    type: rss
+    section: misc
+    subsections: [cybersecurity]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "BleepingComputer"
+    url: "https://www.bleepingcomputer.com/feed/"
+    type: rss
+    section: misc
+    subsections: [cybersecurity]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Dark Reading"
+    url: "https://www.darkreading.com/rss.xml"
+    type: rss
+    section: misc
+    subsections: [cybersecurity]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Schneier on Security"
+    url: "https://www.schneier.com/feed/"
+    type: rss
+    section: misc
+    subsections: [cybersecurity]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "CISA Alerts"
+    url: "https://www.cisa.gov/news-events/alerts"
+    type: html
+    selectors: { article: "article, .views-row", title: "h2, h3, a", link: "a", date: "time, .date" }
+    section: misc
+    subsections: [cybersecurity, policy]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "CrowdStrike Blog"
+    url: "https://www.crowdstrike.com/blog/feed/"
+    type: rss
+    section: misc
+    subsections: [cybersecurity]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 5: SPACE / AEROSPACE
+  # ==========================================================================
+
+  - name: "SpaceNews"
+    url: "https://spacenews.com/feed/"
+    type: rss
+    section: misc
+    subsections: [space-exploration, defense]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "NASA Blogs"
+    url: "https://blogs.nasa.gov/feed/"
+    type: rss
+    section: science
+    subsections: [astronomy, space-exploration]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "The Planetary Society"
+    url: "https://www.planetary.org/feed"
+    type: rss
+    section: science
+    subsections: [astronomy, space-exploration]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "ESA News"
+    url: "https://www.esa.int/rssfeed/Our_Activities/Space_Science"
+    type: rss
+    section: science
+    subsections: [astronomy, space-exploration]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Sky & Telescope"
+    url: "https://skyandtelescope.org/feed/"
+    type: rss
+    section: science
+    subsections: [astronomy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "The Space Review"
+    url: "https://www.thespacereview.com/rss.xml"
+    type: rss
+    section: misc
+    subsections: [space-exploration, policy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Payload Space"
+    url: "https://payloadspace.com/feed/"
+    type: rss
+    section: misc
+    subsections: [space-exploration]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 6: RISC-V / OPEN HARDWARE
+  # ==========================================================================
+
+  - name: "RISC-V International Blog"
+    url: "https://riscv.org/feed/"
+    type: rss
+    section: tech
+    subsections: [risc-v, open-hardware, semiconductor]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "SiFive Blog"
+    url: "https://www.sifive.com/blog"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
+    section: tech
+    subsections: [risc-v, semiconductor]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "CNX Software"
+    url: "https://www.cnx-software.com/feed/"
+    type: rss
+    section: tech
+    subsections: [risc-v, embedded, open-hardware]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "CHIPS Alliance Blog"
+    url: "https://chipsalliance.org/news/"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
+    section: tech
+    subsections: [risc-v, open-hardware, eda]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 7: NETWORKING / INFRASTRUCTURE
+  # ==========================================================================
+
+  - name: "Network World"
+    url: "https://www.networkworld.com/feed/"
+    type: rss
+    section: tech
+    subsections: [networking, servers]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "SDxCentral"
+    url: "https://www.sdxcentral.com/feed/"
+    type: rss
+    section: tech
+    subsections: [networking, servers]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Light Reading"
+    url: "https://www.lightreading.com/rss.xml"
+    type: rss
+    section: tech
+    subsections: [networking, photonics]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 8: BIOTECH / LIFE SCIENCE
+  # ==========================================================================
+
+  - name: "STAT News"
+    url: "https://www.statnews.com/feed/"
+    type: rss
+    section: science
+    subsections: [biotech, biology]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Endpoints News"
+    url: "https://endpts.com/feed/"
+    type: rss
+    section: science
+    subsections: [biotech]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Fierce Biotech"
+    url: "https://www.fiercebiotech.com/rss/xml"
+    type: rss
+    section: science
+    subsections: [biotech, biology]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Derek Lowe's In The Pipeline"
+    url: "https://www.science.org/blogs/pipeline/feed"
+    type: rss
+    section: science
+    subsections: [biotech, chemistry]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 9: EDA / CHIP DESIGN
+  # ==========================================================================
+
+  - name: "Zero ASIC Blog"
+    url: "https://www.zeroasic.com/blog"
+    type: html
+    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
+    section: tech
+    subsections: [eda, semiconductor, open-hardware]
+    tier: free
+    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "SIA Blog"
+    url: "https://www.semiconductors.org/category/blog/feed/"
+    type: rss
+    section: tech
+    subsections: [semiconductor, policy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 10: CLIMATE / ENVIRONMENT
+  # ==========================================================================
+
+  - name: "Carbon Brief"
+    url: "https://www.carbonbrief.org/feed/"
+    type: rss
+    section: science
+    subsections: [climate]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Yale Environment 360"
+    url: "https://e360.yale.edu/feed"
+    type: rss
+    section: science
+    subsections: [climate]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "NASA Earth Observatory"
+    url: "https://earthobservatory.nasa.gov/feeds/earth-observatory.rss"
+    type: rss
+    section: science
+    subsections: [climate, astronomy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "RealClimate"
+    url: "https://www.realclimate.org/index.php/feed/"
+    type: rss
+    section: science
+    subsections: [climate]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Mongabay"
+    url: "https://news.mongabay.com/feed/"
+    type: rss
+    section: science
+    subsections: [climate, biology]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 11: ASTRONOMY
+  # ==========================================================================
+
+  - name: "AAS Nova"
+    url: "https://aasnova.org/feed/"
+    type: rss
+    section: science
+    subsections: [astronomy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Astrobites"
+    url: "https://astrobites.org/feed/"
+    type: rss
+    section: science
+    subsections: [astronomy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Universe Today"
+    url: "https://www.universetoday.com/feed/"
+    type: rss
+    section: science
+    subsections: [astronomy, space-exploration]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "EarthSky"
+    url: "https://earthsky.org/feed/"
+    type: rss
+    section: science
+    subsections: [astronomy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "ESO News"
+    url: "https://www.eso.org/public/news/feed/"
+    type: rss
+    section: science
+    subsections: [astronomy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "JWST Blog"
+    url: "https://blogs.nasa.gov/webb/feed/"
+    type: rss
+    section: science
+    subsections: [astronomy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 12: MATH / CS THEORY
+  # ==========================================================================
+
+  - name: "Quanta Magazine CS"
+    url: "https://www.quantamagazine.org/computer-science/feed/"
+    type: rss
+    section: science
+    subsections: [quantum, materials]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Computational Complexity Blog"
+    url: "https://blog.computationalcomplexity.org/feeds/posts/default/-/complexity"
+    type: rss
+    section: science
+    subsections: [quantum]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Terence Tao's Blog"
+    url: "https://terrytao.wordpress.com/feed/"
+    type: rss
+    section: science
+    subsections: [quantum]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 13: POLICY / GEOPOLITICS
+  # ==========================================================================
+
+  - name: "Lawfare"
+    url: "https://www.lawfaremedia.org/feed"
+    type: rss
+    section: misc
+    subsections: [policy, cybersecurity]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "War on the Rocks"
+    url: "https://warontherocks.com/feed/"
+    type: rss
+    section: misc
+    subsections: [policy, defense]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Brookings TechStream"
+    url: "https://www.brookings.edu/series/techstream/feed/"
+    type: rss
+    section: misc
+    subsections: [policy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Rest of World"
+    url: "https://restofworld.org/feed/"
+    type: rss
+    section: misc
+    subsections: [policy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 14: INDIA SEMICONDUCTOR ECOSYSTEM
+  # ==========================================================================
+
+  - name: "Electronics For You"
+    url: "https://www.electronicsforu.com/feed"
+    type: rss
+    section: tech
+    subsections: [semiconductor, embedded]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 15: SiC / GaN / WIDE-BANDGAP
+  # ==========================================================================
+
+  - name: "Compound Semiconductor"
+    url: "https://compoundsemiconductor.net/rss"
+    type: rss
+    section: tech
+    subsections: [power-semiconductor, semiconductor, photonics]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Power Electronics News"
+    url: "https://www.powerelectronicsnews.com/feed/"
+    type: rss
+    section: tech
+    subsections: [power-semiconductor]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 16: DEVELOPER / SYSTEMS ENGINEERING BLOGS
+  # ==========================================================================
+
+  - name: "Julia Evans Blog"
+    url: "https://jvns.ca/atom.xml"
+    type: rss
+    section: tech
+    subsections: [developer, software, networking]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Dan Luu"
+    url: "https://danluu.com/atom.xml"
+    type: rss
+    section: tech
+    subsections: [developer, software]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Brendan Gregg's Blog"
+    url: "https://www.brendangregg.com/blog/rss.xml"
+    type: rss
+    section: tech
+    subsections: [developer, software, servers]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Oxide Computer Blog"
+    url: "https://oxide.computer/blog/feed"
+    type: rss
+    section: tech
+    subsections: [developer, servers, open-hardware]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Fly.io Blog"
+    url: "https://fly.io/blog/feed.xml"
+    type: rss
+    section: tech
+    subsections: [developer, servers]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Tailscale Blog"
+    url: "https://tailscale.com/blog/index.xml"
+    type: rss
+    section: tech
+    subsections: [developer, networking]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 17: PHILOSOPHY — ADDITIONAL
+  # ==========================================================================
+
+  - name: "Psyche (by Aeon)"
+    url: "https://psyche.co/feed"
+    type: rss
+    section: philosophy
+    subsections: [consciousness, epistemology]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Notre Dame Philosophical Reviews"
+    url: "https://ndpr.nd.edu/feed/"
+    type: rss
+    section: philosophy
+    subsections: [epistemology, metaphysics, ethics-of-ai]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Blog of the APA"
+    url: "https://blog.apaonline.org/feed/"
+    type: rss
+    section: philosophy
+    subsections: [epistemology, ethics-of-ai, consciousness]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Marginal Revolution"
+    url: "https://marginalrevolution.com/feed"
+    type: rss
+    section: philosophy
+    subsections: [epistemology, ethics-of-ai]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 18: YOUTUBE CHANNELS
+  # ==========================================================================
+
+  - name: "Asianometry"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC1LpsuAUaKoMzzJSEt5WImw"
+    type: rss
+    section: tech
+    subsections: [semiconductor, fab, packaging]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "TechTechPotato"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC1r0DG-KEPyqOeW6o79PByw"
+    type: rss
+    section: tech
+    subsections: [cpu, gpu, semiconductor]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Anastasi In Tech"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCORX3Cl7ByidjEgzSCgv9Yw"
+    type: rss
+    section: tech
+    subsections: [semiconductor, lithography, fab]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Branch Education"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCdp4_l1vPmpN-gDbUwhaRUQ"
+    type: rss
+    section: tech
+    subsections: [semiconductor, cpu, memory]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Ben Eater"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCS0N5baNlQWJCUrhCEo8WlA"
+    type: rss
+    section: tech
+    subsections: [embedded, open-hardware]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Robert Miles AI Safety"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCLB7AzTwc6VFZrBsO2ucBMg"
+    type: rss
+    section: tech
+    subsections: [ai, ethics-of-ai]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "3Blue1Brown"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw"
+    type: rss
+    section: science
+    subsections: [quantum]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Veritasium"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC-ImLFXGIe2FC4Wo5hOodnw"
+    type: rss
+    section: science
+    subsections: [biology, chemistry, quantum]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "PBS Space Time"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC7_gcs09iThXybpVgjHZ_7g"
+    type: rss
+    section: science
+    subsections: [astronomy, quantum]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Sabine Hossenfelder"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC1yNl2E66ZzKApQdRuTQ4tw"
+    type: rss
+    section: science
+    subsections: [quantum, astronomy]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Two Minute Papers"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg"
+    type: rss
+    section: tech
+    subsections: [ai, ml]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Yannic Kilcher"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCZHmQk67mSJgfCCTn7xBfew"
+    type: rss
+    section: tech
+    subsections: [ai, ml]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Computerphile"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC9-y-6csu5WGm29I7JiwpnA"
+    type: rss
+    section: tech
+    subsections: [software, ai]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Sam Zeloof"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC7E8-0Ou69hwScPW1_fQApA"
+    type: rss
+    section: tech
+    subsections: [semiconductor, maker, open-hardware]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Applied Science"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCivA7_KLKWo43tFcCkFvydw"
+    type: rss
+    section: science
+    subsections: [materials, chemistry]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "ElectroBOOM"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ0-OtVpF0wOKEqT2Z1HEtA"
+    type: rss
+    section: tech
+    subsections: [embedded, maker]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 19: PODCASTS
+  # ==========================================================================
+
+  - name: "Acquired Podcast"
+    url: "https://feeds.pacific-content.com/acquired"
+    type: rss
+    section: tech
+    subsections: [software, semiconductor, podcast]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Lex Fridman Podcast"
+    url: "https://lexfridman.com/feed/podcast/"
+    type: rss
+    section: misc
+    subsections: [podcast, ai]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "The Amp Hour"
+    url: "https://theamphour.com/feed/"
+    type: rss
+    section: tech
+    subsections: [embedded, podcast]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Signals and Threads"
+    url: "https://signalsandthreads.com/rss"
+    type: rss
+    section: tech
+    subsections: [developer, software, podcast]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Oxide and Friends"
+    url: "https://oxide.computer/podcasts/oxide-and-friends/feed"
+    type: rss
+    section: tech
+    subsections: [developer, servers, podcast]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Philosophize This!"
+    url: "https://www.philosophizethis.org/feed"
+    type: rss
+    section: philosophy
+    subsections: [epistemology, existentialism, podcast]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Sean Carroll's Mindscape"
+    url: "https://www.preposterousuniverse.com/podcast/feed/"
+    type: rss
+    section: science
+    subsections: [quantum, astronomy, podcast]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Machine Learning Street Talk"
+    url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCMLtBahI5DMrt0NPvDSoIRQ"
+    type: rss
+    section: tech
+    subsections: [ai, ml, podcast]
+    tier: free
+    policy: { preview_mode: title_only, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Practical AI"
+    url: "https://changelog.com/practicalai/feed"
+    type: rss
+    section: tech
+    subsections: [ai, ml, podcast]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
