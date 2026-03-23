@@ -30,15 +30,7 @@ export default function SubsectionBar({ articles, sectionId, subsectionsMetadata
         onClick={() => onSelect('all')}
         role="tab"
         aria-selected={active === 'all'}
-        className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
-          active === 'all' ? 'glass-pill' : ''
-        }`}
-        style={{
-          transitionTimingFunction: 'var(--spring)',
-          opacity: active === 'all' ? 1 : 0.65,
-        }}
-        onMouseEnter={e => { e.currentTarget.style.opacity = '1' }}
-        onMouseLeave={e => { e.currentTarget.style.opacity = active === 'all' ? '1' : '0.65' }}
+        className={`glass-pill shrink-0 rounded-full text-xs font-medium ${active === 'all' ? 'active' : ''}`}
       >
         All <span className="font-mono opacity-50 ml-1" style={{ fontSize: '9px' }}>{total}</span>
       </button>
@@ -49,15 +41,7 @@ export default function SubsectionBar({ articles, sectionId, subsectionsMetadata
           onClick={() => onSelect(id)}
           role="tab"
           aria-selected={active === id}
-          className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs whitespace-nowrap font-medium transition-all ${
-            active === id ? 'glass-pill' : ''
-          }`}
-          style={{
-            transitionTimingFunction: 'var(--spring)',
-            opacity: active === id ? 1 : 0.65,
-          }}
-          onMouseEnter={e => { e.currentTarget.style.opacity = '1' }}
-          onMouseLeave={e => { e.currentTarget.style.opacity = active === id ? '1' : '0.65' }}
+          className={`glass-pill shrink-0 rounded-full text-xs whitespace-nowrap font-medium ${active === id ? 'active' : ''}`}
         >
           {meta.display_name}
           <span className="font-mono opacity-50 ml-1" style={{ fontSize: '9px' }}>{counts[id]}</span>
