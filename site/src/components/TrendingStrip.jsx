@@ -64,8 +64,8 @@ export default function TrendingStrip({ articles, subsectionsMetadata }) {
             <button
               key={topic.id || topic.label}
               onClick={() => { if (topic.type === 'subsection') navigate(`/${topic.section}?sub=${topic.id}`) }}
-              className="glass-subtle rounded-full px-3 py-1 whitespace-nowrap flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
-              style={{ fontSize: '11px', transitionTimingFunction: 'var(--spring)', cursor: topic.type === 'subsection' ? 'pointer' : 'default' }}
+              className="glass-pill rounded-full whitespace-nowrap flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95"
+              style={{ fontSize: '11px', cursor: topic.type === 'subsection' ? 'pointer' : 'default' }}
               aria-label={`${topic.label}: ${topic.count} articles`}
             >
               {topic.type === 'cluster' && <span style={{ color: 'var(--accent-tech)', fontSize: '10px' }}>#</span>}
