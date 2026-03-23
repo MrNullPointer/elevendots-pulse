@@ -49,60 +49,71 @@ def fetch_intro(
         return clean_html(rss_summary)[:MAX_INTRO_LENGTH]
 
     # Priority 2: Fetch og:description from page <head>
+    # Only attempt if the URL passes SSRF and robots.txt checks.
+    # On failure, fall through to the RSS fallback below.
     if preview_mode in ("og_description", "rss_description"):
+        page_fetch_ok = False
         try:
-            # SSRF check
+            # SSRF check — if the URL itself is unsafe, skip entirely
             if not is_safe_url(article_url):
                 logger.debug("Skipped intro fetch (SSRF): %s", article_url)
-                return ""
-
             # Robots.txt check — legal requirement before touching the page
-            if not is_crawling_allowed(article_url):
+            elif not is_crawling_allowed(article_url):
                 logger.debug(
                     "Skipped intro fetch (robots.txt): %s", article_url
                 )
-                return ""
+            else:
+                resp = rate_limited_get(article_url, stream=True)
 
-            resp = rate_limited_get(article_url, stream=True)
+                # Only parse successful HTML responses
+                if resp.status_code >= 400:
+                    resp.close()
+                elif not is_html_content_type(resp):
+                    resp.close()
+                else:
+                    page_fetch_ok = True
 
-            # Only parse successful HTML responses
-            if resp.status_code >= 400:
-                resp.close()
-                return ""
-            if not is_html_content_type(resp):
-                resp.close()
-                return ""
+                    # Ensure gzip/deflate/br are decoded transparently
+                    resp.raw.decode_content = True
 
-            # Ensure gzip/deflate/br are decoded transparently
-            resp.raw.decode_content = True
+                    partial = resp.raw.read(PARTIAL_READ_BYTES).decode(
+                        "utf-8", errors="ignore"
+                    )
+                    resp.close()
 
-            partial = resp.raw.read(PARTIAL_READ_BYTES).decode(
-                "utf-8", errors="ignore"
-            )
-            resp.close()
+                    soup = BeautifulSoup(partial, "lxml")
 
-            soup = BeautifulSoup(partial, "lxml")
+                    # Check for nosnippet directive
+                    robots_meta = soup.find(
+                        "meta", attrs={"name": "robots"}
+                    )
+                    max_len = MAX_INTRO_LENGTH
+                    if robots_meta:
+                        content = (
+                            robots_meta.get("content") or ""
+                        ).lower()
+                        if "nosnippet" in content:
+                            # Publisher says no snippet — respect it fully
+                            return ""
+                        ms = re.search(
+                            r"max-snippet\s*:\s*(\d+)", content
+                        )
+                        if ms:
+                            max_len = min(
+                                int(ms.group(1)), MAX_INTRO_LENGTH
+                            )
 
-            # Check for nosnippet directive
-            robots_meta = soup.find("meta", attrs={"name": "robots"})
-            max_len = MAX_INTRO_LENGTH
-            if robots_meta:
-                content = (robots_meta.get("content") or "").lower()
-                if "nosnippet" in content:
-                    return ""
-                ms = re.search(r"max-snippet\s*:\s*(\d+)", content)
-                if ms:
-                    max_len = min(int(ms.group(1)), MAX_INTRO_LENGTH)
+                    # Try og:description
+                    og = soup.find("meta", property="og:description")
+                    if og and og.get("content"):
+                        return clean_html(og["content"])[:max_len]
 
-            # Try og:description
-            og = soup.find("meta", property="og:description")
-            if og and og.get("content"):
-                return clean_html(og["content"])[:max_len]
-
-            # Try meta description
-            meta = soup.find("meta", attrs={"name": "description"})
-            if meta and meta.get("content"):
-                return clean_html(meta["content"])[:max_len]
+                    # Try meta description
+                    meta = soup.find(
+                        "meta", attrs={"name": "description"}
+                    )
+                    if meta and meta.get("content"):
+                        return clean_html(meta["content"])[:max_len]
 
         except Exception:
             pass
