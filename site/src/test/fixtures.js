@@ -1,0 +1,101 @@
+export const mockArticles = [
+  {
+    id: 'art-1',
+    title: 'Samsung union votes to strike, risking Nvidia HBM4 supply disruption',
+    intro: 'Samsung workers vote to strike, threatening production of HBM4 memory chips.',
+    url: 'https://example.com/samsung-strike',
+    source: 'DigiTimes',
+    section: 'tech',
+    subsections: ['semiconductor', 'memory'],
+    tier: 'freemium',
+    published: new Date(Date.now() - 3600000).toISOString(),
+    age_hours: 1,
+    also_from: ['TrendForce'],
+  },
+  {
+    id: 'art-2',
+    title: 'Artemis II: NASA crewed moon mission',
+    intro: 'NASA will send astronauts to the moon for the first time since 1972.',
+    url: 'https://example.com/artemis',
+    source: 'Live Science',
+    section: 'science',
+    subsections: ['astronomy', 'biology'],
+    tier: 'free',
+    published: new Date(Date.now() - 7200000).toISOString(),
+    age_hours: 2,
+    also_from: [],
+  },
+  {
+    id: 'art-3',
+    title: 'The city that wasted nothing',
+    intro: 'Edo, modern Tokyo, transformed from a city near ecological collapse.',
+    url: 'https://example.com/edo',
+    source: 'Aeon',
+    section: 'philosophy',
+    subsections: ['consciousness', 'epistemology'],
+    tier: 'free',
+    published: new Date(Date.now() - 21600000).toISOString(),
+    age_hours: 6,
+    also_from: [],
+  },
+  {
+    id: 'art-4',
+    title: 'TSMC expands Arizona fab with $40B investment',
+    intro: 'TSMC announces massive expansion of its Arizona semiconductor fabrication plant.',
+    url: 'https://example.com/tsmc',
+    source: 'SemiEngineering',
+    section: 'tech',
+    subsections: ['semiconductor', 'fab'],
+    tier: 'paid',
+    published: new Date(Date.now() - 86400000).toISOString(),
+    age_hours: 24,
+    also_from: ['DigiTimes', 'EE Times'],
+  },
+  {
+    id: 'art-5',
+    title: 'New cybersecurity threat targets IoT devices',
+    intro: 'Security researchers discovered a new worm targeting smart home devices.',
+    url: 'https://example.com/cyber',
+    source: 'Krebs on Security',
+    section: 'misc',
+    subsections: ['cybersecurity'],
+    tier: 'free',
+    published: new Date(Date.now() - 43200000).toISOString(),
+    age_hours: 12,
+    also_from: [],
+  },
+]
+
+export const mockSectionsMetadata = {
+  tech: { display_name: 'Tech', description: 'Computing and chips.', icon: 'cpu', order: 1, theme_color: '#3b6bdf' },
+  science: { display_name: 'Science', description: 'Astronomy and beyond.', icon: 'flask', order: 2, theme_color: '#7c3aed' },
+  philosophy: { display_name: 'Philosophy', description: 'Ideas and ethics.', icon: 'book', order: 3, theme_color: '#b45309' },
+  misc: { display_name: 'Miscellaneous', description: 'Long reads.', icon: 'sparkles', order: 4, theme_color: '#525252' },
+}
+
+export const mockSubsectionsMetadata = {
+  semiconductor: { display_name: 'Semiconductor', section: 'tech', color: '#6366f1', order: 1 },
+  memory: { display_name: 'Memory', section: 'tech', color: '#7c3aed', order: 5 },
+  fab: { display_name: 'Fab & Manufacturing', section: 'tech', color: '#a78bfa', order: 3 },
+  astronomy: { display_name: 'Astronomy & Space', section: 'science', color: '#1e40af', order: 1 },
+  biology: { display_name: 'Biology', section: 'science', color: '#059669', order: 2 },
+  consciousness: { display_name: 'Consciousness', section: 'philosophy', color: '#d97706', order: 1 },
+  epistemology: { display_name: 'Epistemology', section: 'philosophy', color: '#b45309', order: 2 },
+  cybersecurity: { display_name: 'Cybersecurity', section: 'misc', color: '#ef4444', order: 1 },
+}
+
+export const mockSourceHealth = [
+  { name: 'DigiTimes', articles_found: 46, last_crawled: new Date().toISOString(), status: 'ok' },
+  { name: 'Live Science', articles_found: 50, last_crawled: new Date().toISOString(), status: 'ok' },
+  { name: 'TrendForce News', articles_found: 0, last_crawled: new Date().toISOString(), status: 'empty' },
+  { name: 'Broken Source', articles_found: 0, last_crawled: null, status: 'error' },
+]
+
+export const mockData = {
+  generated_at: new Date().toISOString(),
+  article_count: mockArticles.length,
+  sections_metadata: mockSectionsMetadata,
+  subsections_metadata: mockSubsectionsMetadata,
+  source_health: mockSourceHealth,
+  articles: mockArticles,
+}
