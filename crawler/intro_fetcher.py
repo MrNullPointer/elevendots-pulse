@@ -21,6 +21,16 @@ MAX_INTRO_LENGTH = 300
 PARTIAL_READ_BYTES = 20_000
 
 
+def _has_nosnippet_attr(element) -> bool:
+    """Check if element or any ancestor has data-nosnippet attribute."""
+    current = element
+    while current and hasattr(current, "name") and current.name:
+        if current.has_attr("data-nosnippet"):
+            return True
+        current = current.parent
+    return False
+
+
 def fetch_intro(
     article_url: str,
     rss_summary: str = "",
@@ -71,6 +81,12 @@ def fetch_intro(
                 elif not is_html_content_type(resp):
                     resp.close()
                 else:
+                    # Check X-Robots-Tag HTTP header (CONTENT-POLICY §2.2)
+                    x_robots = (resp.headers.get("X-Robots-Tag") or "").lower()
+                    if "nosnippet" in x_robots:
+                        resp.close()
+                        return ""
+
                     page_fetch_ok = True
 
                     # Ensure gzip/deflate/br are decoded transparently
@@ -103,16 +119,16 @@ def fetch_intro(
                                 int(ms.group(1)), MAX_INTRO_LENGTH
                             )
 
-                    # Try og:description
+                    # Try og:description (respect data-nosnippet, CONTENT-POLICY §2.2)
                     og = soup.find("meta", property="og:description")
-                    if og and og.get("content"):
+                    if og and og.get("content") and not _has_nosnippet_attr(og):
                         return clean_html(og["content"])[:max_len]
 
-                    # Try meta description
+                    # Try meta description (respect data-nosnippet)
                     meta = soup.find(
                         "meta", attrs={"name": "description"}
                     )
-                    if meta and meta.get("content"):
+                    if meta and meta.get("content") and not _has_nosnippet_attr(meta):
                         return clean_html(meta["content"])[:max_len]
 
         except Exception:

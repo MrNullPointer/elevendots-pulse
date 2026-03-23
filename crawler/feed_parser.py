@@ -52,7 +52,7 @@ def extract_summary(entry) -> str:
         contents = entry["content"]
         if isinstance(contents, list) and len(contents) > 0:
             summary = contents[0].get("value", "")
-    return clean_html(summary)[:500]
+    return clean_html(summary)[:300]
 
 
 def parse_rss_feed(url: str) -> list[dict]:

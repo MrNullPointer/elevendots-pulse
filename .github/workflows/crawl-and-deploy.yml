@@ -1,0 +1,108 @@
+name: Crawl and Deploy
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'  # Every 3 hours
+  workflow_dispatch:        # Manual trigger
+
+concurrency:
+  group: crawl-deploy
+  cancel-in-progress: false  # Don't cancel running crawls
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -r crawler/requirements.txt
+          pip install -r tests/requirements-test.txt
+
+      - name: Run compliance tests
+        run: python -m pytest tests/test_compliance.py -v --tb=short
+
+  crawl:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install crawler dependencies
+        run: pip install -r crawler/requirements.txt
+
+      - name: Run crawler
+        run: python -m crawler.main
+
+      - name: Validate articles.json
+        run: |
+          python -c "
+          import json, sys
+          data = json.load(open('data/articles.json'))
+          count = data.get('article_count', 0)
+          if count == 0:
+              print('ERROR: article_count is 0, blocking deploy')
+              sys.exit(1)
+          # Verify no intro exceeds 300 chars
+          for i, a in enumerate(data['articles']):
+              intro_len = len(a.get('intro', ''))
+              if intro_len > 300:
+                  print(f'ERROR: article {i} intro is {intro_len} chars')
+                  sys.exit(1)
+          print(f'OK: {count} articles, all intros <= 300 chars')
+          "
+
+      - name: Commit articles.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/articles.json
+          git diff --cached --quiet && echo "No changes" || git commit -m "Update articles.json [bot]"
+          git push
+
+  deploy:
+    needs: crawl
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Copy articles.json to site
+        run: cp data/articles.json site/public/articles.json
+
+      - name: Build site
+        working-directory: site
+        run: |
+          npm ci
+          npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
