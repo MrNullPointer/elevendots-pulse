@@ -1,12 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 
-const ACCENT = {
-  tech: 'var(--accent-tech)',
-  science: 'var(--accent-science)',
-  philosophy: 'var(--accent-philosophy)',
-  misc: 'var(--accent-misc)',
-}
-
 export default function SectionTabs({ sections, activeSection }) {
   const navigate = useNavigate()
 
@@ -18,13 +11,13 @@ export default function SectionTabs({ sections, activeSection }) {
           <button
             key={section.id}
             onClick={() => navigate(`/${section.id}`)}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-              isActive ? 'glass-pill' : ''
+            className={`px-3.5 py-1.5 rounded-[10px] text-xs font-medium whitespace-nowrap transition-all ${
+              isActive ? 'glass-pill active' : 'glass-pill'
             }`}
             style={{
               transitionTimingFunction: 'var(--spring)',
-              transitionDuration: 'var(--duration-medium)',
               opacity: isActive ? 1 : 0.65,
+              ...(isActive && { '--accent-rgb': section.theme_color ? undefined : undefined }),
             }}
             onMouseEnter={e => { if (!isActive) e.currentTarget.style.opacity = '1' }}
             onMouseLeave={e => { if (!isActive) e.currentTarget.style.opacity = '0.65' }}

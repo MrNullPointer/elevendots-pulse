@@ -19,7 +19,7 @@ export default function PreviewPanel({ article, onClose }) {
         onClick={onClose}
         className="absolute top-3 right-3 p-1.5 rounded-lg transition-colors"
         style={{ background: 'transparent' }}
-        onMouseEnter={e => e.currentTarget.style.background = 'var(--glass-hover)'}
+        onMouseEnter={e => e.currentTarget.style.background = 'var(--glass-pill-hover)'}
         onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
         aria-label="Close preview"
       >
