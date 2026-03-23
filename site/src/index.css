@@ -254,6 +254,16 @@ a {
   transition: background 800ms ease;
 }
 
+/* ---- Hide scrollbar utility ---- */
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* ---- Focus ring for accessibility ---- */
 
 *:focus-visible {
