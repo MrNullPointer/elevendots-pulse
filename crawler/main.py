@@ -80,6 +80,8 @@ def crawl_source(source: dict) -> tuple[list[dict], str]:
                 rss_summary=raw.get("summary", ""),
                 preview_mode=preview_mode,
             )
+            # Defense-in-depth: final 300-char safety cap (CONTENT-POLICY §1.3)
+            intro = (intro or "")[:300]
 
             articles.append({
                 "id": make_article_id(article_url),
