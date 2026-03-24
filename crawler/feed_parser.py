@@ -8,6 +8,8 @@
 # ---------------------------------------------------------------------------
 
 import logging
+import os
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from datetime import datetime, timezone
 from time import mktime
 
@@ -17,6 +19,8 @@ from dateutil import parser as dateparser
 from .utils import clean_html, is_safe_url, rate_limited_get
 
 logger = logging.getLogger(__name__)
+
+FEED_PARSE_TIMEOUT = int(os.environ.get("CRAWL_TIMEOUT", 30))
 
 
 def normalize_date(entry) -> str:
@@ -46,13 +50,24 @@ def normalize_date(entry) -> str:
 
 
 def extract_summary(entry) -> str:
-    """Extract a clean summary from feed entry (max 500 chars)."""
+    """Extract a clean summary from feed entry (max 300 chars)."""
     summary = entry.get("summary", "")
     if not summary and "content" in entry:
         contents = entry["content"]
         if isinstance(contents, list) and len(contents) > 0:
             summary = contents[0].get("value", "")
     return clean_html(summary)[:300]
+
+
+def _parse_feed_with_timeout(text: str, timeout: int = FEED_PARSE_TIMEOUT):
+    """Parse feed content with a hard timeout to prevent hanging."""
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(feedparser.parse, text)
+        try:
+            return future.result(timeout=timeout)
+        except FuturesTimeoutError:
+            logger.warning("Feed parsing timed out after %ds", timeout)
+            return None
 
 
 def parse_rss_feed(url: str) -> list[dict]:
@@ -77,7 +92,10 @@ def parse_rss_feed(url: str) -> list[dict]:
         logger.warning("Failed to fetch feed %s: %s", url, exc)
         return []
 
-    feed = feedparser.parse(resp.text)
+    # Parse with timeout to prevent hanging on malformed content
+    feed = _parse_feed_with_timeout(resp.text)
+    if feed is None:
+        return []
 
     articles = []
     for entry in feed.entries:

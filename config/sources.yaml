@@ -204,6 +204,7 @@ sources:
   - name: "The Information"
     url: "https://www.theinformation.com/"
     type: html
+    enabled: false  # 403 — paywalled site blocks all scrapers
     selectors: { article: "article, .post", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [ai, software, ai-accelerator]
@@ -211,7 +212,7 @@ sources:
     policy: { preview_mode: title_only, robots_txt_checked: true, tos_reviewed: true }
 
   - name: "The Chip Letter"
-    url: "https://thechipletter.substack.com/feed"
+    url: "https://thechipletter.substack.com/feed/"
     type: rss
     section: tech
     subsections: [semiconductor, cpu]
@@ -219,7 +220,7 @@ sources:
     policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
 
   - name: "More Than Moore"
-    url: "https://morethanmoore.substack.com/feed"
+    url: "https://morethanmoore.substack.com/feed/"
     type: rss
     section: tech
     subsections: [packaging, semiconductor]
@@ -269,6 +270,7 @@ sources:
   - name: "Semiconductor Today"
     url: "https://semiconductor-today.com/"
     type: html
+    enabled: false  # HTML scraper returns 0 articles — site structure changed
     selectors: { article: ".news_item, article", title: "a", link: "a", date: ".date" }
     section: tech
     subsections: [photonics, semiconductor, materials]
@@ -278,6 +280,7 @@ sources:
   - name: "TrendForce News"
     url: "https://www.trendforce.com/news/"
     type: html
+    enabled: false  # HTML scraper returns 0 articles — site structure changed
     selectors: { article: ".news-wrap li, .news_item", title: "a", link: "a", date: ".date, time" }
     section: tech
     subsections: [memory, semiconductor, fab]
@@ -513,6 +516,7 @@ sources:
   - name: "Laser Focus World"
     url: "https://www.laserfocusworld.com/home/news"
     type: html
+    enabled: false  # 404 — URL has moved, no RSS available
     selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [photonics]
@@ -522,6 +526,7 @@ sources:
   - name: "Photonics Media"
     url: "https://www.photonics.com/"
     type: html
+    enabled: false  # 403 — site blocks automated access
     selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [photonics]
@@ -539,6 +544,7 @@ sources:
   - name: "Lightwave Online"
     url: "https://www.lightwaveonline.com/home/news"
     type: html
+    enabled: false  # 404 — URL has moved, no RSS available
     selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [photonics, networking]
@@ -770,6 +776,7 @@ sources:
   - name: "SiFive Blog"
     url: "https://www.sifive.com/blog"
     type: html
+    enabled: false  # HTML scraper returns 0 — JS-rendered site
     selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [risc-v, semiconductor]
@@ -787,6 +794,7 @@ sources:
   - name: "CHIPS Alliance Blog"
     url: "https://chipsalliance.org/news/"
     type: html
+    enabled: false  # HTML scraper returns 0 — JS-rendered site
     selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [risc-v, open-hardware, eda]
@@ -808,6 +816,7 @@ sources:
   - name: "SDxCentral"
     url: "https://www.sdxcentral.com/"
     type: html
+    enabled: false  # 403 — blocks automated access
     selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: tech
     subsections: [networking, servers]
@@ -894,6 +903,7 @@ sources:
   - name: "Yale Environment 360"
     url: "https://e360.yale.edu/digest"
     type: html
+    enabled: false  # HTML scraper returns 0 — site structure changed
     selectors: { article: "article, .post, .digest-item", title: "h2, h3", link: "a", date: "time, .date" }
     section: science
     subsections: [climate]

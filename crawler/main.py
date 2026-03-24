@@ -10,9 +10,11 @@ import json
 import logging
 import os
 import tempfile
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+import requests
 import yaml
 
 from .deduplicator import deduplicate_articles
@@ -29,6 +31,7 @@ CONFIG_DIR = ROOT / "config"
 DATA_DIR = ROOT / "data"
 
 _CRAWLER_NAME = "Elevendots-Pulse Crawler"
+MAX_CRAWL_TIME = int(os.environ.get("MAX_CRAWL_TIME", 600))  # 10 min default
 
 
 def load_config() -> dict:
@@ -45,6 +48,11 @@ def crawl_source(source: dict) -> tuple[list[dict], str]:
     name = source.get("name", "Unknown")
     policy = source.get("policy", {})
     preview_mode = policy.get("preview_mode", "rss_description")
+
+    # Skip disabled sources
+    if not source.get("enabled", True):
+        print(f"  [skip] {name}: disabled")
+        return [], "disabled"
 
     print(f"  [{source_type}] {name}: {url}")
 
@@ -100,7 +108,13 @@ def crawl_source(source: dict) -> tuple[list[dict], str]:
         print(f"    Got {len(articles)} articles")
         return articles, status
 
+    except requests.exceptions.HTTPError as e:
+        # Clean single-line output for HTTP errors (not full traceback)
+        print(f"    SKIP: {e.response.status_code} {e.response.reason} — {url}")
+        return [], "error"
+
     except Exception as e:
+        # Full log for unexpected errors
         logger.exception("Error crawling %s", name)
         print(f"    ERROR: {e}")
         return [], "error"
@@ -150,9 +164,12 @@ def main() -> None:
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
 
+    crawl_start = time.time()
+
     print("=" * 60)
     print(_CRAWLER_NAME)
     print(f"Started: {datetime.now(timezone.utc).isoformat()}")
+    print(f"Max crawl time: {MAX_CRAWL_TIME}s")
     print("=" * 60)
 
     config = load_config()
@@ -166,6 +183,14 @@ def main() -> None:
     source_health: list[dict] = []
 
     for source in sources:
+        # Global crawl time limit
+        elapsed = time.time() - crawl_start
+        if elapsed > MAX_CRAWL_TIME:
+            remaining = len(sources) - len(source_health)
+            print(f"\n⚠ Max crawl time ({MAX_CRAWL_TIME}s) exceeded after {elapsed:.0f}s.")
+            print(f"  Stopping with {len(all_articles)} articles collected, {remaining} sources skipped.")
+            break
+
         articles, status = crawl_source(source)
         all_articles.extend(articles)
         source_health.append({
@@ -205,8 +230,10 @@ def main() -> None:
     output_path = DATA_DIR / "articles.json"
     _atomic_write_json(output_path, output)
 
+    total_time = time.time() - crawl_start
     print(f"\nWrote {len(all_articles)} articles to {output_path}")
     print(f"File size: {output_path.stat().st_size / 1024:.1f} KB")
+    print(f"Total crawl time: {total_time:.1f}s")
     print("=" * 60)
 
 

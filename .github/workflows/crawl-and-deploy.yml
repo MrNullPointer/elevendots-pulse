@@ -17,6 +17,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
 
@@ -35,6 +36,10 @@ jobs:
   crawl:
     needs: test
     runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      MAX_CRAWL_TIME: "600"
+      CRAWL_TIMEOUT: "30"
     steps:
       - uses: actions/checkout@v4
 
@@ -77,6 +82,7 @@ jobs:
   deploy:
     needs: crawl
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
