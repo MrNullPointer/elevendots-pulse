@@ -2,7 +2,7 @@
 
 A config-driven knowledge aggregator with Apple Liquid Glass UI.
 Surfaces headlines and previews from 100+ tech, science, and philosophy
-sources. Updated every hour. Costs ~$11/year.
+sources. Updated every hour. 
 
 ## Quick start
 
