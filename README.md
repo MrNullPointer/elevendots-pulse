@@ -24,7 +24,7 @@ See `GUIDE.md` for full details.
 ```
 sources.yaml → Python Crawler → articles.json → React Static Build → GitHub Pages
                     ↑                                                       ↑
-            GitHub Actions (cron 3h)                                  elevendots.dev
+            GitHub Actions (cron 1h)                                  pulse.elevendots.dev
 ```
 
 ## Docs
