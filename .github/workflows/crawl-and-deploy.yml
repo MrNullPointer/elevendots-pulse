@@ -107,6 +107,7 @@ jobs:
           npm ci --force
           npm run build
           cp dist/index.html dist/404.html
+          cd .. && python scripts/generate_section_og.py
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
