@@ -10,6 +10,7 @@ beforeEach(() => {
     Promise.resolve({ ok: true, json: () => Promise.resolve(mockData) })
   )
   localStorage.clear()
+  localStorage.setItem('theme', 'light')
   document.documentElement.setAttribute('data-theme', 'light')
 })
 
@@ -82,7 +83,7 @@ describe('App integration', () => {
   it('renders footer', async () => {
     renderApp()
     await waitFor(() => {
-      expect(screen.getByText(/contact@elevendots.dev/)).toBeInTheDocument()
+      expect(screen.getByText(/support@elevendots.ai/)).toBeInTheDocument()
     })
   })
 

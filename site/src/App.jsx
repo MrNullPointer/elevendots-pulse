@@ -65,7 +65,7 @@ function useScrollSpecular() {
 }
 
 function App() {
-  const { articles, sections, sectionsMetadata, subsectionsMetadata, sourceHealth, generatedAt, loading, error } = useArticles()
+  const { articles, articlesBySection, sections, sectionsMetadata, subsectionsMetadata, sourceHealth, generatedAt, loading, error } = useArticles()
   const [searchOpen, setSearchOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
   const [previewArticle, setPreviewArticle] = useState(null)
@@ -137,6 +137,7 @@ function App() {
           element={
             <HomePage
               articles={articles}
+              articlesBySection={articlesBySection}
               sections={sections}
               sectionsMetadata={sectionsMetadata}
               subsectionsMetadata={subsectionsMetadata}
@@ -155,6 +156,7 @@ function App() {
           element={
             <SectionPage
               articles={articles}
+              articlesBySection={articlesBySection}
               sections={sections}
               sectionsMetadata={sectionsMetadata}
               subsectionsMetadata={subsectionsMetadata}
@@ -187,7 +189,7 @@ function App() {
 }
 
 function HomePage({
-  articles, sections, sectionsMetadata, subsectionsMetadata,
+  articles, articlesBySection, sections, sectionsMetadata, subsectionsMetadata,
   sourceHealth, generatedAt, onSearchOpen, onPreview,
   previewArticle, onClosePreview, onSectionChange,
 }) {
@@ -204,7 +206,7 @@ function HomePage({
       />
 
       <main className="max-w-7xl mx-auto px-4 pt-6 relative z-10">
-        <HeroSection articles={articles} sectionsMetadata={sectionsMetadata} />
+        <HeroSection articlesBySection={articlesBySection} sectionsMetadata={sectionsMetadata} />
         <TrendingStrip articles={articles} subsectionsMetadata={subsectionsMetadata} />
 
         {previewArticle && (
@@ -216,7 +218,7 @@ function HomePage({
             key={section.id}
             sectionId={section.id}
             meta={section}
-            articles={articles}
+            sectionArticles={articlesBySection[section.id] || []}
             onPreview={onPreview}
           />
         ))}
@@ -229,7 +231,7 @@ function HomePage({
 }
 
 function SectionPage({
-  articles, sections, sectionsMetadata, subsectionsMetadata,
+  articles, articlesBySection, sections, sectionsMetadata, subsectionsMetadata,
   sourceHealth, generatedAt, onSearchOpen, onPreview,
   previewArticle, onClosePreview, onHelpToggle,
   searchOpen, helpOpen, onSectionChange,
@@ -242,8 +244,9 @@ function SectionPage({
   useAccent(section)
   useEffect(() => { onSectionChange?.(section || 'home') }, [section, onSectionChange])
 
+  // Pre-partitioned from useArticles — no filter needed
   const sectionArticles = useMemo(
-    () => articles.filter(a => a.section === section),
+    () => articlesBySection[section] || [],
     [articles, section]
   )
 

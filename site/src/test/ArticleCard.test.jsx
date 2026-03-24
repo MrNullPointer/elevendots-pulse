@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import ArticleCard, { TierBadge, formatAge, computeAge } from '../components/ArticleCard'
+import ArticleCard, { TierBadge, formatAge } from '../components/ArticleCard'
+import { liveAgeHours } from '../hooks/useArticles'
 import { mockArticles } from './fixtures'
 
 function renderWithRouter(ui) {
@@ -23,18 +24,18 @@ describe('formatAge', () => {
   })
 })
 
-describe('computeAge', () => {
-  it('calculates age from published timestamp', () => {
-    const article = { published: new Date(Date.now() - 7200000).toISOString(), age_hours: 999 }
-    const age = computeAge(article)
+describe('liveAgeHours', () => {
+  it('calculates age from published_at epoch ms', () => {
+    const article = { published_at: Date.now() - 7200000, date_confidence: 'exact', age_hours: 999 }
+    const age = liveAgeHours(article)
     expect(age).toBeGreaterThanOrEqual(1.9)
     expect(age).toBeLessThanOrEqual(2.1)
   })
-  it('falls back to age_hours when no published field', () => {
-    expect(computeAge({ age_hours: 5 })).toBe(5)
+  it('falls back to age_hours for unknown confidence', () => {
+    expect(liveAgeHours({ date_confidence: 'unknown', age_hours: 5 })).toBe(5)
   })
   it('returns 0 for future-dated articles', () => {
-    expect(computeAge({ published: new Date(Date.now() + 3600000).toISOString() })).toBe(0)
+    expect(liveAgeHours({ published_at: Date.now() + 3600000, date_confidence: 'exact' })).toBe(0)
   })
 })
 
