@@ -5,7 +5,7 @@ export default function Footer({ generatedAt, sourceCount }) {
   const ageHours = generatedAt
     ? Math.max(0, (Date.now() - new Date(generatedAt).getTime()) / 3600000)
     : null
-  const nextRefresh = ageHours !== null ? Math.max(0, 3 - ageHours) : null
+  const nextRefresh = ageHours !== null ? Math.max(0, 1 - ageHours) : null
 
   return (
     <ScrollReveal>

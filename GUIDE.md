@@ -3,7 +3,7 @@
 ## What You're Building
 
 A config-driven tech/science/philosophy news aggregator with an Apple Liquid Glass
-UI, hosted for free on GitHub Pages, updated every 3 hours via GitHub Actions.
+UI, hosted for free on GitHub Pages, updated every hour via GitHub Actions.
 
 **Total cost**: ~$11/year (domain only)
 **Stack**: Python crawler + React/Vite/Tailwind frontend + GitHub Actions CI/CD
@@ -582,7 +582,7 @@ to modify it, use this prompt:
 Review and improve the GitHub Actions workflow at .github/workflows/crawl-and-deploy.yml.
 
 Current workflow:
-- Runs on cron every 3 hours AND on manual workflow_dispatch
+- Runs on cron every hour AND on manual workflow_dispatch
 - Checks out repo, sets up Python 3.12, installs crawler deps
 - Runs the crawler (python -m crawler.main)
 - Commits articles.json to the repo
@@ -592,7 +592,7 @@ Current workflow:
 - Deploys site/dist/ to GitHub Pages using peaceiris/actions-gh-pages
 
 Please verify:
-1. The cron expression is correct for every 3 hours: '0 */3 * * *'
+1. The cron expression is correct for every hour: '7 * * * *'
 2. The Python and Node caching is properly configured
 3. The git commit step handles "nothing to commit" gracefully
 4. The GITHUB_TOKEN permissions are sufficient

@@ -203,10 +203,10 @@ Sources can request changes or removal: contact@elevendots.dev
 **Removal process:**
 1. Immediately remove the source from `config/sources.yaml`
 2. Trigger a manual crawl-and-deploy to remove their content from the live site
-3. The next automated crawl (within 3 hours) ensures removal persists
+3. The next automated crawl (within 1 hour) ensures removal persists
 4. Add the source domain to `config/blocked_domains.yaml` to prevent re-addition
 5. Respond to the publisher confirming removal
-6. Note: cached `articles.json` data is overwritten every 3 hours; any residual
+6. Note: cached `articles.json` data is overwritten every hour; any residual
    articles from the removed source will be purged within one crawl cycle
 
 **What we do NOT do:**
