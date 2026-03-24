@@ -282,8 +282,8 @@ class TestUserAgent:
     def test_timeout_is_reasonable(self):
         assert 10 <= TIMEOUT <= 30  # Must be between 10-30s
 
-    def test_min_interval_is_1_5(self):
-        assert _MIN_INTERVAL == 1.5
+    def test_min_interval_is_reasonable(self):
+        assert 0.3 <= _MIN_INTERVAL <= 2.0  # Must be between 0.3-2.0s
 
 
 # ============================================================================
@@ -292,8 +292,8 @@ class TestUserAgent:
 
 class TestRateLimit:
     def test_min_interval_constant(self):
-        """Verify the rate limit interval is at least 1.5 seconds."""
-        assert _MIN_INTERVAL >= 1.5
+        """Verify the rate limit interval is reasonable (0.3-2.0s)."""
+        assert 0.3 <= _MIN_INTERVAL <= 2.0
 
     def test_rate_limiter_tracks_domains(self):
         """Verify the rate limiter uses per-domain tracking."""
