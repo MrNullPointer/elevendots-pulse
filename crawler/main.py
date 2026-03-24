@@ -41,7 +41,10 @@ def load_config() -> dict:
         return yaml.safe_load(f)
 
 
-def crawl_source(source: dict) -> tuple[list[dict], str]:
+MAX_ARTICLES_PER_SOURCE = int(os.environ.get("MAX_ARTICLES_PER_SOURCE", 50))
+
+
+def crawl_source(source: dict, crawl_start: float = 0, max_crawl_time: int = 0) -> tuple[list[dict], str]:
     """Crawl a single source. Returns (articles, status_string)."""
     source_type = source.get("type", "rss")
     url = source.get("url", "")
@@ -66,8 +69,19 @@ def crawl_source(source: dict) -> tuple[list[dict], str]:
         print(f"    Unknown type: {source_type}")
         return [], "error"
 
+    # Cap articles per source to avoid spending too long on fetch_intro
+    if len(raw_articles) > MAX_ARTICLES_PER_SOURCE:
+        print(f"    Capping from {len(raw_articles)} to {MAX_ARTICLES_PER_SOURCE} articles")
+        raw_articles = raw_articles[:MAX_ARTICLES_PER_SOURCE]
+
     articles = []
     for raw in raw_articles:
+        # Time check inside per-article loop — bail if global limit exceeded
+        if crawl_start and max_crawl_time:
+            if time.time() - crawl_start > max_crawl_time:
+                print(f"    ⚠ Time limit hit during article processing — got {len(articles)}/{len(raw_articles)} articles")
+                break
+
         article_url = raw.get("url", "")
         if not article_url:
             continue
@@ -195,7 +209,7 @@ def main() -> None:
         # ---- RESILIENT CRAWL: wrap EVERY source in try/except ----
         source_start = time.time()
         try:
-            articles, status = crawl_source(source)
+            articles, status = crawl_source(source, crawl_start=crawl_start, max_crawl_time=MAX_CRAWL_TIME)
             source_duration = (time.time() - source_start) * 1000
 
             all_articles.extend(articles)

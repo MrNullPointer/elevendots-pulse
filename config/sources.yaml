@@ -708,6 +708,7 @@ sources:
   - name: "SpaceNews"
     url: "https://spacenews.com/feed/"
     type: rss
+    enabled: false  # 429 rate limited
     section: misc
     subsections: [space-exploration, defense]
     tier: free
@@ -1001,6 +1002,7 @@ sources:
   - name: "Computational Complexity Blog"
     url: "https://blog.computationalcomplexity.org/feeds/posts/default/-/complexity"
     type: rss
+    enabled: false  # Consistently times out or hangs
     section: science
     subsections: [quantum]
     tier: free
@@ -1173,6 +1175,7 @@ sources:
   - name: "Asianometry"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC1LpsuAUaKoMzzJSEt5WImw"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [semiconductor, fab, packaging]
     tier: free
@@ -1181,6 +1184,7 @@ sources:
   - name: "TechTechPotato"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC1r0DG-KEPyqOeW6o79PByw"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [cpu, gpu, semiconductor]
     tier: free
@@ -1189,6 +1193,7 @@ sources:
   - name: "Anastasi In Tech"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCORX3Cl7ByidjEgzSCgv9Yw"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [semiconductor, lithography, fab]
     tier: free
@@ -1197,6 +1202,7 @@ sources:
   - name: "Branch Education"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCdp4_l1vPmpN-gDbUwhaRUQ"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [semiconductor, cpu, memory]
     tier: free
@@ -1205,6 +1211,7 @@ sources:
   - name: "Ben Eater"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCS0N5baNlQWJCUrhCEo8WlA"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [embedded, open-hardware]
     tier: free
@@ -1213,6 +1220,7 @@ sources:
   - name: "Robert Miles AI Safety"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCLB7AzTwc6VFZrBsO2ucBMg"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [ai, ethics-of-ai]
     tier: free
@@ -1221,6 +1229,7 @@ sources:
   - name: "3Blue1Brown"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCYO_jab_esuFRV4b17AJtAw"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: science
     subsections: [quantum]
     tier: free
@@ -1229,6 +1238,7 @@ sources:
   - name: "Veritasium"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC-ImLFXGIe2FC4Wo5hOodnw"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: science
     subsections: [biology, chemistry, quantum]
     tier: free
@@ -1237,6 +1247,7 @@ sources:
   - name: "PBS Space Time"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC7_gcs09iThXybpVgjHZ_7g"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: science
     subsections: [astronomy, quantum]
     tier: free
@@ -1245,6 +1256,7 @@ sources:
   - name: "Sabine Hossenfelder"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC1yNl2E66ZzKApQdRuTQ4tw"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: science
     subsections: [quantum, astronomy]
     tier: free
@@ -1253,6 +1265,7 @@ sources:
   - name: "Two Minute Papers"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCbfYPyITQ-7l4upoX8nvctg"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [ai, ml]
     tier: free
@@ -1261,6 +1274,7 @@ sources:
   - name: "Yannic Kilcher"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCZHmQk67mSJgfCCTn7xBfew"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [ai, ml]
     tier: free
@@ -1269,6 +1283,7 @@ sources:
   - name: "Computerphile"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC9-y-6csu5WGm29I7JiwpnA"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [software, ai]
     tier: free
@@ -1277,6 +1292,7 @@ sources:
   - name: "Sam Zeloof"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UC7E8-0Ou69hwScPW1_fQApA"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [semiconductor, maker, open-hardware]
     tier: free
@@ -1285,6 +1301,7 @@ sources:
   - name: "Applied Science"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCivA7_KLKWo43tFcCkFvydw"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: science
     subsections: [materials, chemistry]
     tier: free
@@ -1293,6 +1310,7 @@ sources:
   - name: "ElectroBOOM"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCJ0-OtVpF0wOKEqT2Z1HEtA"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [embedded, maker]
     tier: free
@@ -1361,6 +1379,7 @@ sources:
   - name: "Machine Learning Street Talk"
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCMLtBahI5DMrt0NPvDSoIRQ"
     type: rss
+    enabled: false  # YouTube RSS feeds returning 404 in CI
     section: tech
     subsections: [ai, ml, podcast]
     tier: free

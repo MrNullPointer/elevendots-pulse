@@ -49,8 +49,10 @@ jobs:
 
       - name: Run crawler
         env:
+          PYTHONUNBUFFERED: "1"
           CRAWL_TIMEOUT: "15"
           MAX_CRAWL_TIME: "480"
+          MAX_ARTICLES_PER_SOURCE: "50"
         run: python -m crawler.main
 
       - name: Validate articles.json

@@ -38,7 +38,7 @@ MAX_RESPONSE_BYTES = 5 * 1024 * 1024  # 5 MB hard cap for full-page fetches
 MAX_REDIRECTS = 5
 
 _last_request_time: dict[str, float] = defaultdict(float)
-_MIN_INTERVAL = 1.5  # seconds between requests to the same domain
+_MIN_INTERVAL = 0.5  # seconds between requests to the same domain (robots.txt Crawl-delay still respected)
 
 # Per-domain crawl-delay overrides (populated by robots_checker)
 _crawl_delays: dict[str, float] = {}

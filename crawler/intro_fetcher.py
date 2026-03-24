@@ -55,7 +55,7 @@ def fetch_intro(
         return ""
 
     # Priority 1: RSS summary (no extra request needed)
-    if rss_summary and len(rss_summary) > 50:
+    if rss_summary and len(rss_summary) > 30:
         return clean_html(rss_summary)[:MAX_INTRO_LENGTH]
 
     # Priority 2: Fetch og:description from page <head>
