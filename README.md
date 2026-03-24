@@ -1,4 +1,4 @@
-# elevendots.dev — Knowledge Navigator
+# ElevenDots Pulse — Knowledge Navigator
 
 A config-driven knowledge aggregator with Apple Liquid Glass UI.
 Surfaces headlines and previews from 100+ tech, science, and philosophy
