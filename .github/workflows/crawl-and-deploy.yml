@@ -36,10 +36,7 @@ jobs:
   crawl:
     needs: test
     runs-on: ubuntu-latest
-    timeout-minutes: 12
-    env:
-      MAX_CRAWL_TIME: "600"
-      CRAWL_TIMEOUT: "30"
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -51,6 +48,9 @@ jobs:
         run: pip install -r crawler/requirements.txt
 
       - name: Run crawler
+        env:
+          CRAWL_TIMEOUT: "15"
+          MAX_CRAWL_TIME: "480"
         run: python -m crawler.main
 
       - name: Validate articles.json
@@ -62,7 +62,6 @@ jobs:
           if count == 0:
               print('ERROR: article_count is 0, blocking deploy')
               sys.exit(1)
-          # Verify no intro exceeds 300 chars
           for i, a in enumerate(data['articles']):
               intro_len = len(a.get('intro', ''))
               if intro_len > 300:
@@ -71,12 +70,12 @@ jobs:
           print(f'OK: {count} articles, all intros <= 300 chars')
           "
 
-      - name: Commit articles.json
+      - name: Commit crawl data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/articles.json
-          git diff --cached --quiet && echo "No changes" || git commit -m "Update articles.json [bot]"
+          git add data/articles.json data/source_health.json
+          git diff --cached --quiet && echo "No changes" || git commit -m "Update articles.json + source_health.json [bot]"
           git push
 
   deploy:
@@ -95,8 +94,10 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Copy articles.json to site
-        run: cp data/articles.json site/public/articles.json
+      - name: Copy crawl data to site
+        run: |
+          cp data/articles.json site/public/articles.json
+          cp data/source_health.json site/public/source_health.json 2>/dev/null || true
 
       - name: Build site
         working-directory: site

@@ -279,8 +279,8 @@ class TestUserAgent:
     def test_headers_dict_matches(self):
         assert HEADERS["User-Agent"] == USER_AGENT
 
-    def test_timeout_is_30(self):
-        assert TIMEOUT == 30
+    def test_timeout_is_reasonable(self):
+        assert 10 <= TIMEOUT <= 30  # Must be between 10-30s
 
     def test_min_interval_is_1_5(self):
         assert _MIN_INTERVAL == 1.5
