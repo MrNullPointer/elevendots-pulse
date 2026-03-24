@@ -31,7 +31,7 @@ CONFIG_DIR = ROOT / "config"
 DATA_DIR = ROOT / "data"
 
 _CRAWLER_NAME = "Elevendots-Pulse Crawler"
-MAX_CRAWL_TIME = int(os.environ.get("MAX_CRAWL_TIME", 600))  # 10 min default
+MAX_CRAWL_TIME = int(os.environ.get("MAX_CRAWL_TIME", 480))  # 8 min default
 
 
 def load_config() -> dict:
@@ -42,17 +42,12 @@ def load_config() -> dict:
 
 
 def crawl_source(source: dict) -> tuple[list[dict], str]:
-    """Crawl a single source. Returns (articles, status)."""
+    """Crawl a single source. Returns (articles, status_string)."""
     source_type = source.get("type", "rss")
     url = source.get("url", "")
     name = source.get("name", "Unknown")
     policy = source.get("policy", {})
     preview_mode = policy.get("preview_mode", "rss_description")
-
-    # Skip disabled sources
-    if not source.get("enabled", True):
-        print(f"  [skip] {name}: disabled")
-        return [], "disabled"
 
     print(f"  [{source_type}] {name}: {url}")
 
@@ -62,62 +57,49 @@ def crawl_source(source: dict) -> tuple[list[dict], str]:
             print("    BLOCKED by robots.txt")
             return [], "blocked"
 
-    try:
-        if source_type in ("rss", "atom"):
-            raw_articles = parse_rss_feed(url)
-        elif source_type == "html":
-            selectors = source.get("selectors", {})
-            raw_articles = scrape_html_source(url, selectors)
-        else:
-            print(f"    Unknown type: {source_type}")
-            return [], "error"
-
-        articles = []
-        for raw in raw_articles:
-            article_url = raw.get("url", "")
-            if not article_url:
-                continue
-
-            published = raw.get(
-                "published", datetime.now(timezone.utc).isoformat()
-            )
-            age_hours = compute_age_hours(published)
-
-            intro = fetch_intro(
-                article_url,
-                rss_summary=raw.get("summary", ""),
-                preview_mode=preview_mode,
-            )
-            # Defense-in-depth: final 300-char safety cap (CONTENT-POLICY §1.3)
-            intro = (intro or "")[:300]
-
-            articles.append({
-                "id": make_article_id(article_url),
-                "title": raw.get("title", "").strip(),
-                "url": article_url.strip(),
-                "intro": intro,
-                "source": name,
-                "section": source.get("section", "misc"),
-                "subsections": source.get("subsections", []),
-                "tier": source.get("tier", "free"),
-                "published": published,
-                "age_hours": age_hours,
-            })
-
-        status = "ok" if articles else "empty"
-        print(f"    Got {len(articles)} articles")
-        return articles, status
-
-    except requests.exceptions.HTTPError as e:
-        # Clean single-line output for HTTP errors (not full traceback)
-        print(f"    SKIP: {e.response.status_code} {e.response.reason} — {url}")
+    if source_type in ("rss", "atom"):
+        raw_articles = parse_rss_feed(url)
+    elif source_type == "html":
+        selectors = source.get("selectors", {})
+        raw_articles = scrape_html_source(url, selectors)
+    else:
+        print(f"    Unknown type: {source_type}")
         return [], "error"
 
-    except Exception as e:
-        # Full log for unexpected errors
-        logger.exception("Error crawling %s", name)
-        print(f"    ERROR: {e}")
-        return [], "error"
+    articles = []
+    for raw in raw_articles:
+        article_url = raw.get("url", "")
+        if not article_url:
+            continue
+
+        published = raw.get(
+            "published", datetime.now(timezone.utc).isoformat()
+        )
+        age_hours = compute_age_hours(published)
+
+        intro = fetch_intro(
+            article_url,
+            rss_summary=raw.get("summary", ""),
+            preview_mode=preview_mode,
+        )
+        # Defense-in-depth: final 300-char safety cap (CONTENT-POLICY §1.3)
+        intro = (intro or "")[:300]
+
+        articles.append({
+            "id": make_article_id(article_url),
+            "title": raw.get("title", "").strip(),
+            "url": article_url.strip(),
+            "intro": intro,
+            "source": name,
+            "section": source.get("section", "misc"),
+            "subsections": source.get("subsections", []),
+            "tier": source.get("tier", "free"),
+            "published": published,
+            "age_hours": age_hours,
+        })
+
+    print(f"    Got {len(articles)} articles")
+    return articles, "ok" if articles else "empty"
 
 
 def _parse_max_age() -> float:
@@ -126,24 +108,17 @@ def _parse_max_age() -> float:
     try:
         value = float(raw)
         if value <= 0:
-            logger.warning("MAX_AGE_HOURS must be positive, using 168")
             return 168.0
         return value
     except ValueError:
-        logger.warning("Invalid MAX_AGE_HOURS=%r, using 168", raw)
         return 168.0
 
 
 def _atomic_write_json(path: Path, data: dict) -> None:
-    """
-    Write JSON to a file atomically.
-
-    Writes to a temp file in the same directory, then renames.
-    Prevents corrupted output if the process crashes mid-write.
-    """
+    """Write JSON atomically via temp file + rename."""
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_path = tempfile.mkstemp(
-        dir=path.parent, prefix=".articles_", suffix=".json"
+        dir=path.parent, prefix=".tmp_", suffix=".json"
     )
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
@@ -158,7 +133,7 @@ def _atomic_write_json(path: Path, data: dict) -> None:
 
 
 def main() -> None:
-    """Main crawl pipeline."""
+    """Main crawl pipeline with resilient per-source error handling."""
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -181,42 +156,121 @@ def main() -> None:
 
     all_articles: list[dict] = []
     source_health: list[dict] = []
+    time_exceeded = False
 
-    for source in sources:
-        # Global crawl time limit
+    for i, source in enumerate(sources):
+        source_name = source.get("name", f"Source {i}")
+        source_url = source.get("url", "")
+
+        # ---- Check time BEFORE this source ----
         elapsed = time.time() - crawl_start
         if elapsed > MAX_CRAWL_TIME:
-            remaining = len(sources) - len(source_health)
+            for remaining in sources[i:]:
+                source_health.append({
+                    "name": remaining.get("name", ""),
+                    "url": remaining.get("url", ""),
+                    "status": "skipped",
+                    "reason": "Crawl time limit exceeded",
+                    "articles": 0,
+                    "duration_ms": 0,
+                })
             print(f"\n⚠ Max crawl time ({MAX_CRAWL_TIME}s) exceeded after {elapsed:.0f}s.")
-            print(f"  Stopping with {len(all_articles)} articles collected, {remaining} sources skipped.")
+            print(f"  Stopping with {len(all_articles)} articles from {i}/{len(sources)} sources.")
+            time_exceeded = True
             break
 
-        articles, status = crawl_source(source)
-        all_articles.extend(articles)
-        source_health.append({
-            "name": source.get("name", ""),
-            "url": source.get("url", ""),
-            "section": source.get("section", ""),
-            "articles_found": len(articles),
-            "last_crawled": datetime.now(timezone.utc).isoformat(),
-            "status": status,
-        })
+        # ---- Skip disabled sources ----
+        if source.get("enabled") is False:
+            print(f"  [skip] {source_name}: disabled")
+            source_health.append({
+                "name": source_name,
+                "url": source_url,
+                "status": "disabled",
+                "reason": "Manually disabled",
+                "articles": 0,
+                "duration_ms": 0,
+            })
+            continue
 
+        # ---- RESILIENT CRAWL: wrap EVERY source in try/except ----
+        source_start = time.time()
+        try:
+            articles, status = crawl_source(source)
+            source_duration = (time.time() - source_start) * 1000
+
+            all_articles.extend(articles)
+
+            # Classify health status
+            if articles:
+                health_status = "slow" if source_duration > 10000 else "healthy"
+            else:
+                health_status = "empty"
+
+            source_health.append({
+                "name": source_name,
+                "url": source_url,
+                "status": health_status,
+                "articles": len(articles),
+                "duration_ms": round(source_duration),
+            })
+
+        except requests.exceptions.HTTPError as e:
+            source_duration = (time.time() - source_start) * 1000
+            reason = f"{e.response.status_code} {e.response.reason}" if e.response else str(e)
+            print(f"    SKIP: {reason} — {source_url}")
+            source_health.append({
+                "name": source_name,
+                "url": source_url,
+                "status": "error",
+                "reason": reason[:200],
+                "articles": 0,
+                "duration_ms": round(source_duration),
+            })
+
+        except (TimeoutError, Exception) as e:
+            source_duration = (time.time() - source_start) * 1000
+            error_msg = str(e)[:200]
+            is_timeout = "timeout" in error_msg.lower() or isinstance(e, TimeoutError)
+            print(f"    {'TIMEOUT' if is_timeout else 'ERROR'}: {source_name} — {error_msg}")
+            source_health.append({
+                "name": source_name,
+                "url": source_url,
+                "status": "timeout" if is_timeout else "error",
+                "reason": error_msg,
+                "articles": 0,
+                "duration_ms": round(source_duration),
+            })
+
+        # ---- Check time AFTER this source ----
+        elapsed = time.time() - crawl_start
+        if elapsed > MAX_CRAWL_TIME:
+            for remaining in sources[i + 1:]:
+                source_health.append({
+                    "name": remaining.get("name", ""),
+                    "url": remaining.get("url", ""),
+                    "status": "skipped",
+                    "reason": "Crawl time limit exceeded",
+                    "articles": 0,
+                    "duration_ms": 0,
+                })
+            print(f"\n⚠ Max crawl time ({MAX_CRAWL_TIME}s) exceeded after {elapsed:.0f}s.")
+            print(f"  Stopping with {len(all_articles)} articles from {i + 1}/{len(sources)} sources.")
+            time_exceeded = True
+            break
+
+    # ---- Post-processing (ALWAYS runs, even if time exceeded) ----
     print(f"\nTotal raw articles: {len(all_articles)}")
 
-    # Deduplicate
     all_articles = deduplicate_articles(all_articles)
     print(f"After dedup: {len(all_articles)}")
 
-    # Filter by age
     max_age = _parse_max_age()
     all_articles = [a for a in all_articles if a["age_hours"] <= max_age]
     print(f"After age filter ({max_age}h): {len(all_articles)}")
 
-    # Sort by recency
     all_articles.sort(key=lambda a: a["age_hours"])
 
-    # Write output atomically
+    # ---- Write articles.json (ALWAYS) ----
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "crawler": _CRAWLER_NAME,
@@ -230,10 +284,31 @@ def main() -> None:
     output_path = DATA_DIR / "articles.json"
     _atomic_write_json(output_path, output)
 
-    total_time = time.time() - crawl_start
+    # ---- Write source_health.json ----
+    crawl_duration = time.time() - crawl_start
+    health_data = {
+        "crawl_timestamp": datetime.now(timezone.utc).isoformat(),
+        "crawl_duration_s": round(crawl_duration),
+        "total_sources": len(sources),
+        "sources_crawled": sum(1 for s in source_health if s["status"] in ("healthy", "slow", "empty")),
+        "sources_failed": sum(1 for s in source_health if s["status"] in ("error", "timeout")),
+        "sources_skipped": sum(1 for s in source_health if s["status"] in ("disabled", "skipped")),
+        "total_articles": len(all_articles),
+        "sources": source_health,
+    }
+
+    health_path = DATA_DIR / "source_health.json"
+    _atomic_write_json(health_path, health_data)
+
+    # ---- Summary ----
     print(f"\nWrote {len(all_articles)} articles to {output_path}")
     print(f"File size: {output_path.stat().st_size / 1024:.1f} KB")
-    print(f"Total crawl time: {total_time:.1f}s")
+    print(f"Source health: {health_data['sources_crawled']} healthy, "
+          f"{health_data['sources_failed']} failed, "
+          f"{health_data['sources_skipped']} skipped")
+    print(f"Total crawl time: {crawl_duration:.1f}s")
+    if time_exceeded:
+        print("⚠ Crawl was stopped early due to time limit.")
     print("=" * 60)
 
 

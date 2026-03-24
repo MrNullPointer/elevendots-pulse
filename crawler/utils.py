@@ -9,6 +9,7 @@
 import hashlib
 import ipaddress
 import logging
+import os
 import re
 import socket
 import time
@@ -32,7 +33,7 @@ HEADERS = {
     "Accept-Language": "en-US,en;q=0.9",
 }
 
-TIMEOUT = 30
+TIMEOUT = int(os.environ.get("CRAWL_TIMEOUT", 15))
 MAX_RESPONSE_BYTES = 5 * 1024 * 1024  # 5 MB hard cap for full-page fetches
 MAX_REDIRECTS = 5
 

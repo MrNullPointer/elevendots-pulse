@@ -20,7 +20,7 @@ from .utils import clean_html, is_safe_url, rate_limited_get
 
 logger = logging.getLogger(__name__)
 
-FEED_PARSE_TIMEOUT = int(os.environ.get("CRAWL_TIMEOUT", 30))
+FEED_PARSE_TIMEOUT = int(os.environ.get("CRAWL_TIMEOUT", 15))
 
 
 def normalize_date(entry) -> str:
