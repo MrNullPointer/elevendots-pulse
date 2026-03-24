@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { liveAgeHours } from './useArticles'
 
 export function useFilters(articles) {
   const [activeSubsection, setActiveSubsection] = useState('all')
@@ -7,7 +8,7 @@ export function useFilters(articles) {
   const [searchQuery, setSearchQuery] = useState('')
 
   const filtered = useMemo(() => {
-    let result = articles
+    let result = articles // already sorted from useArticles
 
     if (activeSubsection !== 'all') {
       result = result.filter(a => a.subsections?.includes(activeSubsection))
@@ -15,7 +16,8 @@ export function useFilters(articles) {
 
     if (timeFilter !== 'all') {
       const hours = Number(timeFilter)
-      result = result.filter(a => a.age_hours <= hours)
+      // LIVE age check — not the stale age_hours snapshot
+      result = result.filter(a => liveAgeHours(a) <= hours)
     }
 
     if (accessFilter !== 'all') {
@@ -26,7 +28,8 @@ export function useFilters(articles) {
       }
     }
 
-    return result.sort((a, b) => a.age_hours - b.age_hours)
+    // NO RE-SORT — input was pre-sorted, filter preserves order
+    return result
   }, [articles, activeSubsection, timeFilter, accessFilter])
 
   return {

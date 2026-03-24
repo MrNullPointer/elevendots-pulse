@@ -9,12 +9,12 @@ describe('useFilters', () => {
     expect(result.current.filtered).toHaveLength(mockArticles.length)
   })
 
-  it('sorts articles by age_hours ascending (freshest first)', () => {
+  it('preserves input order (no re-sort — input is pre-sorted)', () => {
     const { result } = renderHook(() => useFilters(mockArticles))
-    const ages = result.current.filtered.map(a => a.age_hours)
-    for (let i = 1; i < ages.length; i++) {
-      expect(ages[i]).toBeGreaterThanOrEqual(ages[i - 1])
-    }
+    // Output order should match input order since filter preserves relative order
+    const ids = result.current.filtered.map(a => a.id)
+    const inputIds = mockArticles.map(a => a.id)
+    expect(ids).toEqual(inputIds)
   })
 
   it('filters by subsection', () => {

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import Fuse from 'fuse.js'
 import { Search, X, ExternalLink } from 'lucide-react'
-import { TierBadge, formatAge, computeAge } from './ArticleCard'
+import { TierBadge, formatAge } from './ArticleCard'
+import { liveAgeHours } from '../hooks/useArticles'
 
 function useDebounce(value, delay) {
   const [debounced, setDebounced] = useState(value)
@@ -154,7 +155,7 @@ export default function SearchOverlay({ articles, isOpen, onClose }) {
                         {article.section}
                       </span>
                       <TierBadge tier={article.tier} />
-                      <span>{formatAge(computeAge(article))}</span>
+                      <span>{formatAge(liveAgeHours(article))}</span>
                     </div>
                   </div>
                   <ExternalLink size={12} className="shrink-0 mt-1 opacity-30" aria-hidden="true" />

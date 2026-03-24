@@ -1,18 +1,14 @@
-import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import ArticleCard from './ArticleCard'
 import { ScrollReveal } from '../hooks/useScrollReveal'
 
-export default function SectionShelf({ sectionId, meta, articles, onPreview }) {
+export default function SectionShelf({ sectionArticles, meta, sectionId, onPreview }) {
   const navigate = useNavigate()
 
-  const { displayed, total } = useMemo(() => {
-    const sectionArticles = articles
-      .filter(a => a.section === sectionId)
-      .sort((a, b) => a.age_hours - b.age_hours)
-    return { displayed: sectionArticles.slice(0, 3), total: sectionArticles.length }
-  }, [articles, sectionId])
+  // sectionArticles is already sorted from useArticles — just slice
+  const displayed = sectionArticles.slice(0, 3)
+  const total = sectionArticles.length
 
   if (displayed.length === 0) return null
 

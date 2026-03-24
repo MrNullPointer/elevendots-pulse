@@ -1,5 +1,6 @@
 import { X, ExternalLink } from 'lucide-react'
-import { TierBadge, formatAge, computeAge } from './ArticleCard'
+import { TierBadge, formatAge } from './ArticleCard'
+import { liveAgeHours } from '../hooks/useArticles'
 
 const ACCENT_MAP = {
   tech: 'var(--accent-tech)',
@@ -58,7 +59,7 @@ export default function PreviewPanel({ article, onClose }) {
       <div className="flex items-center flex-wrap gap-2 mb-4" style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>
         <span className="font-medium" style={{ color: 'var(--text-secondary)' }}>{article.source}</span>
         <TierBadge tier={article.tier} />
-        <span>{formatAge(computeAge(article))}</span>
+        <span>{formatAge(liveAgeHours(article))}</span>
         {article.also_from?.length > 0 && (
           <span className="italic">
             Also from: {article.also_from.join(', ')}

@@ -2,9 +2,10 @@ import { useMemo } from 'react'
 import { TrendingUp } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { ScrollReveal } from '../hooks/useScrollReveal'
+import { liveAgeHours } from '../hooks/useArticles'
 
 function detectClusters(articles) {
-  const recentArticles = articles.filter(a => a.age_hours <= 12)
+  const recentArticles = articles.filter(a => a.date_confidence !== 'unknown' && liveAgeHours(a) <= 12)
   const wordCounts = {}
 
   for (const a of recentArticles) {
@@ -35,7 +36,7 @@ export default function TrendingStrip({ articles, subsectionsMetadata }) {
   const navigate = useNavigate()
 
   const { subsectionTopics, clusterTopics } = useMemo(() => {
-    const recentArticles = articles.filter(a => a.age_hours <= 12)
+    const recentArticles = articles.filter(a => a.date_confidence !== 'unknown' && liveAgeHours(a) <= 12)
     const counts = {}
     for (const a of recentArticles) {
       for (const sub of a.subsections || []) { counts[sub] = (counts[sub] || 0) + 1 }

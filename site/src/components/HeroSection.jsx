@@ -1,5 +1,6 @@
 import { ExternalLink } from 'lucide-react'
-import { TierBadge, formatAge, computeAge } from './ArticleCard'
+import { TierBadge, formatAge } from './ArticleCard'
+import { liveAgeHours } from '../hooks/useArticles'
 import { ScrollReveal } from '../hooks/useScrollReveal'
 
 function FeaturedCard({ article, section, accentColor }) {
@@ -32,7 +33,7 @@ function FeaturedCard({ article, section, accentColor }) {
         <div className="flex items-center gap-2" style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
           <span className="font-medium" style={{ color: 'var(--text-secondary)' }}>{article.source}</span>
           <TierBadge tier={article.tier} />
-          <span>{formatAge(computeAge(article))}</span>
+          <span>{formatAge(liveAgeHours(article))}</span>
           <ExternalLink size={11} className="ml-auto opacity-0 group-hover:opacity-40 transition-opacity" aria-hidden="true" />
         </div>
       </a>
@@ -40,22 +41,23 @@ function FeaturedCard({ article, section, accentColor }) {
   )
 }
 
-export default function HeroSection({ articles, sectionsMetadata }) {
-  const techArticles = articles.filter(a => a.section === 'tech').sort((a, b) => a.age_hours - b.age_hours)
-  const scienceArticles = articles.filter(a => a.section === 'science').sort((a, b) => a.age_hours - b.age_hours)
+export default function HeroSection({ articlesBySection, sectionsMetadata }) {
+  // Already sorted by (confidence, published_at DESC) — just take first
+  const techFeatured = articlesBySection?.tech?.[0] || null
+  const scienceFeatured = articlesBySection?.science?.[0] || null
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6 scroll-reveal-stagger" aria-label="Featured stories">
+    <section className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6 animate-hero" aria-label="Featured stories">
       <ScrollReveal>
         <FeaturedCard
-          article={techArticles[0]}
+          article={techFeatured}
           section="Tech"
           accentColor={sectionsMetadata?.tech?.theme_color || 'var(--accent-tech)'}
         />
       </ScrollReveal>
       <ScrollReveal delay={100}>
         <FeaturedCard
-          article={scienceArticles[0]}
+          article={scienceFeatured}
           section="Science"
           accentColor={sectionsMetadata?.science?.theme_color || 'var(--accent-science)'}
         />

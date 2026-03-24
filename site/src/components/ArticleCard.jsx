@@ -1,13 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { ExternalLink, Lock } from 'lucide-react'
-
-function computeAge(article) {
-  if (article.published) {
-    const hours = (Date.now() - new Date(article.published).getTime()) / 3600000
-    return Math.max(0, hours)
-  }
-  return article.age_hours ?? 0
-}
+import { liveAgeHours } from '../hooks/useArticles'
 
 function formatAge(hours) {
   if (hours < 0) return 'just now'
@@ -90,7 +83,7 @@ export default function ArticleCard({ article, compact = false, onPreview, isFoc
         rel="noopener noreferrer"
         onClick={handleClick}
         className="block"
-        aria-label={`${article.title} — ${article.source} — ${formatAge(computeAge(article))}`}
+        aria-label={`${article.title} — ${article.source} — ${formatAge(liveAgeHours(article))}`}
       >
         <ExternalLink
           size={12}
@@ -118,7 +111,7 @@ export default function ArticleCard({ article, compact = false, onPreview, isFoc
         <div className="flex items-center flex-wrap gap-x-2 gap-y-1" style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
           <span className="font-medium" style={{ color: 'var(--text-secondary)' }}>{article.source}</span>
           <TierBadge tier={article.tier} />
-          <span>{formatAge(computeAge(article))}</span>
+          <span>{formatAge(liveAgeHours(article))}</span>
 
           {article.subsections?.length > 0 && (
             <div className="flex gap-1 flex-wrap">
@@ -146,4 +139,4 @@ export default function ArticleCard({ article, compact = false, onPreview, isFoc
   )
 }
 
-export { TierBadge, formatAge, computeAge, AlsoFrom }
+export { TierBadge, formatAge, AlsoFrom }

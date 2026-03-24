@@ -23,17 +23,23 @@ logger = logging.getLogger(__name__)
 FEED_PARSE_TIMEOUT = int(os.environ.get("CRAWL_TIMEOUT", 15))
 
 
-def normalize_date(entry) -> str:
-    """Extract and normalize publication date from a feed entry."""
-    for field in ("published_parsed", "updated_parsed", "created_parsed"):
+def normalize_date(entry) -> tuple[str | None, str]:
+    """
+    Extract and normalize publication date from a feed entry.
+    Returns (iso_timestamp_or_None, confidence).
+    confidence: "exact" | "estimated" | "unknown"
+    """
+    # Structured parsed dates — highest confidence
+    for field in ("published_parsed", "updated_parsed"):
         parsed = getattr(entry, field, None) or entry.get(field)
         if parsed:
             try:
                 dt = datetime.fromtimestamp(mktime(parsed), tz=timezone.utc)
-                return dt.isoformat()
+                return dt.isoformat(), "exact"
             except Exception:
                 continue
 
+    # Raw date strings — medium confidence (parsing heuristics)
     for field in ("published", "updated", "created"):
         raw = entry.get(field, "")
         if raw:
@@ -42,11 +48,20 @@ def normalize_date(entry) -> str:
                 if dt and dt.tzinfo is None:
                     dt = dt.replace(tzinfo=timezone.utc)
                 if dt:
-                    return dt.isoformat()
+                    return dt.isoformat(), "estimated"
             except Exception:
                 continue
 
-    return datetime.now(timezone.utc).isoformat()
+    # created_parsed fallback
+    parsed = getattr(entry, "created_parsed", None) or entry.get("created_parsed")
+    if parsed:
+        try:
+            dt = datetime.fromtimestamp(mktime(parsed), tz=timezone.utc)
+            return dt.isoformat(), "estimated"
+        except Exception:
+            pass
+
+    return None, "unknown"
 
 
 def extract_summary(entry) -> str:

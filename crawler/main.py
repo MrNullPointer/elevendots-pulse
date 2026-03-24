@@ -86,10 +86,27 @@ def crawl_source(source: dict, crawl_start: float = 0, max_crawl_time: int = 0) 
         if not article_url:
             continue
 
-        published = raw.get(
-            "published", datetime.now(timezone.utc).isoformat()
-        )
-        age_hours = compute_age_hours(published)
+        # Handle (timestamp, confidence) tuple from normalize_date()
+        raw_published = raw.get("published")
+        if isinstance(raw_published, tuple):
+            pub_str, date_confidence = raw_published
+            if pub_str is None:
+                pub_str = datetime.now(timezone.utc).isoformat()
+        elif raw_published is None:
+            pub_str = datetime.now(timezone.utc).isoformat()
+            date_confidence = "unknown"
+        else:
+            pub_str = raw_published
+            date_confidence = "exact"
+
+        age_hours = compute_age_hours(pub_str)
+
+        # Epoch ms for fast JS comparison
+        try:
+            from dateutil import parser as dp
+            published_at = int(dp.parse(pub_str).timestamp() * 1000)
+        except Exception:
+            published_at = int(datetime.now(timezone.utc).timestamp() * 1000)
 
         intro = fetch_intro(
             article_url,
@@ -108,7 +125,9 @@ def crawl_source(source: dict, crawl_start: float = 0, max_crawl_time: int = 0) 
             "section": source.get("section", "misc"),
             "subsections": source.get("subsections", []),
             "tier": source.get("tier", "free"),
-            "published": published,
+            "published": pub_str,
+            "published_at": published_at,
+            "date_confidence": date_confidence,
             "age_hours": age_hours,
         })
 
@@ -282,7 +301,12 @@ def main() -> None:
     all_articles = [a for a in all_articles if a["age_hours"] <= max_age]
     print(f"After age filter ({max_age}h): {len(all_articles)}")
 
-    all_articles.sort(key=lambda a: a["age_hours"])
+    # Two-tier sort: real dates first (newest on top), unknown dates last
+    _CONF_ORDER = {"exact": 0, "estimated": 1, "unknown": 2}
+    all_articles.sort(key=lambda a: (
+        _CONF_ORDER.get(a.get("date_confidence", "unknown"), 2),
+        a["age_hours"],
+    ))
 
     # ---- Write articles.json (ALWAYS) ----
     output = {
