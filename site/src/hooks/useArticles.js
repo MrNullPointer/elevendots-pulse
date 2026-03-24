@@ -6,7 +6,7 @@ export function useArticles() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch('/articles.json')
+    fetch(`${import.meta.env.BASE_URL}articles.json`)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         return res.json()
