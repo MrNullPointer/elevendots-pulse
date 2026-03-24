@@ -29,5 +29,5 @@ Thumbs.db
 # Claude worktrees
 .claude/worktrees/
 
-# Generated data (re-created by crawler)
-data/articles.json
+# Note: data/articles.json and data/source_health.json are NOT gitignored
+# because the CI pipeline must commit them for deploy to work.
