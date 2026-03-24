@@ -104,7 +104,7 @@ jobs:
       - name: Build site
         working-directory: site
         run: |
-          npm ci
+          npm ci --force
           npm run build
 
       - name: Upload artifact
