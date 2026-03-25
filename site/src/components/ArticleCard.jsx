@@ -3,6 +3,7 @@ import { ExternalLink, Lock } from 'lucide-react'
 import { liveAgeHours } from '../hooks/useArticles'
 
 function formatAge(hours) {
+  if (!isFinite(hours)) return 'Date unknown'
   if (hours < 0) return 'just now'
   if (hours < 1) return `${Math.round(hours * 60)}m ago`
   if (hours < 24) return `${Math.round(hours)}h ago`
