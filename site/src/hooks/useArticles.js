@@ -33,16 +33,21 @@ function articleComparator(a, b) {
  * Compute live age in hours from epoch-ms published_at.
  * All components should use this instead of article.age_hours.
  *
- * For articles with low confidence (unknown dates), falls back to
- * the crawler's age_hours which is relative to observed_at.
+ * Low-confidence articles (missing/invalid dates) return Infinity
+ * so they are excluded from time-based filters and display as
+ * "Date unknown" rather than a misleading "0m ago".
  */
 export function liveAgeHours(article) {
   const conf = article.published_confidence || article.date_confidence
-  if (article.published_at && conf !== 'low' && conf !== 'unknown') {
+  if (conf === 'low' || conf === 'unknown') {
+    // No trustworthy timestamp — return Infinity so time filters exclude them
+    return Infinity
+  }
+  if (article.published_at) {
     return Math.max(0, (Date.now() - article.published_at) / 3600000)
   }
-  // Low-confidence or missing published_at: use crawler's snapshot
-  return article.age_hours ?? 0
+  // Fallback for articles without published_at but with known confidence
+  return article.age_hours ?? Infinity
 }
 
 export function useArticles() {

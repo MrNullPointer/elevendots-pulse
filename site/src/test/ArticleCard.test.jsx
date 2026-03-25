@@ -22,6 +22,9 @@ describe('formatAge', () => {
   it('shows days for >= 24 hours', () => {
     expect(formatAge(48)).toBe('2d ago')
   })
+  it('shows "Date unknown" for Infinity', () => {
+    expect(formatAge(Infinity)).toBe('Date unknown')
+  })
 })
 
 describe('liveAgeHours', () => {
@@ -31,8 +34,11 @@ describe('liveAgeHours', () => {
     expect(age).toBeGreaterThanOrEqual(1.9)
     expect(age).toBeLessThanOrEqual(2.1)
   })
-  it('falls back to age_hours for unknown confidence', () => {
-    expect(liveAgeHours({ date_confidence: 'unknown', age_hours: 5 })).toBe(5)
+  it('returns Infinity for unknown confidence (excludes from time filters)', () => {
+    expect(liveAgeHours({ date_confidence: 'unknown', age_hours: 5 })).toBe(Infinity)
+  })
+  it('returns Infinity for low confidence', () => {
+    expect(liveAgeHours({ published_confidence: 'low', age_hours: 0 })).toBe(Infinity)
   })
   it('returns 0 for future-dated articles', () => {
     expect(liveAgeHours({ published_at: Date.now() + 3600000, date_confidence: 'exact' })).toBe(0)
