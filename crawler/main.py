@@ -19,10 +19,11 @@ import yaml
 
 from .deduplicator import deduplicate_articles
 from .feed_parser import parse_rss_feed
+from .freshness import freshness_sort_key, normalize_article_timestamp
 from .html_scraper import scrape_html_source
 from .intro_fetcher import fetch_intro
 from .robots_checker import is_crawling_allowed
-from .utils import compute_age_hours, make_article_id
+from .utils import make_article_id
 
 logger = logging.getLogger(__name__)
 
@@ -86,27 +87,19 @@ def crawl_source(source: dict, crawl_start: float = 0, max_crawl_time: int = 0) 
         if not article_url:
             continue
 
-        # Handle (timestamp, confidence) tuple from normalize_date()
+        # ---- Timestamp normalization via freshness module ----
+        # Both feed_parser and html_scraper return (iso_string, confidence)
+        # tuples, or (None, "unknown") when no date was found.
         raw_published = raw.get("published")
         if isinstance(raw_published, tuple):
-            pub_str, date_confidence = raw_published
-            if pub_str is None:
-                pub_str = datetime.now(timezone.utc).isoformat()
+            pub_raw_str = raw_published[0]  # may be None
         elif raw_published is None:
-            pub_str = datetime.now(timezone.utc).isoformat()
-            date_confidence = "unknown"
+            pub_raw_str = None
         else:
-            pub_str = raw_published
-            date_confidence = "exact"
+            pub_raw_str = raw_published
 
-        age_hours = compute_age_hours(pub_str)
-
-        # Epoch ms for fast JS comparison
-        try:
-            from dateutil import parser as dp
-            published_at = int(dp.parse(pub_str).timestamp() * 1000)
-        except Exception:
-            published_at = int(datetime.now(timezone.utc).timestamp() * 1000)
+        observed_at = datetime.now(timezone.utc)
+        freshness = normalize_article_timestamp(pub_raw_str, observed_at)
 
         intro = fetch_intro(
             article_url,
@@ -125,10 +118,24 @@ def crawl_source(source: dict, crawl_start: float = 0, max_crawl_time: int = 0) 
             "section": source.get("section", "misc"),
             "subsections": source.get("subsections", []),
             "tier": source.get("tier", "free"),
-            "published": pub_str,
-            "published_at": published_at,
-            "date_confidence": date_confidence,
-            "age_hours": age_hours,
+            # Freshness fields (all computed by freshness module)
+            "published": freshness["published"],
+            "published_at": freshness["published_at"],
+            "published_raw": freshness["published_raw"],
+            "published_confidence": freshness["published_confidence"],
+            "timestamp_issue": freshness["timestamp_issue"],
+            "observed_at": freshness["observed_at"],
+            "age_hours": freshness["age_hours"],
+            "freshness_bucket": freshness["freshness_bucket"],
+            "freshness_bucket_order": freshness["freshness_bucket_order"],
+            "freshness_score": freshness["freshness_score"],
+            # Legacy field for frontend backward compatibility
+            # Maps: high→exact, medium→estimated, low→unknown
+            "date_confidence": {
+                "high": "exact",
+                "medium": "estimated",
+                "low": "unknown",
+            }.get(freshness["published_confidence"], "unknown"),
         })
 
     print(f"    Got {len(articles)} articles")
@@ -301,12 +308,8 @@ def main() -> None:
     all_articles = [a for a in all_articles if a["age_hours"] <= max_age]
     print(f"After age filter ({max_age}h): {len(all_articles)}")
 
-    # Two-tier sort: real dates first (newest on top), unknown dates last
-    _CONF_ORDER = {"exact": 0, "estimated": 1, "unknown": 2}
-    all_articles.sort(key=lambda a: (
-        _CONF_ORDER.get(a.get("date_confidence", "unknown"), 2),
-        a["age_hours"],
-    ))
+    # Sort by freshness: bucket → confidence → recency (newest first)
+    all_articles.sort(key=freshness_sort_key)
 
     # ---- Write articles.json (ALWAYS) ----
     output = {

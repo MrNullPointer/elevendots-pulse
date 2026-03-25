@@ -91,7 +91,11 @@ def scrape_html_source(url: str, selectors: dict) -> list[dict]:
                 logger.debug("Skipped scraped link (SSRF): %s", article_url)
                 continue
 
-            published = datetime.now(timezone.utc).isoformat()
+            # Extract date — return (iso_string, confidence) tuple
+            # matching feed_parser.normalize_date() contract.
+            # NEVER fabricate datetime.now() — return (None, "unknown")
+            # so downstream freshness scoring handles it correctly.
+            published = (None, "unknown")
             date_el = container.select_one(date_sel)
             if date_el:
                 date_str = (
@@ -103,7 +107,7 @@ def scrape_html_source(url: str, selectors: dict) -> list[dict]:
                         if dt:
                             if dt.tzinfo is None:
                                 dt = dt.replace(tzinfo=timezone.utc)
-                            published = dt.isoformat()
+                            published = (dt.isoformat(), "estimated")
                     except Exception:
                         pass
 
