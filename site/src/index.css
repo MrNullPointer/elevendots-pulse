@@ -651,16 +651,9 @@ a { text-decoration: none; color: inherit; }
    TYPOGRAPHY
    =========================================================================== */
 
-/* Safari fallback: use accent → lighter accent via rgba overlay instead of color-mix() */
 .section-title-gradient {
-  background: linear-gradient(135deg, var(--accent-current, #6868e0), rgba(255, 255, 255, 0.3));
-  background-blend-mode: lighten;
+  background: linear-gradient(135deg, var(--accent-current), color-mix(in srgb, var(--accent-current), white 30%));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-@supports (background: color-mix(in srgb, red, blue)) {
-  .section-title-gradient {
-    background: linear-gradient(135deg, var(--accent-current), color-mix(in srgb, var(--accent-current), white 30%));
-  }
 }
 [data-theme="dark"] .section-title-gradient {
   filter: drop-shadow(0 0 30px rgba(var(--accent-rgb), 0.1));
