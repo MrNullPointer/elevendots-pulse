@@ -1,6 +1,6 @@
 # Pulse — Build & Development Guide
 
-**v2.0 Alpha**
+**v2.0.0-GM**
 
 ---
 
@@ -166,4 +166,4 @@ The site is served at `pulse.elevendots.dev` via a CNAME record pointing to GitH
 
 ---
 
-**Pulse v2.0 Alpha** · [pulse.elevendots.dev](https://pulse.elevendots.dev)
+**Pulse v2.0.0-GM** · [pulse.elevendots.dev](https://pulse.elevendots.dev)

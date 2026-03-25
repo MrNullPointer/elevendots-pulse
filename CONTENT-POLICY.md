@@ -1,6 +1,6 @@
 # ElevenDots Pulse — Content Policy & Legal Compliance Guide
 
-## Version 2.0 Alpha — Last Updated: March 2026
+## Version 2.0.0-GM — Last Updated: March 2026
 
 ---
 
