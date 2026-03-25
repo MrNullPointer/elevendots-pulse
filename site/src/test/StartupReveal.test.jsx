@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import StartupReveal from '../components/StartupReveal'
 
 describe('StartupReveal', () => {
-  it('renders fragments in the full-motion path', () => {
+  it('renders the overlay with correct phase attribute', () => {
     render(
       <StartupReveal
         phase="intro"
@@ -14,20 +14,37 @@ describe('StartupReveal', () => {
       />
     )
 
-    expect(screen.getByTestId('startup-fragments')).toBeInTheDocument()
+    const overlay = screen.getByTestId('startup-reveal')
+    expect(overlay).toBeInTheDocument()
+    expect(overlay).toHaveAttribute('data-phase', 'intro')
+    expect(overlay).toHaveAttribute('aria-hidden', 'true')
   })
 
-  it('omits fragments in reduced-motion mode', () => {
+  it('applies light theme class', () => {
     render(
       <StartupReveal
         phase="intro"
         theme="light"
+        dataReady={false}
+        reduceMotion={false}
+        onRevealComplete={() => {}}
+      />
+    )
+
+    expect(screen.getByTestId('startup-reveal').className).toContain('startup-reveal--light')
+  })
+
+  it('applies reduced-motion class', () => {
+    render(
+      <StartupReveal
+        phase="intro"
+        theme="dark"
         dataReady={false}
         reduceMotion
         onRevealComplete={() => {}}
       />
     )
 
-    expect(screen.queryByTestId('startup-fragments')).not.toBeInTheDocument()
+    expect(screen.getByTestId('startup-reveal').className).toContain('startup-reveal--reduced')
   })
 })

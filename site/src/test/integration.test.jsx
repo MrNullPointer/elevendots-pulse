@@ -28,8 +28,8 @@ async function advanceIntro(ms) {
 
 async function finishStartup() {
   await flushAsyncWork()
-  // min duration (3200ms) + reveal (1200ms) + margin
-  await advanceIntro(4600)
+  // min duration (2600ms) + reveal (1000ms) + margin
+  await advanceIntro(3800)
 }
 
 beforeEach(() => {
@@ -62,11 +62,11 @@ describe('App startup reveal', () => {
     expect(screen.getByTestId('startup-reveal')).toHaveAttribute('data-phase', 'intro')
     expect(screen.queryByLabelText('Go to homepage')).not.toBeInTheDocument()
 
-    await advanceIntro(3100)
+    await advanceIntro(2500)
     expect(screen.getByTestId('startup-reveal')).toBeInTheDocument()
     expect(screen.queryByLabelText('Go to homepage')).not.toBeInTheDocument()
 
-    await advanceIntro(1500)
+    await advanceIntro(1200)
     expect(screen.queryByTestId('startup-reveal')).not.toBeInTheDocument()
     expect(screen.getByLabelText('Go to homepage')).toBeInTheDocument()
   })
@@ -80,7 +80,7 @@ describe('App startup reveal', () => {
     )
 
     renderApp()
-    await advanceIntro(3300)
+    await advanceIntro(2700)
     expect(screen.getByTestId('startup-reveal')).toHaveAttribute('data-phase', 'holding')
 
     await act(async () => {
@@ -88,7 +88,7 @@ describe('App startup reveal', () => {
       await Promise.resolve()
       await Promise.resolve()
     })
-    await advanceIntro(1400)
+    await advanceIntro(1200)
 
     expect(screen.queryByTestId('startup-reveal')).not.toBeInTheDocument()
     expect(screen.getByLabelText('Go to homepage')).toBeInTheDocument()

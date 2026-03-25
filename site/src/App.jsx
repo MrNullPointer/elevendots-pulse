@@ -194,6 +194,7 @@ function App() {
         mode={startup.showOverlay ? 'intro' : 'default'}
         intensity={startup.isIdleHold ? 'normal' : 'high'}
         veilActive={startup.showOverlay}
+        meltActive={startup.phase === 'revealing'}
       />
 
       {startup.mountContent && (

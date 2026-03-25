@@ -111,6 +111,7 @@ export default function NeuralBackground({
   mode = 'default',
   intensity = 'normal',
   veilActive = false,
+  meltActive = false,
 }) {
   const canvasRef = useRef(null)
   const stateRef = useRef({
@@ -126,6 +127,10 @@ export default function NeuralBackground({
     timeMultiplier: 1,
     // Scroll depth
     scrollDepth: 0,
+    // Melt state: 0 = normal, >0 = melting (progress 0→1 over ~1200ms)
+    meltActive: false,
+    meltStartTime: 0,
+    meltProgress: 0,
   })
   const rafRef = useRef(null)
 
@@ -243,6 +248,18 @@ export default function NeuralBackground({
       // Idle detection
       const isIdle = now - s.lastMouseMove > 5000
 
+      // ---- Melt physics ----
+      if (s.meltActive && s.meltStartTime === 0) {
+        s.meltStartTime = now
+      }
+      if (s.meltActive && s.meltStartTime > 0) {
+        s.meltProgress = Math.min(1, (now - s.meltStartTime) / 1200)
+      } else {
+        s.meltProgress = 0
+      }
+      const mp = s.meltProgress // 0→1 over 1200ms
+      const melting = mp > 0 && mp < 1
+
       // Trail effect
       const introActive = s.mode === 'intro'
       const introBoost = introActive ? 1.2 : 1
@@ -293,6 +310,35 @@ export default function NeuralBackground({
           // Damping
           dot.vx *= 0.997; dot.vy *= 0.997
 
+          // Melt gravity: each dot falls with acceleration
+          if (melting) {
+            // Per-dot delay: anchor melts last, adaptive first
+            const meltDelay = dot.role === 'anchor' ? 0.15
+              : dot.role === 'domain' ? 0.05 + i * 0.02
+              : 0.0 + i * 0.01
+            const localT = Math.max(0, Math.min(1, (mp - meltDelay) / (1 - meltDelay)))
+
+            if (localT > 0) {
+              // Store original position on first melt frame
+              if (!dot._meltOriginY) dot._meltOriginY = dot.y
+              if (!dot._meltWobble) dot._meltWobble = (i % 2 === 0 ? 1 : -1) * (0.3 + (i % 3) * 0.2)
+
+              // Gravity: accelerating fall (ease-in quadratic)
+              const fallEase = localT * localT // quadratic ease-in = accelerating
+              const fallDist = h * 0.5 * fallEase
+              dot.y = dot._meltOriginY + fallDist
+
+              // Subtle horizontal wobble (organic sway)
+              dot.x += Math.sin(localT * Math.PI * 2.5 + i) * dot._meltWobble
+
+              // Disable normal drift during melt
+              dot.vx = 0
+              dot.vy = 0
+            }
+          } else if (!melting && mp >= 1) {
+            // Melt complete — dots are off-screen, let them stay
+          }
+
           // Mouse attraction
           if (!s.isMobile && !s.veilActive) {
             const dx = s.mouse.x - dot.x, dy = s.mouse.y - dot.y
@@ -322,30 +368,100 @@ export default function NeuralBackground({
 
         const finalOp = Math.min(0.95, (dot.opacity + boost) * intensityBoost) * s.searchDim
 
-        // Draw glow
-        const gr = dot.glowRadius * glowMult * (introActive ? 1.08 : 1)
+        // Compute melt deformation for this dot
+        const meltDelay = dot.role === 'anchor' ? 0.15
+          : dot.role === 'domain' ? 0.05 + i * 0.02 : 0.0 + i * 0.01
+        const dotMeltT = melting ? Math.max(0, Math.min(1, (mp - meltDelay) / (1 - meltDelay))) : 0
+
+        // During melt: initial flash, then fade
+        let meltOpMult = 1
+        let meltStretchY = 1
+        let meltSqueezeX = 1
+        let meltGlowBoost = 1
+
+        if (dotMeltT > 0) {
+          // Phase 1 (0-0.08): bright flash
+          if (dotMeltT < 0.08) {
+            meltGlowBoost = 1 + dotMeltT / 0.08 * 1.5
+            meltOpMult = 1 + dotMeltT / 0.08 * 0.5
+          }
+          // Phase 2 (0.08-1): teardrop stretch + fade
+          else {
+            const stretchT = (dotMeltT - 0.08) / 0.92
+            meltStretchY = 1 + stretchT * 3.5 // elongate to 4.5x height
+            meltSqueezeX = 1 - stretchT * 0.7 // squeeze to 0.3x width
+            meltOpMult = 1 - stretchT * stretchT // quadratic fade
+            meltGlowBoost = Math.max(0, 1 - stretchT * 1.5)
+          }
+        }
+
+        const drawOp = finalOp * meltOpMult
+
+        // Draw glow (stretched during melt)
+        const gr = dot.glowRadius * glowMult * (introActive ? 1.08 : 1) * meltGlowBoost
         const glow = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, gr)
-        glow.addColorStop(0, col(color, finalOp * 0.4))
-        glow.addColorStop(0.4, col(color, finalOp * 0.1))
+        glow.addColorStop(0, col(color, drawOp * 0.4))
+        glow.addColorStop(0.4, col(color, drawOp * 0.1))
         glow.addColorStop(1, col(color, 0))
         ctx.fillStyle = glow
         ctx.fillRect(dot.x - gr, dot.y - gr, gr * 2, gr * 2)
 
-        // Core with white center (glass pearl)
-        const core = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, dot.radius)
-        core.addColorStop(0, `rgba(255,255,255,${finalOp * 0.9})`)
-        core.addColorStop(0.3, col(color, finalOp * 0.8))
-        core.addColorStop(1, col(color, finalOp * 0.2))
-        ctx.beginPath()
-        ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2)
-        ctx.fillStyle = core
-        ctx.fill()
+        // Core — during melt, draw as elongated teardrop instead of circle
+        if (dotMeltT > 0.08 && dotMeltT < 1) {
+          // Teardrop: ellipse (wide at top, narrow at bottom)
+          ctx.save()
+          ctx.translate(dot.x, dot.y)
+          ctx.scale(meltSqueezeX, meltStretchY)
 
-        // Specular highlight
-        ctx.beginPath()
-        ctx.arc(dot.x - dot.radius * 0.3, dot.y - dot.radius * 0.3, dot.radius * 0.25, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255,255,255,${finalOp * 0.5})`
-        ctx.fill()
+          const r = dot.radius * (1 + dotMeltT * 0.5)
+          const tearGrad = ctx.createRadialGradient(0, -r * 0.3, 0, 0, 0, r * 1.2)
+          tearGrad.addColorStop(0, `rgba(255,255,255,${drawOp * 0.85})`)
+          tearGrad.addColorStop(0.25, col(color, drawOp * 0.7))
+          tearGrad.addColorStop(0.6, col(color, drawOp * 0.3))
+          tearGrad.addColorStop(1, col(color, 0))
+
+          // Draw teardrop shape: circle top + pointed bottom
+          ctx.beginPath()
+          ctx.arc(0, 0, r, Math.PI, 0) // top half circle
+          ctx.quadraticCurveTo(r * 0.6, r * 1.2, 0, r * 2.5) // right curve to point
+          ctx.quadraticCurveTo(-r * 0.6, r * 1.2, -r, 0) // left curve back
+          ctx.fillStyle = tearGrad
+          ctx.fill()
+
+          // Trailing drip line below the teardrop
+          if (dotMeltT > 0.2) {
+            const trailLen = (dotMeltT - 0.2) / 0.8 * r * 6
+            const trailOp = drawOp * 0.3 * (1 - dotMeltT)
+            ctx.beginPath()
+            ctx.moveTo(0, r * 2.5)
+            ctx.lineTo(0, r * 2.5 + trailLen)
+            ctx.strokeStyle = col(color, trailOp)
+            ctx.lineWidth = r * 0.3 * (1 - dotMeltT * 0.7)
+            ctx.lineCap = 'round'
+            ctx.stroke()
+          }
+
+          ctx.restore()
+        } else {
+          // Normal circle rendering (pre-melt or post-melt)
+          const core = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, dot.radius)
+          core.addColorStop(0, `rgba(255,255,255,${drawOp * 0.9})`)
+          core.addColorStop(0.3, col(color, drawOp * 0.8))
+          core.addColorStop(1, col(color, drawOp * 0.2))
+          ctx.beginPath()
+          ctx.arc(dot.x, dot.y, dot.radius, 0, Math.PI * 2)
+          ctx.fillStyle = core
+          ctx.fill()
+        }
+
+        // Specular highlight (suppressed during melt)
+        if (dotMeltT < 0.3) {
+          const specOp = drawOp * 0.5 * (1 - dotMeltT / 0.3)
+          ctx.beginPath()
+          ctx.arc(dot.x - dot.radius * 0.3, dot.y - dot.radius * 0.3, dot.radius * 0.25, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(255,255,255,${specOp})`
+          ctx.fill()
+        }
       }
 
       // Connections
@@ -379,6 +495,12 @@ export default function NeuralBackground({
 
             if (introActive && isBackbone) lineOp *= 1.35
             lineOp *= s.searchDim * scrollMult * intensityBoost
+
+            // During melt: connections thin, stretch, then snap
+            if (melting) {
+              const connMeltT = Math.max(0, (mp - 0.05) / 0.6) // connections fade fast
+              lineOp *= Math.max(0, 1 - connMeltT * connMeltT)
+            }
 
             const mx = (a.x + b.x) / 2 + Math.sin(now * 0.0005 + i * 0.5) * 15
             const my = (a.y + b.y) / 2 - Math.cos(now * 0.0004 + j * 0.5) * 15 * 0.7
@@ -502,6 +624,23 @@ export default function NeuralBackground({
   useEffect(() => { stateRef.current.mode = mode }, [mode])
   useEffect(() => { stateRef.current.intensity = intensity }, [intensity])
   useEffect(() => { stateRef.current.veilActive = veilActive }, [veilActive])
+  useEffect(() => {
+    const s = stateRef.current
+    if (meltActive && !s.meltActive) {
+      s.meltActive = true
+      s.meltStartTime = 0 // will be set on next draw frame
+      s.meltProgress = 0
+      // Clear stored melt origins so they get re-captured
+      for (const dot of s.dots) {
+        dot._meltOriginY = 0
+        dot._meltWobble = 0
+      }
+    } else if (!meltActive) {
+      s.meltActive = false
+      s.meltStartTime = 0
+      s.meltProgress = 0
+    }
+  }, [meltActive])
 
   return (
     <canvas
