@@ -1,11 +1,34 @@
-import { Mail } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Mail, Eye } from 'lucide-react'
 import { ScrollReveal } from '../hooks/useScrollReveal'
+
+function useTrafficStats() {
+  const [stats, setStats] = useState(null)
+
+  useEffect(() => {
+    // Cache-bust every 30 minutes (traffic stats update hourly in CI)
+    const v = Math.floor(Date.now() / (30 * 60000))
+    fetch(`${import.meta.env.BASE_URL}stats.json?v=${v}`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => setStats(data))
+      .catch(() => {}) // Silent fail — stats are optional
+  }, [])
+
+  return stats
+}
+
+function formatNumber(n) {
+  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`
+  return String(n)
+}
 
 export default function Footer({ generatedAt, sourceCount }) {
   const ageHours = generatedAt
     ? Math.max(0, (Date.now() - new Date(generatedAt).getTime()) / 3600000)
     : null
   const nextRefresh = ageHours !== null ? Math.max(0, 1 - ageHours) : null
+  const stats = useTrafficStats()
 
   return (
     <ScrollReveal>
@@ -25,6 +48,19 @@ export default function Footer({ generatedAt, sourceCount }) {
               <span> · next refresh in ~{Math.round(nextRefresh)}h</span>
             )}
           </div>
+
+          {/* Traffic stats — only shown if stats.json is available */}
+          {stats && stats.total_views > 0 && (
+            <div className="mt-1.5 flex items-center justify-center gap-1" style={{ opacity: 0.55 }}>
+              <Eye size={10} />
+              <span>{formatNumber(stats.total_views)} views</span>
+              {stats.unique_visitors > 0 && (
+                <span> · {formatNumber(stats.unique_visitors)} visitors</span>
+              )}
+              <span className="opacity-60"> (14d)</span>
+            </div>
+          )}
+
           <div className="mt-1 opacity-60">
             Sources can request removal via the contact below.
           </div>

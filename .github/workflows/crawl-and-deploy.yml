@@ -101,6 +101,11 @@ jobs:
           cp data/articles.json site/public/articles.json
           cp data/source_health.json site/public/source_health.json 2>/dev/null || true
 
+      - name: Fetch traffic stats
+        run: python scripts/fetch_traffic_stats.py
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build site
         working-directory: site
         run: |
