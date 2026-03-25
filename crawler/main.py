@@ -22,6 +22,7 @@ from .feed_parser import parse_rss_feed
 from .freshness import freshness_sort_key, normalize_article_timestamp
 from .html_scraper import scrape_html_source
 from .intro_fetcher import fetch_intro
+from .openalex_adapter import fetch_openalex_papers
 from .robots_checker import is_crawling_allowed
 from .utils import make_article_id
 
@@ -66,6 +67,10 @@ def crawl_source(source: dict, crawl_start: float = 0, max_crawl_time: int = 0) 
     elif source_type == "html":
         selectors = source.get("selectors", {})
         raw_articles = scrape_html_source(url, selectors)
+    elif source_type == "openalex":
+        # OpenAlex API source — query config stored in source dict
+        query_config = source.get("query", {})
+        raw_articles = fetch_openalex_papers(query_config)
     else:
         print(f"    Unknown type: {source_type}")
         return [], "error"
