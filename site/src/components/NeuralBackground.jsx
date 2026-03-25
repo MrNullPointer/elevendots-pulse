@@ -6,6 +6,7 @@ const THEMES = {
   science:    { r: 160, g: 80,  b: 255 },
   philosophy: { r: 224, g: 160, b: 48  },
   world:      { r: 220, g: 40,  b: 40  },
+  research:   { r: 16,  g: 185, b: 129 },
   misc:       { r: 160, g: 160, b: 192 },
 }
 

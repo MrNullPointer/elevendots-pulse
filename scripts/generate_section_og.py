@@ -36,6 +36,11 @@ SECTIONS = {
         "description": "Global news, politics, economics, geopolitics, and public policy. Curated from 140+ sources.",
         "image": "og-homepage.png",  # Reuse homepage OG until dedicated world card is designed
     },
+    "research": {
+        "title": "Research — Pulse by elevendots",
+        "description": "Latest academic papers, preprints, and peer-reviewed research across tech.",
+        "image": "og-homepage.png",  # Reuse homepage OG until dedicated research card is designed
+    },
     "misc": {
         "title": "Miscellaneous — Pulse by elevendots",
         "description": "Essays, culture, long reads, and uncategorized gems. Curated from 140+ sources.",

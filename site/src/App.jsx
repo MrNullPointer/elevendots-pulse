@@ -26,10 +26,11 @@ const ACCENT_MAP = {
   science:    { color: '#a050ff', rgb: '160,80,255' },
   philosophy: { color: '#e0a030', rgb: '224,160,48' },
   world:      { color: '#dc2626', rgb: '220,38,38' },
+  research:   { color: '#10b981', rgb: '16,185,129' },
   misc:       { color: '#a0a0c0', rgb: '160,160,192' },
 }
 
-const KNOWN_SECTIONS = new Set(['tech', 'science', 'philosophy', 'world', 'misc'])
+const KNOWN_SECTIONS = new Set(['tech', 'science', 'philosophy', 'world', 'research', 'misc'])
 
 function resolveVisualSection(pathname) {
   const section = pathname.split('/').filter(Boolean)[0]

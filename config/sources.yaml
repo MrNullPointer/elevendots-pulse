@@ -36,11 +36,17 @@ sections_metadata:
     icon: "globe"
     order: 4
     theme_color: "#dc2626"
+  research:
+    display_name: "Research"
+    description: "Latest academic papers, preprints, and peer-reviewed research across tech."
+    icon: "microscope"
+    order: 5
+    theme_color: "#10b981"
   misc:
     display_name: "Miscellaneous"
     description: "Essays, culture, long reads, and uncategorized gems."
     icon: "sparkles"
-    order: 5
+    order: 6
     theme_color: "#525252"
 
 subsections_metadata:
@@ -101,6 +107,16 @@ subsections_metadata:
   geopolitics: { display_name: "Geopolitics & Conflict", section: world, color: "#b91c1c", order: 3 }
   economics: { display_name: "Economics", section: world, color: "#16a34a", order: 4 }
   public-policy: { display_name: "Public Policy", section: world, color: "#64748b", order: 5 }
+  # --- RESEARCH (mirrors tech taxonomy for academic papers) ---
+  r-ai-ml: { display_name: "AI & Machine Learning", section: research, color: "#10b981", order: 1 }
+  r-systems: { display_name: "Systems & Architecture", section: research, color: "#0ea5e9", order: 2 }
+  r-hardware: { display_name: "Hardware & Semiconductors", section: research, color: "#6366f1", order: 3 }
+  r-networking: { display_name: "Networking & Distributed", section: research, color: "#f59e0b", order: 4 }
+  r-security: { display_name: "Security & Privacy", section: research, color: "#ef4444", order: 5 }
+  r-robotics: { display_name: "Robotics & Autonomous", section: research, color: "#8b5cf6", order: 6 }
+  r-quantum: { display_name: "Quantum Computing", section: research, color: "#06b6d4", order: 7 }
+  r-software: { display_name: "Software Engineering", section: research, color: "#84cc16", order: 8 }
+  r-hpc: { display_name: "HPC & Cloud", section: research, color: "#f97316", order: 9 }
   # --- MISC ---
   maker: { display_name: "Maker & DIY", section: misc, color: "#f97316", order: 1 }
   policy: { display_name: "Policy & Geopolitics", section: misc, color: "#64748b", order: 2 }
@@ -1691,3 +1707,135 @@ sources:
     subsections: [preprints, biology, biotech]
     tier: free
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # RESEARCH SECTION — Academic papers and preprints
+  # Uses arXiv RSS feeds (standard RSS, no new source type needed) and
+  # OpenAlex API (new 'openalex' source type) for broader coverage.
+  #
+  # Compliance:
+  # - arXiv RSS: Permissive for metadata. Must link to arXiv, not host PDFs.
+  # - OpenAlex: CC0 license. No restrictions on commercial use.
+  # - All records are metadata-only. No full-text storage.
+  # ==========================================================================
+
+  # --- arXiv CS categories (RSS feeds — works with existing parser) ---
+  - name: "arXiv AI"
+    url: "https://rss.arxiv.org/rss/cs.AI"
+    type: rss
+    section: research
+    subsections: [r-ai-ml]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Machine Learning"
+    url: "https://rss.arxiv.org/rss/cs.LG"
+    type: rss
+    section: research
+    subsections: [r-ai-ml]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Computer Vision"
+    url: "https://rss.arxiv.org/rss/cs.CV"
+    type: rss
+    section: research
+    subsections: [r-ai-ml]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Computation and Language"
+    url: "https://rss.arxiv.org/rss/cs.CL"
+    type: rss
+    section: research
+    subsections: [r-ai-ml]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Hardware Architecture"
+    url: "https://rss.arxiv.org/rss/cs.AR"
+    type: rss
+    section: research
+    subsections: [r-hardware, r-systems]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Distributed Computing"
+    url: "https://rss.arxiv.org/rss/cs.DC"
+    type: rss
+    section: research
+    subsections: [r-hpc, r-systems]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Networking"
+    url: "https://rss.arxiv.org/rss/cs.NI"
+    type: rss
+    section: research
+    subsections: [r-networking]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Cryptography"
+    url: "https://rss.arxiv.org/rss/cs.CR"
+    type: rss
+    section: research
+    subsections: [r-security]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Robotics"
+    url: "https://rss.arxiv.org/rss/cs.RO"
+    type: rss
+    section: research
+    subsections: [r-robotics]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Software Engineering"
+    url: "https://rss.arxiv.org/rss/cs.SE"
+    type: rss
+    section: research
+    subsections: [r-software]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Quantum Physics"
+    url: "https://rss.arxiv.org/rss/quant-ph"
+    type: rss
+    section: research
+    subsections: [r-quantum]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Operating Systems"
+    url: "https://rss.arxiv.org/rss/cs.OS"
+    type: rss
+    section: research
+    subsections: [r-systems]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Emerging Technologies"
+    url: "https://rss.arxiv.org/rss/cs.ET"
+    type: rss
+    section: research
+    subsections: [r-quantum, r-hardware]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Programming Languages"
+    url: "https://rss.arxiv.org/rss/cs.PL"
+    type: rss
+    section: research
+    subsections: [r-software]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "arXiv Performance"
+    url: "https://rss.arxiv.org/rss/cs.PF"
+    type: rss
+    section: research
+    subsections: [r-hpc, r-systems]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
