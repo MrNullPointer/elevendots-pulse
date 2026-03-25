@@ -1,6 +1,6 @@
 # ElevenDots Pulse — Content Policy & Legal Compliance Guide
 
-## Version 2.0 — Last Updated: March 2026
+## Version 2.0 Alpha — Last Updated: March 2026
 
 ---
 
@@ -186,6 +186,13 @@ description). We never download, cache, or serve audio files.
 **Paid sources (The Information, SemiAnalysis, WSJ, etc.):** We fetch only
 the publicly exposed RSS `<description>`. We never attempt to bypass paywalls,
 use cookies, sessions, or authentication tokens.
+
+**Academic research papers (arXiv, OpenAlex):** We ingest metadata only — title,
+authors, venue, abstract excerpt (≤300 chars), and a link to the canonical page.
+We never store, host, or serve full-text PDFs. arXiv papers link to arxiv.org.
+OpenAlex papers link to the publisher's DOI landing page. OpenAlex data is CC0.
+arXiv RSS is permissive for metadata use. We do not automate Google Scholar
+access or scrape behind access controls.
 
 ---
 
