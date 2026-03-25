@@ -1,6 +1,6 @@
 # Pulse by ElevenDots — Knowledge Navigator
 
-**v2.0 Alpha** · [pulse.elevendots.dev](https://pulse.elevendots.dev)
+**v2.0.0-GM** · [pulse.elevendots.dev](https://pulse.elevendots.dev)
 
 A curated knowledge navigator that aggregates the latest news, research, and ideas across technology, science, philosophy, world affairs, and more. Updated every hour from 165+ sources.
 
@@ -34,6 +34,8 @@ Pulse is a **freshness-first news and research aggregator** that surfaces the mo
 - **Dark mode first** — Premium dark theme with light mode support. Neural constellation background, liquid glass UI, cinematic startup reveal.
 - **Static and fast** — No server at runtime. All data baked into a JSON artifact at build time. Deployed to GitHub Pages CDN.
 - **Privacy-respecting** — No cookies, no tracking scripts, no analytics. Visit counts come from GitHub's built-in traffic stats.
+
+> **Best experienced on Chromium-based desktop browsers** (Chrome, Edge, Arc, Brave). The site works in all modern browsers, but glass effects and neural animations are optimized for Chromium rendering.
 
 ---
 
@@ -149,4 +151,4 @@ MIT
 
 ---
 
-**Pulse v2.0 Alpha** · Built by [elevendots.dev](https://elevendots.dev) · Made with 🤖 in San Diego
+**Pulse v2.0.0-GM** · Built by [elevendots.dev](https://elevendots.dev) · Made with 🤖 in San Diego

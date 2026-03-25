@@ -78,6 +78,11 @@ export default function Footer({ generatedAt, sourceCount }) {
         <div style={{ fontSize: '11px', opacity: 0.4 }}>
           Made with 🤖 in San Diego
         </div>
+
+        {/* Browser recommendation */}
+        <div style={{ fontSize: '10px', opacity: 0.3 }}>
+          Best experienced on Chromium-based desktop browsers (Chrome, Edge, Arc, Brave)
+        </div>
       </footer>
     </ScrollReveal>
   )
