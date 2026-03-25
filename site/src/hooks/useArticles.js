@@ -1,29 +1,47 @@
 import { useState, useEffect, useMemo } from 'react'
 
-// Confidence tier for sort: exact (0) < estimated (1) < unknown (2)
-const CONF_RANK = { exact: 0, estimated: 1, unknown: 2 }
-
 /**
  * Master sort comparator.
- * Primary key: date confidence tier (real dates before unknown).
- * Secondary key: published_at descending (newest first).
+ *
+ * Uses the crawler's pre-computed freshness_score when available.
+ * freshness_score encodes: bucket (coarse) → confidence → age (fine).
+ * Lower score = fresher article.
+ *
+ * Falls back to published_at descending for articles without freshness
+ * metadata (should not happen with the current pipeline, but defensive).
  */
 function articleComparator(a, b) {
-  const confA = CONF_RANK[a.date_confidence] ?? 2
-  const confB = CONF_RANK[b.date_confidence] ?? 2
-  if (confA !== confB) return confA - confB
+  const scoreA = a.freshness_score
+  const scoreB = b.freshness_score
+
+  // Both have freshness_score — use it directly (lower = fresher = first)
+  if (scoreA != null && scoreB != null) {
+    if (scoreA !== scoreB) return scoreA - scoreB
+    // Tiebreak: newer published_at first
+    return (b.published_at || 0) - (a.published_at || 0)
+  }
+
+  // Fallback: articles with freshness_score sort before those without
+  if (scoreA != null) return -1
+  if (scoreB != null) return 1
+
+  // Neither has freshness_score: sort by published_at descending
   return (b.published_at || 0) - (a.published_at || 0)
 }
 
 /**
- * Compute live age in hours from epoch-ms timestamp.
+ * Compute live age in hours from epoch-ms published_at.
  * All components should use this instead of article.age_hours.
+ *
+ * For articles with low confidence (unknown dates), falls back to
+ * the crawler's age_hours which is relative to observed_at.
  */
 export function liveAgeHours(article) {
-  if (article.published_at && article.date_confidence !== 'unknown') {
+  const conf = article.published_confidence || article.date_confidence
+  if (article.published_at && conf !== 'low' && conf !== 'unknown') {
     return Math.max(0, (Date.now() - article.published_at) / 3600000)
   }
-  // Unknown dates or missing published_at: use crawler's age_hours as fallback
+  // Low-confidence or missing published_at: use crawler's snapshot
   return article.age_hours ?? 0
 }
 
