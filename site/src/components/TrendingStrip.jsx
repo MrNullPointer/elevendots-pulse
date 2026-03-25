@@ -50,7 +50,9 @@ export default function TrendingStrip({ articles, subsectionsMetadata }) {
     return { subsectionTopics, clusterTopics: detectClusters(articles) }
   }, [articles, subsectionsMetadata])
 
-  const allTopics = [...subsectionTopics, ...clusterTopics]
+  // Only show subsection topics — cluster keywords (single words like "Data",
+  // "Quantum") are too generic and not actionable (clicking does nothing).
+  const allTopics = subsectionTopics
   if (allTopics.length === 0) return null
 
   return (
@@ -69,7 +71,6 @@ export default function TrendingStrip({ articles, subsectionsMetadata }) {
               style={{ fontSize: '11px', cursor: topic.type === 'subsection' ? 'pointer' : 'default' }}
               aria-label={`${topic.label}: ${topic.count} articles`}
             >
-              {topic.type === 'cluster' && <span style={{ color: 'var(--accent-tech)', fontSize: '10px' }}>#</span>}
               <span className="font-medium">{topic.label}</span>
               <span className="font-mono opacity-50" style={{ fontSize: '9px' }}>{topic.count}</span>
             </button>
