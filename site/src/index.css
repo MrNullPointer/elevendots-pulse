@@ -53,6 +53,12 @@
   --tier-paid-bg: rgba(251, 191, 36, 0.12); --tier-paid-text: #fbbf24;
 
   --overlay-bg: rgba(0, 0, 0, 0.55);
+  --startup-veil: rgba(10, 14, 24, 0.54);
+  --startup-veil-border: rgba(255, 255, 255, 0.12);
+  --startup-specular: rgba(255, 255, 255, 0.24);
+  --startup-pulse: rgba(88, 190, 255, 0.46);
+  --startup-fragment-shadow: rgba(0, 0, 0, 0.28);
+  --startup-noise-opacity: 0.1;
   --mx: -999px; --my: -999px;
   --scroll-pct: 0%;
 }
@@ -84,6 +90,12 @@
   --tier-paid-bg: rgba(245,158,11,0.12); --tier-paid-text: #92400e;
 
   --overlay-bg: rgba(0, 0, 0, 0.20);
+  --startup-veil: rgba(248, 249, 252, 0.62);
+  --startup-veil-border: rgba(144, 168, 196, 0.26);
+  --startup-specular: rgba(255, 255, 255, 0.52);
+  --startup-pulse: rgba(48, 154, 224, 0.34);
+  --startup-fragment-shadow: rgba(106, 138, 170, 0.12);
+  --startup-noise-opacity: 0.07;
 }
 
 /* ---- Base ---- */
@@ -167,6 +179,352 @@ a { text-decoration: none; color: inherit; }
 [data-theme="light"] .mesh-philosophy { background: radial-gradient(ellipse at 25% 20%, rgba(224,160,48,0.10) 0%, transparent 55%), radial-gradient(ellipse at 70% 25%, rgba(245,158,11,0.07) 0%, transparent 50%), radial-gradient(ellipse at 50% 75%, rgba(217,119,6,0.05) 0%, transparent 50%); }
 [data-theme="light"] .mesh-world { background: radial-gradient(ellipse at 20% 20%, rgba(220,38,38,0.10) 0%, transparent 55%), radial-gradient(ellipse at 75% 25%, rgba(239,68,68,0.07) 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, rgba(185,28,28,0.05) 0%, transparent 50%); }
 [data-theme="light"] .mesh-misc { background: radial-gradient(ellipse at 20% 30%, rgba(160,160,192,0.08) 0%, transparent 55%), radial-gradient(ellipse at 75% 20%, rgba(120,113,108,0.05) 0%, transparent 50%); }
+
+/* ===========================================================================
+   STARTUP REVEAL
+   =========================================================================== */
+
+.startup-content {
+  position: relative;
+  z-index: 10;
+}
+
+.startup-content--revealing {
+  animation: startupContentResolve 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: 50% 20%;
+}
+
+.startup-content--ready {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.startup-fallback {
+  max-width: 32rem;
+}
+
+.startup-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.startup-reveal__ambient,
+.startup-reveal__veil,
+.startup-reveal__specular,
+.startup-reveal__noise,
+.startup-reveal__ghost,
+.startup-reveal__fragments,
+.startup-reveal__pulse {
+  position: absolute;
+  inset: 0;
+}
+
+.startup-reveal__ambient {
+  background:
+    radial-gradient(circle at 18% 24%, rgba(var(--accent-rgb), 0.14), transparent 34%),
+    radial-gradient(circle at 78% 16%, rgba(95, 205, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 50% 76%, rgba(140, 110, 255, 0.08), transparent 30%);
+  opacity: 0.5;
+  animation: startupVeilBloom 1800ms var(--spring) both;
+}
+
+.startup-reveal__veil {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 28%, rgba(255,255,255,0.08) 55%, transparent 100%),
+    linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 22%, rgba(255,255,255,0.06) 100%),
+    var(--startup-veil);
+  backdrop-filter: blur(28px) saturate(1.18);
+  -webkit-backdrop-filter: blur(28px) saturate(1.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 0 0 1px var(--startup-veil-border),
+    0 28px 80px rgba(0,0,0,0.12);
+  animation: startupVeilBloom 1100ms var(--spring) both;
+}
+
+.startup-reveal__specular {
+  background:
+    linear-gradient(105deg, transparent 10%, rgba(255,255,255,0.08) 24%, transparent 42%),
+    radial-gradient(circle at 50% 16%, var(--startup-specular), transparent 38%);
+  mix-blend-mode: screen;
+  opacity: 0.8;
+  animation: startupSpecularSweep 3400ms ease-in-out infinite;
+}
+
+.startup-reveal__noise {
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.18) 0.4px, transparent 0.8px),
+    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.12) 0.5px, transparent 1px),
+    radial-gradient(circle at 40% 70%, rgba(255,255,255,0.12) 0.4px, transparent 0.9px);
+  background-size: 18px 18px, 24px 24px, 30px 30px;
+  opacity: var(--startup-noise-opacity);
+  mix-blend-mode: soft-light;
+}
+
+.startup-reveal__ghost {
+  width: min(1120px, 88vw);
+  height: min(82vh, 860px);
+  margin: 0 auto;
+  top: 6vh;
+  opacity: 0.34;
+  filter: blur(18px);
+  animation: startupVeilBloom 1400ms var(--spring) both;
+}
+
+.startup-ghost,
+.startup-fragment,
+.startup-flurry {
+  position: absolute;
+  display: block;
+}
+
+.startup-ghost {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04)),
+    rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    0 18px 44px rgba(0,0,0,0.08);
+}
+
+.startup-ghost--nav {
+  inset: 0 auto auto 50%;
+  width: min(940px, 82vw);
+  height: 72px;
+  border-radius: 28px;
+  transform: translateX(-50%);
+}
+
+.startup-ghost--hero {
+  top: 122px;
+  left: 0;
+  width: 62%;
+  height: 194px;
+  border-radius: 36px;
+}
+
+.startup-ghost-grid {
+  position: absolute;
+  inset: 352px 0 0;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr;
+  grid-auto-rows: minmax(164px, auto);
+  gap: 22px;
+}
+
+.startup-ghost--card,
+.startup-ghost--footer {
+  position: relative;
+  border-radius: 28px;
+}
+
+.startup-ghost--card-lg {
+  min-height: 220px;
+}
+
+.startup-ghost--footer {
+  grid-column: 1 / -1;
+  height: 112px;
+}
+
+.startup-reveal__pulse {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.02) 16%, var(--startup-pulse) 50%, rgba(255,255,255,0.02) 84%, transparent 100%);
+  mix-blend-mode: screen;
+  opacity: 0.62;
+  transform: translate3d(-120%, 0, 0);
+  animation: startupPulseTraverse 3200ms ease-in-out infinite;
+}
+
+.startup-reveal--holding .startup-reveal__pulse {
+  opacity: 0.46;
+  animation-duration: 4200ms;
+}
+
+/* ---- Reveal: neuron melt — nodes dissolve into water droplets ---- */
+
+/* Veil dissolves with a soft top-to-bottom gradient wipe */
+.startup-reveal--revealing .startup-reveal__veil {
+  animation: startupVeilDissolve 1300ms cubic-bezier(0.25, 0, 0.1, 1) forwards;
+  transform-origin: 50% 0%;
+}
+
+.startup-reveal--revealing .startup-reveal__specular {
+  animation: startupSpecularFade 1200ms cubic-bezier(0.3, 0, 0.1, 1) forwards;
+}
+
+.startup-reveal--revealing .startup-reveal__noise,
+.startup-reveal--revealing .startup-reveal__ghost,
+.startup-reveal--revealing .startup-reveal__ambient,
+.startup-reveal--revealing .startup-reveal__pulse {
+  animation: startupLayerDissolve 1100ms cubic-bezier(0.3, 0, 0.15, 1) forwards;
+}
+
+/* The neuron melt animation is handled by NeuralBackground.jsx (Canvas).
+   No CSS drop/fragment elements needed — the Canvas draws the organic
+   teardrop deformation, gravity drip, and connection stretching. */
+
+/* ---- Reduced motion: simple dissolve ---- */
+.startup-reveal--reduced .startup-reveal__veil {
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.startup-reveal--reduced .startup-reveal__ambient,
+.startup-reveal--reduced .startup-reveal__ghost {
+  filter: none;
+}
+
+@keyframes startupVeilBloom {
+  0% {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes startupPulseTraverse {
+  0% {
+    transform: translate3d(-120%, 0, 0);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  82% {
+    opacity: 0.25;
+  }
+  100% {
+    transform: translate3d(120%, 0, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes startupSpecularSweep {
+  0% {
+    transform: translate3d(-4%, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, -1%, 0) scale(1.02);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* Veil dissolves softly — not a hard cut, a gentle fade with
+   top clearing first (like mist evaporating upward) */
+@keyframes startupVeilDissolve {
+  0% {
+    opacity: 1;
+    backdrop-filter: blur(28px) saturate(1.18);
+    -webkit-backdrop-filter: blur(28px) saturate(1.18);
+  }
+  30% {
+    opacity: 0.7;
+    backdrop-filter: blur(18px) saturate(1.08);
+    -webkit-backdrop-filter: blur(18px) saturate(1.08);
+  }
+  60% {
+    opacity: 0.3;
+    backdrop-filter: blur(8px) saturate(1);
+    -webkit-backdrop-filter: blur(8px) saturate(1);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 0;
+    backdrop-filter: blur(0) saturate(1);
+    -webkit-backdrop-filter: blur(0) saturate(1);
+    filter: blur(6px);
+  }
+}
+
+@keyframes startupSpecularFade {
+  0%   { opacity: 0.8; }
+  40%  { opacity: 0.3; filter: blur(4px); }
+  100% { opacity: 0; filter: blur(10px); }
+}
+
+@keyframes startupLayerDissolve {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.3; }
+  100% { opacity: 0; filter: blur(4px); }
+}
+
+/* Content emerges from beneath the dissolving veil */
+@keyframes startupContentResolve {
+  0% {
+    opacity: 0.05;
+    transform: scale(0.995);
+    filter: blur(14px);
+  }
+  35% {
+    opacity: 0.55;
+    filter: blur(4px);
+  }
+  70% {
+    opacity: 0.92;
+    transform: scale(1);
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@media (max-width: 767px) {
+  .startup-reveal__ghost {
+    width: min(92vw, 560px);
+    top: 8vh;
+    height: 72vh;
+  }
+
+  .startup-ghost--nav {
+    height: 60px;
+    width: 100%;
+  }
+
+  .startup-ghost--hero {
+    top: 104px;
+    width: 100%;
+    height: 150px;
+  }
+
+  .startup-ghost-grid {
+    inset: 278px 0 0;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .startup-ghost--footer {
+    height: 88px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .startup-reveal__ambient,
+  .startup-reveal__specular,
+  .startup-reveal__pulse {
+    animation: none;
+  }
+
+  .startup-content--revealing {
+    animation-duration: 520ms;
+  }
+}
 
 /* ===========================================================================
    GLASS HIERARCHY — 5 Levels

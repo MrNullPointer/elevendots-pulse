@@ -39,6 +39,9 @@ HTMLCanvasElement.prototype.getContext = function() {
     quadraticCurveTo: () => {},
     createRadialGradient: () => ({ addColorStop: () => {} }),
     createLinearGradient: () => ({ addColorStop: () => {} }),
+    save: () => {},
+    restore: () => {},
+    translate: () => {},
     scale: () => {},
     setTransform: () => {},
     fillText: () => {},
@@ -47,6 +50,7 @@ HTMLCanvasElement.prototype.getContext = function() {
     fillStyle: '',
     strokeStyle: '',
     lineWidth: 1,
+    lineCap: 'butt',
   }
 }
 
@@ -64,3 +68,6 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: () => {},
   }),
 })
+
+global.requestAnimationFrame = (callback) => setTimeout(() => callback(Date.now()), 16)
+global.cancelAnimationFrame = (id) => clearTimeout(id)
