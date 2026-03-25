@@ -30,11 +30,17 @@ sections_metadata:
     icon: "book-open"
     order: 3
     theme_color: "#b45309"
+  world:
+    display_name: "World"
+    description: "Global news, politics, economics, geopolitics, and public policy."
+    icon: "globe"
+    order: 4
+    theme_color: "#dc2626"
   misc:
     display_name: "Miscellaneous"
     description: "Essays, culture, long reads, and uncategorized gems."
     icon: "sparkles"
-    order: 4
+    order: 5
     theme_color: "#525252"
 
 subsections_metadata:
@@ -78,6 +84,10 @@ subsections_metadata:
   biology: { display_name: "Biology & Evolution", section: science, color: "#15803d", order: 7 }
   climate: { display_name: "Climate & Environment", section: science, color: "#22c55e", order: 8 }
   biotech: { display_name: "Biotech & Pharma", section: science, color: "#0e7490", order: 9 }
+  medicine: { display_name: "Medicine", section: science, color: "#e11d48", order: 10 }
+  public-health: { display_name: "Public Health", section: science, color: "#f43f5e", order: 11 }
+  preprints: { display_name: "Preprints", section: science, color: "#a3a3a3", order: 12 }
+  physics: { display_name: "Physics", section: science, color: "#6366f1", order: 13 }
   # --- PHILOSOPHY ---
   ethics-of-ai: { display_name: "Ethics of AI", section: philosophy, color: "#f59e0b", order: 1 }
   consciousness: { display_name: "Consciousness", section: philosophy, color: "#8b5cf6", order: 2 }
@@ -85,6 +95,12 @@ subsections_metadata:
   metaphysics: { display_name: "Metaphysics", section: philosophy, color: "#7c3aed", order: 4 }
   stoicism: { display_name: "Stoicism", section: philosophy, color: "#64748b", order: 5 }
   existentialism: { display_name: "Existentialism", section: philosophy, color: "#475569", order: 6 }
+  # --- WORLD ---
+  world-news: { display_name: "World News", section: world, color: "#dc2626", order: 1 }
+  us-politics: { display_name: "U.S. Politics", section: world, color: "#2563eb", order: 2 }
+  geopolitics: { display_name: "Geopolitics & Conflict", section: world, color: "#b91c1c", order: 3 }
+  economics: { display_name: "Economics", section: world, color: "#16a34a", order: 4 }
+  public-policy: { display_name: "Public Policy", section: world, color: "#64748b", order: 5 }
   # --- MISC ---
   maker: { display_name: "Maker & DIY", section: misc, color: "#f97316", order: 1 }
   policy: { display_name: "Policy & Geopolitics", section: misc, color: "#64748b", order: 2 }
@@ -1491,5 +1507,187 @@ sources:
     type: rss
     section: tech
     subsections: [robotics-industry, robotics, ai]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 26: WORLD NEWS — Global headlines, breaking news
+  # Validated: 2026-03-25, all feeds Grade A via feedparser
+  # ==========================================================================
+  - name: "BBC World News"
+    url: "https://feeds.bbci.co.uk/news/world/rss.xml"
+    type: rss
+    section: world
+    subsections: [world-news, geopolitics]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Deutsche Welle"
+    url: "https://rss.dw.com/rdf/rss-en-all"
+    type: rss
+    section: world
+    subsections: [world-news, geopolitics]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Al Jazeera"
+    url: "https://www.aljazeera.com/xml/rss/all.xml"
+    type: rss
+    section: world
+    subsections: [world-news, geopolitics]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "The Guardian World"
+    url: "https://www.theguardian.com/world/rss"
+    type: rss
+    section: world
+    subsections: [world-news, geopolitics]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 27: U.S. POLITICS & DOMESTIC POLICY
+  # ==========================================================================
+  - name: "The Guardian US News"
+    url: "https://www.theguardian.com/us-news/rss"
+    type: rss
+    section: world
+    subsections: [us-politics, public-policy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "NPR Politics"
+    url: "https://feeds.npr.org/1014/rss.xml"
+    type: rss
+    section: world
+    subsections: [us-politics, public-policy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Politico"
+    url: "https://rss.politico.com/politics-news.xml"
+    type: rss
+    section: world
+    subsections: [us-politics, public-policy]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 28: GEOPOLITICS & INTERNATIONAL AFFAIRS
+  # ==========================================================================
+  - name: "NPR World"
+    url: "https://feeds.npr.org/1004/rss.xml"
+    type: rss
+    section: world
+    subsections: [world-news, geopolitics]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Foreign Affairs"
+    url: "https://www.foreignaffairs.com/rss.xml"
+    type: rss
+    section: world
+    subsections: [geopolitics, public-policy]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "International Crisis Group"
+    url: "https://www.crisisgroup.org/rss.xml"
+    type: rss
+    section: world
+    subsections: [geopolitics, public-policy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 29: ECONOMICS
+  # ==========================================================================
+  - name: "NPR Economy"
+    url: "https://feeds.npr.org/1017/rss.xml"
+    type: rss
+    section: world
+    subsections: [economics, public-policy]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 30: SCIENCE — Nature journals, broad science research
+  # ==========================================================================
+  - name: "Nature"
+    url: "https://www.nature.com/nature.rss"
+    type: rss
+    section: science
+    subsections: [biology, chemistry, physics, materials]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Nature Medicine"
+    url: "https://www.nature.com/nm.rss"
+    type: rss
+    section: science
+    subsections: [medicine, biotech]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Science / AAAS News"
+    url: "https://www.science.org/rss/news_current.xml"
+    type: rss
+    section: science
+    subsections: [biology, chemistry, physics, medicine]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "PNAS"
+    url: "https://www.pnas.org/action/showFeed?type=etoc&feed=rss&jc=pnas"
+    type: rss
+    section: science
+    subsections: [biology, chemistry, medicine]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 31: MEDICINE & PUBLIC HEALTH
+  # ==========================================================================
+  - name: "The Lancet"
+    url: "https://www.thelancet.com/rssfeed/lancet_current.xml"
+    type: rss
+    section: science
+    subsections: [medicine, public-health]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "WHO News"
+    url: "https://www.who.int/rss-feeds/news-english.xml"
+    type: rss
+    section: science
+    subsections: [public-health, medicine]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "CDC Newsroom"
+    url: "https://tools.cdc.gov/api/v2/resources/media/316422.rss"
+    type: rss
+    section: science
+    subsections: [public-health, medicine]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 32: PREPRINTS — Pre-peer-review research feeds
+  # ==========================================================================
+  - name: "medRxiv"
+    url: "https://connect.medrxiv.org/medrxiv_xml.php?subject=all"
+    type: rss
+    section: science
+    subsections: [preprints, medicine, public-health]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "bioRxiv"
+    url: "https://connect.biorxiv.org/biorxiv_xml.php?subject=all"
+    type: rss
+    section: science
+    subsections: [preprints, biology, biotech]
     tier: free
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
