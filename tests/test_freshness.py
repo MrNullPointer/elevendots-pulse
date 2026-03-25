@@ -94,7 +94,10 @@ class TestNormalizeArticleTimestamp:
         assert result["published_confidence"] == "low"
         assert result["timestamp_issue"] == "missing"
         assert result["age_hours"] == 1.0
-        assert result["freshness_bucket"] == "last_hour"
+        # Low-confidence articles are demoted to "last_week" bucket
+        # regardless of computed age, to prevent them from outranking
+        # genuinely recent high-confidence articles.
+        assert result["freshness_bucket"] == "last_week"
 
     def test_valid_date_gets_high_confidence(self):
         pub = "2026-03-25T10:00:00Z"
@@ -144,41 +147,53 @@ class TestNormalizeArticleTimestamp:
 
         assert recent["freshness_score"] < old["freshness_score"]
         assert old["freshness_score"] < ancient["freshness_score"]
-        # Unknown-date articles (low confidence) sort after known-date articles
-        # in the same bucket, due to confidence penalty
-        assert unknown["freshness_score"] > recent["freshness_score"]
+        # Unknown-date articles (low confidence) sort AFTER ALL known-date
+        # articles, regardless of age bucket.  Confidence is the primary
+        # dimension: high-conf articles always outrank low-conf.
+        assert unknown["freshness_score"] > ancient["freshness_score"]
+
+    def test_low_conf_demoted_to_last_week_bucket(self):
+        """Low-confidence articles should be demoted to 'last_week' bucket."""
+        unknown = normalize_article_timestamp(None, NOW, now=NOW)
+        assert unknown["freshness_bucket"] == "last_week"
+        assert unknown["freshness_bucket_order"] == 4
+
+    def test_low_conf_sorts_after_all_high_conf(self):
+        """Low-confidence must sort after even 6-day-old high-confidence."""
+        six_day_old = normalize_article_timestamp(
+            (NOW - timedelta(days=6)).isoformat(), NOW, now=NOW
+        )
+        unknown_just_crawled = normalize_article_timestamp(None, NOW, now=NOW)
+
+        assert six_day_old["published_confidence"] == "high"
+        assert unknown_just_crawled["published_confidence"] == "low"
+        assert six_day_old["freshness_score"] < unknown_just_crawled["freshness_score"]
 
 
 class TestFreshnessSortKey:
     def test_sort_order_correct(self):
-        """Articles should sort: recent-known > old-known > unknown-date."""
-        recent_known = {
-            "freshness_score": 1_000_000,
-            "published_at": int((NOW - timedelta(minutes=30)).timestamp() * 1000),
-            "published": (NOW - timedelta(minutes=30)).isoformat(),
-            "title": "Recent",
-            "source": "A",
-        }
-        old_known = {
-            "freshness_score": 20_000_000,
-            "published_at": int((NOW - timedelta(hours=5)).timestamp() * 1000),
-            "published": (NOW - timedelta(hours=5)).isoformat(),
-            "title": "Old",
-            "source": "B",
-        }
-        unknown_date = {
-            "freshness_score": 2_000_000,  # low confidence penalty
-            "published_at": int(NOW.timestamp() * 1000),
-            "published": NOW.isoformat(),
-            "title": "Unknown",
-            "source": "C",
-        }
+        """Articles should sort: recent-known > old-known > unknown-date.
+        Unknown-date articles always sort LAST regardless of apparent age."""
+        # Use real normalize_article_timestamp to get correct scores
+        recent_known = normalize_article_timestamp(
+            (NOW - timedelta(minutes=30)).isoformat(), NOW, now=NOW
+        )
+        recent_known.update({"title": "Recent", "source": "A"})
+
+        old_known = normalize_article_timestamp(
+            (NOW - timedelta(hours=5)).isoformat(), NOW, now=NOW
+        )
+        old_known.update({"title": "Old", "source": "B"})
+
+        unknown_date = normalize_article_timestamp(None, NOW, now=NOW)
+        unknown_date.update({"title": "Unknown", "source": "C"})
 
         articles = [old_known, unknown_date, recent_known]
         sorted_articles = sorted(articles, key=freshness_sort_key)
 
         assert sorted_articles[0]["title"] == "Recent"
-        assert sorted_articles[-1]["title"] == "Old"
+        assert sorted_articles[1]["title"] == "Old"
+        assert sorted_articles[2]["title"] == "Unknown"  # LAST — always
 
     def test_fallback_without_freshness_score(self):
         """Articles without freshness_score should still sort."""

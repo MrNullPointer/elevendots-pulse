@@ -140,11 +140,22 @@ def normalize_article_timestamp(
     freshness_bucket = classify_freshness_bucket(age_hours)
     bucket_order = FRESHNESS_BUCKET_ORDER[freshness_bucket]
 
+    # For low-confidence articles (missing/invalid dates), the age_hours
+    # is computed from observed_at (≈ 0h).  Placing them in "last_hour"
+    # would rank them ABOVE genuinely recent high-confidence articles.
+    # Demote them to "last_week" bucket so they sort after all real-dated
+    # articles while still appearing within the 7-day window.
+    if published_confidence == "low":
+        freshness_bucket = "last_week"
+        bucket_order = FRESHNESS_BUCKET_ORDER["last_week"]
+
     # Composite score: lower = fresher.
-    # bucket (coarse) → confidence (fine) → age in seconds (finest)
+    # PRIMARY: confidence (high articles always before low, regardless of age)
+    # SECONDARY: bucket (coarse recency grouping)
+    # TERTIARY: age in seconds (fine-grained within a bucket)
     freshness_score = (
-        bucket_order * 10_000_000
-        + TIMESTAMP_CONFIDENCE_ORDER[published_confidence] * 1_000_000
+        TIMESTAMP_CONFIDENCE_ORDER[published_confidence] * 100_000_000
+        + bucket_order * 1_000_000
         + int(age_hours * 3_600)
     )
 
