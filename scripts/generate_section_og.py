@@ -19,7 +19,7 @@ SECTIONS = {
     "tech": {
         "title": "Tech — Pulse by elevendots",
         "description": "Computing, chips, AI, systems, and emerging hardware. Curated from 100+ sources.",
-        "image": "og-article-default.png",
+        "image": "og-section-tech.png",
     },
     "science": {
         "title": "Science — Pulse by elevendots",
@@ -34,12 +34,12 @@ SECTIONS = {
     "world": {
         "title": "World — Pulse by elevendots",
         "description": "Global news, politics, economics, geopolitics, and public policy. Curated from 140+ sources.",
-        "image": "og-homepage.png",  # Reuse homepage OG until dedicated world card is designed
+        "image": "og-section-world.png",
     },
     "research": {
         "title": "Research — Pulse by elevendots",
         "description": "Latest academic papers, preprints, and peer-reviewed research across tech.",
-        "image": "og-homepage.png",  # Reuse homepage OG until dedicated research card is designed
+        "image": "og-section-research.png",
     },
     "misc": {
         "title": "Miscellaneous — Pulse by elevendots",
