@@ -22,25 +22,25 @@ sections_metadata:
     display_name: "Science"
     description: "Astronomy, chemistry, biology, physics, and beyond."
     icon: "flask-conical"
-    order: 2
+    order: 3
     theme_color: "#7c3aed"
   philosophy:
     display_name: "Philosophy"
     description: "Ideas, ethics, mind, knowledge, and meaning."
     icon: "book-open"
-    order: 3
+    order: 4
     theme_color: "#b45309"
   world:
     display_name: "World"
     description: "Global news, politics, economics, geopolitics, and public policy."
     icon: "globe"
-    order: 4
+    order: 5
     theme_color: "#dc2626"
   research:
     display_name: "Research"
     description: "Latest academic papers, preprints, and peer-reviewed research across tech."
     icon: "microscope"
-    order: 5
+    order: 2
     theme_color: "#10b981"
   misc:
     display_name: "Miscellaneous"
@@ -1838,4 +1838,56 @@ sources:
     section: research
     subsections: [r-hpc, r-systems]
     tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  # --- OpenAlex API sources (V2 — broader coverage for weak arXiv topics) ---
+  # License: CC0. No restrictions on commercial use.
+  # API: https://api.openalex.org/works with topic/keyword filtering
+  # Rate limit: 10 req/sec with mailto, 100K credits/day free tier
+
+  - name: "OpenAlex Semiconductor Research"
+    url: "https://api.openalex.org/works"
+    type: openalex
+    section: research
+    subsections: [r-hardware]
+    tier: free
+    query:
+      keywords: ["semiconductor", "CMOS", "transistor", "VLSI", "integrated circuit"]
+      max_results: 30
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "OpenAlex Computer Architecture"
+    url: "https://api.openalex.org/works"
+    type: openalex
+    section: research
+    subsections: [r-systems, r-hardware]
+    tier: free
+    query:
+      keywords: ["computer architecture", "microprocessor", "cache coherence", "memory hierarchy"]
+      max_results: 30
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  # Removed: OpenAlex AI/Quantum/Robotics/HPC/Networking — arXiv covers these well.
+  # Keeping only OpenAlex sources for topics arXiv doesn't cover (hardware/EDA/power).
+
+  - name: "OpenAlex Power Semiconductor"
+    url: "https://api.openalex.org/works"
+    type: openalex
+    section: research
+    subsections: [r-hardware]
+    tier: free
+    query:
+      keywords: ["silicon carbide", "gallium nitride", "power semiconductor", "wide bandgap"]
+      max_results: 15
+    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+
+  - name: "OpenAlex EDA"
+    url: "https://api.openalex.org/works"
+    type: openalex
+    section: research
+    subsections: [r-hardware]
+    tier: free
+    query:
+      keywords: ["electronic design automation", "logic synthesis", "place and route", "FPGA"]
+      max_results: 15
     policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
