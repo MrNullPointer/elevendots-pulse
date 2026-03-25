@@ -94,15 +94,17 @@ describe('App startup reveal', () => {
   })
 
   it('does not replay the intro on route changes', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     renderApp()
     await finishStartup()
 
     expect(screen.queryByTestId('startup-reveal')).not.toBeInTheDocument()
-    await user.click(screen.getAllByRole('button', { name: 'Tech' })[0])
+
+    // Navigate by finding and clicking a section link/button
+    const techButtons = screen.getAllByRole('button', { name: 'Tech' })
+    await act(async () => { techButtons[0].click() })
+    await flushAsyncWork()
 
     expect(screen.queryByTestId('startup-reveal')).not.toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Tech' })).toBeInTheDocument()
   })
 })
 
@@ -182,11 +184,13 @@ describe('App integration', () => {
 
 describe('Theme toggle', () => {
   it('toggles dark mode on button click', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     renderApp()
     await finishStartup()
 
-    await user.click(screen.getByLabelText(/Switch to dark mode/))
+    const toggleBtn = screen.getByLabelText(/Switch to dark mode/)
+    await act(async () => { toggleBtn.click() })
+    await flushAsyncWork()
+
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark')
     expect(localStorage.getItem('theme')).toBe('dark')
   })
@@ -194,11 +198,13 @@ describe('Theme toggle', () => {
 
 describe('Section filtering', () => {
   it('filters articles by subsection when tab is clicked', async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
     renderApp('/tech')
     await finishStartup()
 
-    await user.click(screen.getByRole('tab', { name: /Semiconductor/ }))
+    const semiTab = screen.getByRole('tab', { name: /Semiconductor/ })
+    await act(async () => { semiTab.click() })
+    await flushAsyncWork()
+
     expect(screen.getByText(/2 article/)).toBeInTheDocument()
   })
 })

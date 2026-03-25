@@ -5,6 +5,7 @@ const THEMES = {
   tech:       { r: 64,  g: 128, b: 255 },
   science:    { r: 160, g: 80,  b: 255 },
   philosophy: { r: 224, g: 160, b: 48  },
+  world:      { r: 220, g: 40,  b: 40  },
   misc:       { r: 160, g: 160, b: 192 },
 }
 
@@ -14,9 +15,9 @@ const CONNECTION_DIST = 300
 const CONNECTION_DIST_MOBILE = 200
 const MOUSE_BRIGHT = 200
 const MOUSE_ATTRACT = 150
-const BACKBONE_PAIRS = [[0,1],[0,2],[0,3],[0,4]] // anchor to domain nodes
+const BACKBONE_PAIRS = [[0,1],[0,2],[0,3],[0,4],[0,5]] // anchor to domain nodes
 
-// Dot roles: 0=anchor, 1-4=domain (tech/science/phil/misc), 5-10=adaptive
+// Dot roles: 0=anchor, 1-5=domain (tech/science/phil/world/misc), 6-10=adaptive
 function createDots(w, h, count) {
   const cx = w * 0.5, cy = h * 0.38
   const dots = []
@@ -29,12 +30,13 @@ function createDots(w, h, count) {
     opacity: 0.65,
   })
 
-  // Dots 1-4: Domain nodes in quadrants
+  // Dots 1-5: Domain nodes — loose pentagon around anchor
   const domains = [
-    { qx: 0.3, qy: 0.25 }, // tech (upper-left area)
-    { qx: 0.7, qy: 0.25 }, // science (upper-right)
-    { qx: 0.3, qy: 0.65 }, // philosophy (lower-left)
-    { qx: 0.7, qy: 0.65 }, // misc (lower-right)
+    { qx: 0.25, qy: 0.25 }, // tech (upper-left)
+    { qx: 0.75, qy: 0.25 }, // science (upper-right)
+    { qx: 0.18, qy: 0.60 }, // philosophy (lower-left)
+    { qx: 0.50, qy: 0.18 }, // world (top-center)
+    { qx: 0.82, qy: 0.60 }, // misc (lower-right)
   ]
   for (const d of domains) {
     dots.push({
@@ -47,8 +49,8 @@ function createDots(w, h, count) {
     })
   }
 
-  // Dots 5+: Adaptive nodes
-  const adaptiveCount = count - 5
+  // Dots 6+: Adaptive nodes
+  const adaptiveCount = count - 6
   for (let i = 0; i < adaptiveCount; i++) {
     const angle = (i / adaptiveCount) * Math.PI * 2 + Math.random()
     const dist = Math.min(w, h) * (0.15 + Math.random() * 0.3)

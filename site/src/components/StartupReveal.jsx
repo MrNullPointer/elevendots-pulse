@@ -1,5 +1,4 @@
-import { useEffect, useMemo } from 'react'
-import { STARTUP_REVEAL_DURATION_MS } from '../hooks/useStartupReveal'
+import { useMemo } from 'react'
 
 function createFragments(isMobile) {
   const count = isMobile ? 8 : 14
@@ -58,15 +57,8 @@ export default function StartupReveal({
     [isMobile, reduceMotion]
   )
 
-  useEffect(() => {
-    if (phase !== 'revealing' || !onRevealComplete) return undefined
-
-    const timer = window.setTimeout(() => {
-      onRevealComplete()
-    }, STARTUP_REVEAL_DURATION_MS)
-
-    return () => window.clearTimeout(timer)
-  }, [onRevealComplete, phase])
+  // Reveal timing is managed by the useStartupReveal hook.
+  // The component only renders the visual overlay — no duplicate timers.
 
   return (
     <div
