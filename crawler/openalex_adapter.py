@@ -22,6 +22,12 @@ from .utils import USER_AGENT, HEADERS
 
 CRAWL_TIMEOUT = int(os.environ.get("CRAWL_TIMEOUT", 15))
 
+# Papers with >= this many citations are tagged "r-must-read".
+# This primarily captures papers where the preprint accumulated
+# citations over months and the formal version just appeared.
+# Pure day-zero preprints (0 citations) correctly don't qualify.
+MUST_READ_CITATION_THRESHOLD = 5
+
 logger = logging.getLogger(__name__)
 
 # OpenAlex polite pool: include email in requests
@@ -238,11 +244,18 @@ def fetch_openalex_papers(query_config):
         venue_type = _classify_venue_type(work)
         is_preprint = venue_type == "preprint"
 
+        # Citation-based "must read" tagging
+        cited_by = work.get("cited_by_count", 0) or 0
+        extra_subs = []
+        if cited_by >= MUST_READ_CITATION_THRESHOLD:
+            extra_subs.append("r-must-read")
+
         articles.append({
             "title": title.strip(),
             "url": landing_url,
             "published": pub_date if pub_date else None,
             "summary": intro,
+            "extra_subsections": extra_subs,
         })
 
     return articles

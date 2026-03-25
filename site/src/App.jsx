@@ -338,6 +338,7 @@ function SectionPage({
   const {
     filtered, activeSubsection, setActiveSubsection,
     timeFilter, setTimeFilter, accessFilter, setAccessFilter,
+    sortMode, setSortMode,
   } = useFilters(sectionArticles)
 
   useEffect(() => {
@@ -427,6 +428,23 @@ function SectionPage({
             <TimeFilter active={timeFilter} onSelect={setTimeFilter} />
             <div className="w-px h-4" style={{ background: 'var(--glass-border)' }} />
             <AccessFilter active={accessFilter} onSelect={setAccessFilter} />
+            <div className="w-px h-4" style={{ background: 'var(--glass-border)' }} />
+            <div className="flex gap-1" role="group" aria-label="Sort order">
+              {[
+                { id: 'freshness', label: 'Newest' },
+                { id: 'oldest', label: 'Oldest' },
+                ...(section === 'research' ? [{ id: 'importance', label: 'Important' }] : []),
+              ].map(mode => (
+                <button
+                  key={mode.id}
+                  onClick={() => setSortMode(mode.id)}
+                  className={`glass-pill text-xs px-3 py-1 transition-all ${sortMode === mode.id ? 'active' : ''}`}
+                  style={{ fontSize: '11px' }}
+                >
+                  {mode.label}
+                </button>
+              ))}
+            </div>
             <span className="font-mono ml-auto opacity-40" style={{ fontSize: '10px' }}>
               {filtered.length} article{filtered.length !== 1 ? 's' : ''}
             </span>

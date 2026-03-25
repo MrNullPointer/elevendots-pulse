@@ -45,6 +45,27 @@ def load_config() -> dict:
 
 MAX_ARTICLES_PER_SOURCE = int(os.environ.get("MAX_ARTICLES_PER_SOURCE", 50))
 
+# Frontier threshold: preprints ≤ this many hours old are tagged "r-frontier"
+FRONTIER_AGE_HOURS = 48
+
+
+def _compute_subsections(source_subs, extra_subs, section, source_type, age_hours):
+    """Merge source-level + article-level subsections, add computed tags."""
+    subs = set(source_subs + extra_subs)
+
+    # Frontier: research preprints ≤ 48h old
+    # arXiv RSS sources are all preprints; OpenAlex may return extra_subs
+    if section == "research" and age_hours <= FRONTIER_AGE_HOURS:
+        if source_type in ("rss", "atom"):
+            # arXiv feeds are all preprints
+            subs.add("r-frontier")
+        elif "r-must-read" not in extra_subs:
+            # OpenAlex non-must-read papers under 48h = frontier preprints
+            # (Must Read papers are established, not frontier)
+            subs.add("r-frontier")
+
+    return list(subs)
+
 
 def crawl_source(source: dict, crawl_start: float = 0, max_crawl_time: int = 0) -> tuple[list[dict], str]:
     """Crawl a single source. Returns (articles, status_string)."""
@@ -121,7 +142,13 @@ def crawl_source(source: dict, crawl_start: float = 0, max_crawl_time: int = 0) 
             "intro": intro,
             "source": name,
             "section": source.get("section", "misc"),
-            "subsections": source.get("subsections", []),
+            "subsections": _compute_subsections(
+                source.get("subsections", []),
+                raw.get("extra_subsections", []),
+                source.get("section", "misc"),
+                source_type,
+                freshness["age_hours"],
+            ),
             "tier": source.get("tier", "free"),
             # Freshness fields (all computed by freshness module)
             "published": freshness["published"],
