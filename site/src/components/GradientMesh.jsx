@@ -2,6 +2,7 @@ const MESH_CLASSES = {
   tech: 'mesh-tech',
   science: 'mesh-science',
   philosophy: 'mesh-philosophy',
+  world: 'mesh-world',
   misc: 'mesh-misc',
 }
 
