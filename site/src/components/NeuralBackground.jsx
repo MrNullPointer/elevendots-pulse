@@ -127,10 +127,14 @@ export default function NeuralBackground({
     timeMultiplier: 1,
     // Scroll depth
     scrollDepth: 0,
-    // Melt state: 0 = normal, >0 = melting (progress 0→1 over ~1200ms)
+    // Melt state: 0 = normal, >0 = melting (progress 0→1 over ~1000ms)
     meltActive: false,
     meltStartTime: 0,
     meltProgress: 0,
+    // Reassembly: after melt completes, new nodes converge from edges
+    reassemblyStartTime: 0,
+    reassemblyProgress: 0, // 0→1 over ~1800ms
+    reassemblyStarted: false,
   })
   const rafRef = useRef(null)
 
@@ -253,12 +257,37 @@ export default function NeuralBackground({
         s.meltStartTime = now
       }
       if (s.meltActive && s.meltStartTime > 0) {
-        s.meltProgress = Math.min(1, (now - s.meltStartTime) / 1200)
-      } else {
-        s.meltProgress = 0
+        s.meltProgress = Math.min(1, (now - s.meltStartTime) / 1000)
+      } else if (!s.meltActive && s.meltProgress >= 1 && !s.reassemblyStarted) {
+        // Melt just ended — begin reassembly
+        s.reassemblyStarted = true
+        s.reassemblyStartTime = now
+        // Scatter dots to edge positions for convergence
+        for (let di = 0; di < s.dots.length; di++) {
+          const dot = s.dots[di]
+          // Pick a random edge: 0=top, 1=right, 2=bottom, 3=left
+          const edge = (di * 3 + di * di) % 4
+          const spread = 0.3 + ((di * 7) % 10) / 10 * 0.4 // 0.3-0.7 along edge
+          if (edge === 0) { dot.x = w * spread; dot.y = -40 - di * 15 }
+          else if (edge === 1) { dot.x = w + 40 + di * 15; dot.y = h * spread }
+          else if (edge === 2) { dot.x = w * (1 - spread); dot.y = h + 40 + di * 15 }
+          else { dot.x = -40 - di * 15; dot.y = h * (1 - spread) }
+          dot.vx = 0; dot.vy = 0
+          dot.opacity = 0
+          // Clear melt state
+          dot._meltOriginY = 0; dot._meltWobble = 0
+        }
       }
-      const mp = s.meltProgress // 0→1 over 1200ms
-      const melting = mp > 0 && mp < 1
+      if (!s.meltActive) { s.meltProgress = Math.min(s.meltProgress, 1) }
+      const mp = s.meltProgress
+      const melting = s.meltActive && mp > 0 && mp < 1
+
+      // ---- Reassembly physics: dots converge from edges ----
+      let reassemblyT = 0
+      if (s.reassemblyStarted && s.reassemblyStartTime > 0) {
+        reassemblyT = Math.min(1, (now - s.reassemblyStartTime) / 1800)
+      }
+      const reassembling = reassemblyT > 0 && reassemblyT < 1
 
       // Trail effect
       const introActive = s.mode === 'intro'
@@ -281,8 +310,41 @@ export default function NeuralBackground({
       for (let i = 0; i < s.dots.length; i++) {
         const dot = s.dots[i]
         if (!s.reducedMotion) {
-          // Assembly
-          if (assemblyT < 1) {
+
+          // ---- REASSEMBLY: dots converge from edges to home positions ----
+          if (reassembling) {
+            // Per-dot stagger: anchor arrives first (dramatic), adaptive last
+            const arrivalDelay = dot.role === 'anchor' ? 0.0
+              : dot.role === 'domain' ? 0.05 + i * 0.02
+              : 0.12 + i * 0.015
+            const localT = Math.max(0, Math.min(1, (reassemblyT - arrivalDelay) / (0.7 - arrivalDelay * 0.5)))
+
+            if (localT > 0) {
+              // Ease: cubic ease-out (fast start, gentle arrival)
+              const ease = 1 - Math.pow(1 - localT, 3)
+
+              // Spring toward target with organic overshoot
+              const springStrength = 0.06 * ease
+              dot.vx += (dot.tx - dot.x) * springStrength
+              dot.vy += (dot.ty - dot.y) * springStrength
+
+              // Light damping — allows slight overshoot for organic feel
+              dot.vx *= 0.92
+              dot.vy *= 0.92
+
+              dot.x += dot.vx
+              dot.y += dot.vy
+
+              // Fade in: opacity rises with convergence
+              dot.opacity = dot.baseOpacity * Math.min(1, localT * 1.5)
+            }
+            // Skip normal physics during reassembly
+            continue
+          }
+
+          // After reassembly completes, normal physics resume
+          // Assembly (initial page load — skip if we came from reassembly)
+          if (assemblyT < 1 && !s.reassemblyStarted) {
             dot.x += (dot.tx - dot.x) * assemblyEase * 0.03
             dot.y += (dot.ty - dot.y) * assemblyEase * 0.03
           }
@@ -294,7 +356,7 @@ export default function NeuralBackground({
           dot.y += dot.vy + (Math.cos(t * 0.0006 * driftSpeed + dot.phaseY) * 0.2 + Math.cos(t * 0.0004 * driftSpeed + dot.phaseY * 1.3) * 0.15)
 
           // Idle formation: weak spring toward home position
-          if (isIdle && assemblyT >= 1) {
+          if (isIdle && (assemblyT >= 1 || s.reassemblyStarted)) {
             const spring = introActive ? 0.0022 : 0.0015
             dot.vx += (dot.tx - dot.x) * spring
             dot.vy += (dot.ty - dot.y) * spring
@@ -351,8 +413,10 @@ export default function NeuralBackground({
           dot.x = dot.tx; dot.y = dot.ty
         }
 
-        // Pulse + proximity brightness
-        dot.opacity = (dot.baseOpacity + 0.12 * Math.sin(now * 0.002 + dot.phaseX * 3)) * timeMult * introBoost
+        // Pulse + proximity brightness (skip during reassembly — opacity set by convergence)
+        if (!reassembling) {
+          dot.opacity = (dot.baseOpacity + 0.12 * Math.sin(now * 0.002 + dot.phaseX * 3)) * timeMult * introBoost
+        }
 
         let boost = 0
         if (!s.isMobile && !s.veilActive) {
@@ -635,10 +699,10 @@ export default function NeuralBackground({
         dot._meltOriginY = 0
         dot._meltWobble = 0
       }
-    } else if (!meltActive) {
+    } else if (!meltActive && s.meltActive) {
+      // Melt prop turned off — let the draw loop detect completion
+      // and trigger reassembly. Don't reset meltProgress here.
       s.meltActive = false
-      s.meltStartTime = 0
-      s.meltProgress = 0
     }
   }, [meltActive])
 
