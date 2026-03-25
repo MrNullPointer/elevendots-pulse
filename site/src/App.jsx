@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Routes, Route, useParams, useSearchParams } from 'react-router-dom'
+import { Routes, Route, useLocation, useParams, useSearchParams } from 'react-router-dom'
 import { useArticles } from './hooks/useArticles'
 import { useFilters } from './hooks/useFilters'
+import { useStartupReveal } from './hooks/useStartupReveal'
 import NeuralBackground from './components/NeuralBackground'
 import AtmosphereOrbs from './components/AtmosphereOrbs'
 import GlassNavbar from './components/GlassNavbar'
@@ -18,13 +19,20 @@ import SearchOverlay from './components/SearchOverlay'
 import KeyboardHelp from './components/KeyboardHelp'
 import SourceHealth from './components/SourceHealth'
 import Footer from './components/Footer'
+import StartupReveal from './components/StartupReveal'
 
 const ACCENT_MAP = {
   tech:       { color: '#4080ff', rgb: '64,128,255' },
   science:    { color: '#a050ff', rgb: '160,80,255' },
   philosophy: { color: '#e0a030', rgb: '224,160,48' },
-  world:      { color: '#dc2626', rgb: '220,38,38' },
   misc:       { color: '#a0a0c0', rgb: '160,160,192' },
+}
+
+const KNOWN_SECTIONS = new Set(['tech', 'science', 'philosophy', 'misc'])
+
+function resolveVisualSection(pathname) {
+  const section = pathname.split('/').filter(Boolean)[0]
+  return KNOWN_SECTIONS.has(section) ? section : 'home'
 }
 
 function useAccent(section) {
@@ -41,16 +49,16 @@ function useAccent(section) {
 }
 
 // Cursor tracking for glass glow effect
-function useCursorGlow() {
+function useCursorGlow(enabled = true) {
   useEffect(() => {
-    if (window.innerWidth < 768) return
+    if (!enabled || window.innerWidth < 768) return
     const handler = (e) => {
       document.documentElement.style.setProperty('--mx', e.clientX + 'px')
       document.documentElement.style.setProperty('--my', e.clientY + 'px')
     }
     window.addEventListener('mousemove', handler, { passive: true })
     return () => window.removeEventListener('mousemove', handler)
-  }, [])
+  }, [enabled])
 }
 
 // Scroll-linked specular shift
@@ -65,14 +73,79 @@ function useScrollSpecular() {
   }, [])
 }
 
+function usePrefersReducedMotion() {
+  const [reduceMotion, setReduceMotion] = useState(() =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const handleChange = () => setReduceMotion(media.matches)
+
+    media.addEventListener?.('change', handleChange)
+    media.addListener?.(handleChange)
+
+    return () => {
+      media.removeEventListener?.('change', handleChange)
+      media.removeListener?.(handleChange)
+    }
+  }, [])
+
+  return reduceMotion
+}
+
+function useDocumentTheme() {
+  const [theme, setTheme] = useState(() =>
+    document.documentElement.getAttribute('data-theme') || 'dark'
+  )
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setTheme(document.documentElement.getAttribute('data-theme') || 'dark')
+    })
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  return theme
+}
+
+function FallbackState({ message }) {
+  return (
+    <main className="min-h-screen flex items-center justify-center px-4 relative z-10">
+      <div className="startup-fallback glass text-center max-w-md w-full px-6 py-6">
+        <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{message}</p>
+      </div>
+    </main>
+  )
+}
+
 function App() {
+  const location = useLocation()
   const { articles, articlesBySection, sections, sectionsMetadata, subsectionsMetadata, sourceHealth, generatedAt, loading, error } = useArticles()
   const [searchOpen, setSearchOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
   const [previewArticle, setPreviewArticle] = useState(null)
-  const [currentSection, setCurrentSection] = useState('home')
+  const [currentSection, setCurrentSection] = useState(() => resolveVisualSection(location.pathname))
+  const reduceMotion = usePrefersReducedMotion()
+  const theme = useDocumentTheme()
+  const startup = useStartupReveal({ loading, error })
+  const hasArticles = articles.length > 0
+  const hasResolvedData = !loading
+  const pageState = error ? 'error' : hasResolvedData && !hasArticles ? 'empty' : 'ready'
+  const meshSection = currentSection === 'home' ? 'tech' : currentSection
 
-  useCursorGlow()
+  useEffect(() => {
+    setCurrentSection(resolveVisualSection(location.pathname))
+  }, [location.pathname])
+
+  useAccent(currentSection === 'home' ? null : currentSection)
+  useCursorGlow(!startup.showOverlay)
   useScrollSpecular()
 
   // ⌘K search shortcut
@@ -110,81 +183,96 @@ function App() {
     setPreviewArticle(article)
   }, [])
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p style={{ color: 'var(--text-tertiary)', fontSize: '14px' }}>Loading articles...</p>
-      </div>
-    )
-  }
-
-  if (error || !articles.length) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p style={{ color: 'var(--text-tertiary)', fontSize: '14px' }}>
-          {error || 'No articles found. Run the crawler first.'}
-        </p>
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen relative">
       <AtmosphereOrbs />
-      <NeuralBackground activeSection={currentSection} searchOpen={searchOpen} />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <HomePage
-              articles={articles}
-              articlesBySection={articlesBySection}
-              sections={sections}
-              sectionsMetadata={sectionsMetadata}
-              subsectionsMetadata={subsectionsMetadata}
-              sourceHealth={sourceHealth}
-              generatedAt={generatedAt}
-              onSearchOpen={() => setSearchOpen(true)}
-              onPreview={handlePreview}
-              previewArticle={previewArticle}
-              onClosePreview={() => setPreviewArticle(null)}
-              onSectionChange={setCurrentSection}
-            />
-          }
-        />
-        <Route
-          path="/:section"
-          element={
-            <SectionPage
-              articles={articles}
-              articlesBySection={articlesBySection}
-              sections={sections}
-              sectionsMetadata={sectionsMetadata}
-              subsectionsMetadata={subsectionsMetadata}
-              sourceHealth={sourceHealth}
-              generatedAt={generatedAt}
-              onSearchOpen={() => setSearchOpen(true)}
-              onPreview={handlePreview}
-              previewArticle={previewArticle}
-              onClosePreview={() => setPreviewArticle(null)}
-              onHelpToggle={() => setHelpOpen(o => !o)}
-              searchOpen={searchOpen}
-              helpOpen={helpOpen}
-              onSectionChange={setCurrentSection}
-            />
-          }
-        />
-      </Routes>
+      <GradientMesh activeSection={meshSection} />
+      <NeuralBackground
+        activeSection={currentSection}
+        searchOpen={startup.showOverlay ? false : searchOpen}
+        mode={startup.showOverlay ? 'intro' : 'default'}
+        intensity={startup.isIdleHold ? 'normal' : 'high'}
+        veilActive={startup.showOverlay}
+      />
 
-      <SearchOverlay
-        articles={articles}
-        isOpen={searchOpen}
-        onClose={() => setSearchOpen(false)}
-      />
-      <KeyboardHelp
-        isOpen={helpOpen}
-        onClose={() => setHelpOpen(false)}
-      />
+      {startup.mountContent && (
+        <div
+          className={[
+            'startup-content',
+            startup.phase === 'revealing' ? 'startup-content--revealing' : 'startup-content--ready',
+          ].join(' ')}
+        >
+          {pageState === 'ready' ? (
+            <>
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <HomePage
+                      articles={articles}
+                      articlesBySection={articlesBySection}
+                      sections={sections}
+                      sectionsMetadata={sectionsMetadata}
+                      subsectionsMetadata={subsectionsMetadata}
+                      sourceHealth={sourceHealth}
+                      generatedAt={generatedAt}
+                      onSearchOpen={() => setSearchOpen(true)}
+                      onPreview={handlePreview}
+                      previewArticle={previewArticle}
+                      onClosePreview={() => setPreviewArticle(null)}
+                    />
+                  }
+                />
+                <Route
+                  path="/:section"
+                  element={
+                    <SectionPage
+                      articles={articles}
+                      articlesBySection={articlesBySection}
+                      sections={sections}
+                      sectionsMetadata={sectionsMetadata}
+                      subsectionsMetadata={subsectionsMetadata}
+                      sourceHealth={sourceHealth}
+                      generatedAt={generatedAt}
+                      onSearchOpen={() => setSearchOpen(true)}
+                      onPreview={handlePreview}
+                      previewArticle={previewArticle}
+                      onClosePreview={() => setPreviewArticle(null)}
+                      onHelpToggle={() => setHelpOpen(o => !o)}
+                      searchOpen={searchOpen}
+                      helpOpen={helpOpen}
+                    />
+                  }
+                />
+              </Routes>
+
+              <SearchOverlay
+                articles={articles}
+                isOpen={searchOpen}
+                onClose={() => setSearchOpen(false)}
+              />
+              <KeyboardHelp
+                isOpen={helpOpen}
+                onClose={() => setHelpOpen(false)}
+              />
+            </>
+          ) : (
+            <FallbackState
+              message={error || 'No articles found. Run the crawler first.'}
+            />
+          )}
+        </div>
+      )}
+
+      {startup.showOverlay && (
+        <StartupReveal
+          phase={startup.phase}
+          theme={theme}
+          dataReady={hasResolvedData}
+          reduceMotion={reduceMotion}
+          onRevealComplete={startup.completeReveal}
+        />
+      )}
     </div>
   )
 }
@@ -192,14 +280,10 @@ function App() {
 function HomePage({
   articles, articlesBySection, sections, sectionsMetadata, subsectionsMetadata,
   sourceHealth, generatedAt, onSearchOpen, onPreview,
-  previewArticle, onClosePreview, onSectionChange,
+  previewArticle, onClosePreview,
 }) {
-  useAccent(null) // home accent
-  useEffect(() => { onSectionChange?.('home') }, [onSectionChange])
-
   return (
     <>
-      <GradientMesh activeSection="tech" />
       <GlassNavbar
         sections={sections}
         activeSection={null}
@@ -235,15 +319,12 @@ function SectionPage({
   articles, articlesBySection, sections, sectionsMetadata, subsectionsMetadata,
   sourceHealth, generatedAt, onSearchOpen, onPreview,
   previewArticle, onClosePreview, onHelpToggle,
-  searchOpen, helpOpen, onSectionChange,
+  searchOpen, helpOpen,
 }) {
   const { section } = useParams()
   const [searchParams] = useSearchParams()
   const meta = sectionsMetadata[section]
   const [focusedIndex, setFocusedIndex] = useState(-1)
-
-  useAccent(section)
-  useEffect(() => { onSectionChange?.(section || 'home') }, [section, onSectionChange])
 
   // Pre-partitioned from useArticles — no filter needed
   const sectionArticles = useMemo(
@@ -294,7 +375,6 @@ function SectionPage({
   if (!meta) {
     return (
       <>
-        <GradientMesh activeSection="tech" />
         <GlassNavbar sections={sections} activeSection={null} onSearchOpen={onSearchOpen} />
         <main className="max-w-5xl mx-auto px-4 pt-12 text-center">
           <p style={{ color: 'var(--text-tertiary)', fontSize: '14px' }}>Section not found.</p>
@@ -305,7 +385,6 @@ function SectionPage({
 
   return (
     <>
-      <GradientMesh activeSection={section} />
       <GlassNavbar
         sections={sections}
         activeSection={section}

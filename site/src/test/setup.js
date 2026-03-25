@@ -64,3 +64,6 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: () => {},
   }),
 })
+
+global.requestAnimationFrame = (callback) => setTimeout(() => callback(Date.now()), 16)
+global.cancelAnimationFrame = (id) => clearTimeout(id)

@@ -5,7 +5,6 @@ const THEMES = {
   tech:       { r: 64,  g: 128, b: 255 },
   science:    { r: 160, g: 80,  b: 255 },
   philosophy: { r: 224, g: 160, b: 48  },
-  world:      { r: 220, g: 40,  b: 40  },
   misc:       { r: 160, g: 160, b: 192 },
 }
 
@@ -15,9 +14,9 @@ const CONNECTION_DIST = 300
 const CONNECTION_DIST_MOBILE = 200
 const MOUSE_BRIGHT = 200
 const MOUSE_ATTRACT = 150
-const BACKBONE_PAIRS = [[0,1],[0,2],[0,3],[0,4],[0,5]] // anchor to domain nodes
+const BACKBONE_PAIRS = [[0,1],[0,2],[0,3],[0,4]] // anchor to domain nodes
 
-// Dot roles: 0=anchor, 1-5=domain (tech/science/phil/world/misc), 6-10=adaptive
+// Dot roles: 0=anchor, 1-4=domain (tech/science/phil/misc), 5-10=adaptive
 function createDots(w, h, count) {
   const cx = w * 0.5, cy = h * 0.38
   const dots = []
@@ -30,13 +29,12 @@ function createDots(w, h, count) {
     opacity: 0.65,
   })
 
-  // Dots 1-5: Domain nodes — loose pentagon around anchor
+  // Dots 1-4: Domain nodes in quadrants
   const domains = [
-    { qx: 0.25, qy: 0.25 }, // tech (upper-left)
-    { qx: 0.75, qy: 0.25 }, // science (upper-right)
-    { qx: 0.18, qy: 0.60 }, // philosophy (lower-left)
-    { qx: 0.50, qy: 0.18 }, // world (top-center)
-    { qx: 0.82, qy: 0.60 }, // misc (lower-right)
+    { qx: 0.3, qy: 0.25 }, // tech (upper-left area)
+    { qx: 0.7, qy: 0.25 }, // science (upper-right)
+    { qx: 0.3, qy: 0.65 }, // philosophy (lower-left)
+    { qx: 0.7, qy: 0.65 }, // misc (lower-right)
   ]
   for (const d of domains) {
     dots.push({
@@ -49,8 +47,8 @@ function createDots(w, h, count) {
     })
   }
 
-  // Dots 6+: Adaptive nodes
-  const adaptiveCount = count - 6
+  // Dots 5+: Adaptive nodes
+  const adaptiveCount = count - 5
   for (let i = 0; i < adaptiveCount; i++) {
     const angle = (i / adaptiveCount) * Math.PI * 2 + Math.random()
     const dist = Math.min(w, h) * (0.15 + Math.random() * 0.3)
@@ -105,7 +103,13 @@ class EnergyPulse {
   }
 }
 
-export default function NeuralBackground({ activeSection = 'home', searchOpen = false }) {
+export default function NeuralBackground({
+  activeSection = 'home',
+  searchOpen = false,
+  mode = 'default',
+  intensity = 'normal',
+  veilActive = false,
+}) {
   const canvasRef = useRef(null)
   const stateRef = useRef({
     dots: [], mouse: { x: -999, y: -999 }, hoveredCard: null,
@@ -113,6 +117,7 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
     startTime: Date.now(), pulses: [], nextPulseAt: 0,
     isMobile: false, reducedMotion: false, searchDim: 1,
     idleTime: 0, lastMouseMove: 0,
+    mode: 'default', intensity: 'normal', veilActive: false,
     // Afterglow: edges that recently had pulses [{ fromIdx, toIdx, opacity }]
     afterglows: [],
     // Time of day multiplier
@@ -217,7 +222,7 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
     })
 
     // Schedule first pulse
-    s.nextPulseAt = Date.now() + 3000 + Math.random() * 4000
+    s.nextPulseAt = Date.now() + 900 + Math.random() * 900
 
     const draw = () => {
       const w = window.innerWidth, h = window.innerHeight
@@ -237,12 +242,18 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
       const isIdle = now - s.lastMouseMove > 5000
 
       // Trail effect
-      ctx.fillStyle = isDark ? 'rgba(8,8,15,0.07)' : 'rgba(240,240,234,0.12)'
+      const introActive = s.mode === 'intro'
+      const introBoost = introActive ? 1.2 : 1
+      const intensityBoost = s.intensity === 'high' ? 1.15 : 1
+      ctx.fillStyle = isDark
+        ? `rgba(8,8,15,${introActive ? 0.045 : 0.07})`
+        : `rgba(240,240,234,${introActive ? 0.08 : 0.12})`
       ctx.fillRect(0, 0, w, h)
 
       const maxDist = s.isMobile ? CONNECTION_DIST_MOBILE : CONNECTION_DIST
       const glowMult = s.isMobile ? 0.5 : 1
-      const assemblyT = Math.min(1, elapsed / 1500)
+      const assemblyDuration = introActive ? 1050 : 1500
+      const assemblyT = Math.min(1, elapsed / assemblyDuration)
       const assemblyEase = 1 - Math.pow(1 - assemblyT, 3) // cubic ease out
       const timeMult = s.timeMultiplier
       const scrollMult = 1 + s.scrollDepth * 0.25 // connections denser at bottom
@@ -265,8 +276,9 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
 
           // Idle formation: weak spring toward home position
           if (isIdle && assemblyT >= 1) {
-            dot.vx += (dot.tx - dot.x) * 0.0015
-            dot.vy += (dot.ty - dot.y) * 0.0015
+            const spring = introActive ? 0.0022 : 0.0015
+            dot.vx += (dot.tx - dot.x) * spring
+            dot.vy += (dot.ty - dot.y) * spring
           }
 
           // Edge avoidance
@@ -280,7 +292,7 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
           dot.vx *= 0.997; dot.vy *= 0.997
 
           // Mouse attraction
-          if (!s.isMobile) {
+          if (!s.isMobile && !s.veilActive) {
             const dx = s.mouse.x - dot.x, dy = s.mouse.y - dot.y
             const dist = Math.sqrt(dx * dx + dy * dy)
             if (dist < MOUSE_ATTRACT && dist > 1) {
@@ -292,10 +304,10 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
         }
 
         // Pulse + proximity brightness
-        dot.opacity = (dot.baseOpacity + 0.12 * Math.sin(now * 0.002 + dot.phaseX * 3)) * timeMult
+        dot.opacity = (dot.baseOpacity + 0.12 * Math.sin(now * 0.002 + dot.phaseX * 3)) * timeMult * introBoost
 
         let boost = 0
-        if (!s.isMobile) {
+        if (!s.isMobile && !s.veilActive) {
           const mdx = s.mouse.x - dot.x, mdy = s.mouse.y - dot.y
           const mDist = Math.sqrt(mdx * mdx + mdy * mdy)
           if (mDist < MOUSE_BRIGHT) boost = (1 - mDist / MOUSE_BRIGHT) * 0.35
@@ -306,10 +318,10 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
           }
         }
 
-        const finalOp = Math.min(0.92, dot.opacity + boost) * s.searchDim
+        const finalOp = Math.min(0.95, (dot.opacity + boost) * intensityBoost) * s.searchDim
 
         // Draw glow
-        const gr = dot.glowRadius * glowMult
+        const gr = dot.glowRadius * glowMult * (introActive ? 1.08 : 1)
         const glow = ctx.createRadialGradient(dot.x, dot.y, 0, dot.x, dot.y, gr)
         glow.addColorStop(0, col(color, finalOp * 0.4))
         glow.addColorStop(0.4, col(color, finalOp * 0.1))
@@ -350,7 +362,7 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
               : (1 - dist / maxDist) * 0.2
 
             // Mouse proximity boost
-            if (!s.isMobile) {
+            if (!s.isMobile && !s.veilActive) {
               const ad = Math.sqrt((s.mouse.x - a.x) ** 2 + (s.mouse.y - a.y) ** 2)
               const bd = Math.sqrt((s.mouse.x - b.x) ** 2 + (s.mouse.y - b.y) ** 2)
               if (ad < MOUSE_BRIGHT || bd < MOUSE_BRIGHT) lineOp *= 2
@@ -363,7 +375,8 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
               }
             }
 
-            lineOp *= s.searchDim * scrollMult
+            if (introActive && isBackbone) lineOp *= 1.35
+            lineOp *= s.searchDim * scrollMult * intensityBoost
 
             const mx = (a.x + b.x) / 2 + Math.sin(now * 0.0005 + i * 0.5) * 15
             const my = (a.y + b.y) / 2 - Math.cos(now * 0.0004 + j * 0.5) * 15 * 0.7
@@ -388,7 +401,9 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
           const a = s.dots[fromIdx], b = s.dots[toIdx]
           const cp = { x: (a.x + b.x) / 2 + (Math.random() - 0.5) * 30, y: (a.y + b.y) / 2 + (Math.random() - 0.5) * 30 }
           s.pulses.push(new EnergyPulse(fromIdx, toIdx, cp))
-          s.nextPulseAt = now + 6000 + Math.random() * 4000
+          const base = introActive ? 1800 : s.intensity === 'high' ? 2600 : 6000
+          const variance = introActive ? 1200 : s.intensity === 'high' ? 1600 : 4000
+          s.nextPulseAt = now + base + Math.random() * variance
         }
 
         // Update + draw pulses
@@ -440,6 +455,8 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
     } else {
       // Static render
       const drawStatic = () => {
+        const w = window.innerWidth
+        const h = window.innerHeight
         ctx.fillStyle = document.documentElement.getAttribute('data-theme') !== 'light' ? '#08080f' : '#f0f0ea'
         ctx.fillRect(0, 0, w, h)
         for (const dot of s.dots) {
@@ -480,6 +497,9 @@ export default function NeuralBackground({ activeSection = 'home', searchOpen = 
 
   // Search dimming
   useEffect(() => { stateRef.current.searchDimTarget = searchOpen }, [searchOpen])
+  useEffect(() => { stateRef.current.mode = mode }, [mode])
+  useEffect(() => { stateRef.current.intensity = intensity }, [intensity])
+  useEffect(() => { stateRef.current.veilActive = veilActive }, [veilActive])
 
   return (
     <canvas
