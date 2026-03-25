@@ -63,6 +63,11 @@ subsections_metadata:
   risc-v: { display_name: "RISC-V", section: tech, color: "#059669", order: 30 }
   open-hardware: { display_name: "Open Hardware", section: tech, color: "#0f766e", order: 31 }
   developer: { display_name: "Systems Engineering", section: tech, color: "#6d28d9", order: 32 }
+  linux-oss: { display_name: "Linux & Open Source", section: tech, color: "#f0c020", order: 33 }
+  storage: { display_name: "Storage", section: tech, color: "#94a3b8", order: 34 }
+  hpc: { display_name: "HPC & Supercomputing", section: tech, color: "#7e22ce", order: 35 }
+  cloud-native: { display_name: "Cloud Native & DevOps", section: tech, color: "#0284c7", order: 36 }
+  robotics-industry: { display_name: "Robotics Industry", section: tech, color: "#047857", order: 37 }
   # --- SCIENCE ---
   astronomy: { display_name: "Astronomy & Space", section: science, color: "#1e40af", order: 1 }
   biophysics: { display_name: "Biophysics", section: science, color: "#16a34a", order: 2 }
@@ -179,8 +184,8 @@ sources:
   - name: "SciTechDaily"
     url: "https://scitechdaily.com/feed/"
     type: rss
-    section: tech
-    subsections: [materials, semiconductor]
+    section: science
+    subsections: [materials, chemistry, biology]
     tier: free
     policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
 
@@ -378,13 +383,8 @@ sources:
     policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
 
   # ---- MISC ----
-  - name: "Hackaday (Maker)"
-    url: "https://hackaday.com/feed/"
-    type: rss
-    section: misc
-    subsections: [maker]
-    tier: free
-    policy: { preview_mode: rss_description, robots_txt_checked: true, tos_reviewed: true }
+  # NOTE: Hackaday (Maker) removed — duplicate of Hackaday in tech section (same feed URL).
+  # The tech entry has subsections: [embedded, maker] which covers both use cases.
 
   - name: "Space.com"
     url: "https://www.space.com/feeds/all"
@@ -552,13 +552,12 @@ sources:
     policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Ayar Labs News"
-    url: "https://ayarlabs.com/news/"
-    type: html
-    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
+    url: "https://ayarlabs.com/feed/"
+    type: rss
     section: tech
     subsections: [photonics, packaging]
     tier: free
-    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
   - name: "Lightmatter News"
     url: "https://lightmatter.co/news/"
@@ -641,13 +640,12 @@ sources:
 
   # ---- Power Semiconductors ----
   - name: "Navitas Semiconductor News"
-    url: "https://navitassemi.com/news/"
-    type: html
-    selectors: { article: "article, .post, .news-item", title: "h2, h3", link: "a", date: "time, .date" }
+    url: "https://navitassemi.com/feed/"
+    type: rss
     section: tech
     subsections: [power-semiconductor]
     tier: free
-    policy: { preview_mode: og_description, robots_txt_checked: false, tos_reviewed: false }
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
 
   # ==========================================================================
   # GAP 4: CYBERSECURITY
@@ -1390,5 +1388,108 @@ sources:
     type: rss
     section: tech
     subsections: [ai, ml, podcast]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 21: LINUX & OPEN SOURCE — New coverage area
+  # ==========================================================================
+  - name: "LWN.net"
+    url: "https://lwn.net/headlines/rss"
+    type: rss
+    section: tech
+    subsections: [linux-oss, developer, software]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Phoronix"
+    url: "https://www.phoronix.com/rss.php"
+    type: rss
+    section: tech
+    subsections: [linux-oss, cpu, gpu]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "DevClass"
+    url: "https://devclass.com/feed/"
+    type: rss
+    section: tech
+    subsections: [linux-oss, developer, cloud-native]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 22: HPC, SERVERS & STORAGE — New coverage area
+  # ==========================================================================
+  - name: "ServeTheHome"
+    url: "https://www.servethehome.com/feed/"
+    type: rss
+    section: tech
+    subsections: [servers, datacenter, networking]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "The Next Platform"
+    url: "https://www.nextplatform.com/feed/"
+    type: rss
+    section: tech
+    subsections: [hpc, datacenter, servers]
+    tier: freemium
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "HPCwire"
+    url: "https://www.hpcwire.com/feed/"
+    type: rss
+    section: tech
+    subsections: [hpc, ai-accelerator, datacenter]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "Blocks & Files"
+    url: "https://blocksandfiles.com/feed/"
+    type: rss
+    section: tech
+    subsections: [storage, datacenter, servers]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 23: CLOUD-NATIVE & DEVOPS — New coverage area
+  # ==========================================================================
+  - name: "The New Stack"
+    url: "https://thenewstack.io/feed/"
+    type: rss
+    section: tech
+    subsections: [cloud-native, developer, software]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  - name: "InfoQ"
+    url: "https://feed.infoq.com/"
+    type: rss
+    section: tech
+    subsections: [cloud-native, software, developer]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 24: SEMICONDUCTOR ANALYSIS — Missing analyst coverage
+  # ==========================================================================
+  - name: "SemiWiki"
+    url: "https://semiwiki.com/feed/"
+    type: rss
+    section: tech
+    subsections: [semiconductor, eda, fab]
+    tier: free
+    policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
+
+  # ==========================================================================
+  # GAP 25: ROBOTICS INDUSTRY — Dedicated robotics reporting
+  # ==========================================================================
+  - name: "The Robot Report"
+    url: "https://www.therobotreport.com/feed/"
+    type: rss
+    section: tech
+    subsections: [robotics-industry, robotics, ai]
     tier: free
     policy: { preview_mode: rss_description, robots_txt_checked: false, tos_reviewed: false }
