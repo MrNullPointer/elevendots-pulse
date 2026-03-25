@@ -94,7 +94,7 @@ export function useArticles() {
 
   const sections = useMemo(() =>
     Object.entries(sectionsMetadata)
-      .sort(([, a], [, b]) => (a.order || 99) - (b.order || 99))
+      .sort(([, a], [, b]) => (a.order ?? 99) - (b.order ?? 99))
       .map(([id, meta]) => ({ id, ...meta })),
     [sectionsMetadata]
   )
@@ -106,7 +106,7 @@ export function useArticles() {
       map[meta.section].push({ id, ...meta })
     }
     for (const key of Object.keys(map)) {
-      map[key].sort((a, b) => (a.order || 99) - (b.order || 99))
+      map[key].sort((a, b) => (a.order ?? 99) - (b.order ?? 99))
     }
     return map
   }, [subsectionsMetadata])
