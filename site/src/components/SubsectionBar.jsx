@@ -15,7 +15,7 @@ export default function SubsectionBar({ articles, sectionId, subsectionsMetadata
     const subs = Object.entries(subsectionsMetadata)
       .filter(([, meta]) => meta.section === sectionId)
       .filter(([id]) => counts[id])
-      .sort(([, a], [, b]) => (a.order || 99) - (b.order || 99))
+      .sort(([, a], [, b]) => (a.order ?? 99) - (b.order ?? 99))
 
     return { counts, total, subs }
   }, [articles, sectionId, subsectionsMetadata])
