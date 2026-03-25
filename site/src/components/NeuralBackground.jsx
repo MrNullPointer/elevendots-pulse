@@ -470,29 +470,36 @@ export default function NeuralBackground({
         ctx.fillStyle = glow
         ctx.fillRect(dot.x - gr, dot.y - gr, gr * 2, gr * 2)
 
-        // Core — during melt, draw as elongated teardrop instead of circle
+        // Core — during melt, draw as elongated teardrop instead of circle.
+        // Uses save/restore for the scale transform but avoids creating new
+        // gradients per-frame on mobile (iOS Safari GPU budget).
         if (dotMeltT > 0.08 && dotMeltT < 1) {
-          // Teardrop: ellipse (wide at top, narrow at bottom)
           ctx.save()
           ctx.translate(dot.x, dot.y)
           ctx.scale(meltSqueezeX, meltStretchY)
 
           const r = dot.radius * (1 + dotMeltT * 0.5)
-          const tearGrad = ctx.createRadialGradient(0, -r * 0.3, 0, 0, 0, r * 1.2)
-          tearGrad.addColorStop(0, `rgba(255,255,255,${drawOp * 0.85})`)
-          tearGrad.addColorStop(0.25, col(color, drawOp * 0.7))
-          tearGrad.addColorStop(0.6, col(color, drawOp * 0.3))
-          tearGrad.addColorStop(1, col(color, 0))
 
           // Draw teardrop shape: circle top + pointed bottom
           ctx.beginPath()
-          ctx.arc(0, 0, r, Math.PI, 0) // top half circle
-          ctx.quadraticCurveTo(r * 0.6, r * 1.2, 0, r * 2.5) // right curve to point
-          ctx.quadraticCurveTo(-r * 0.6, r * 1.2, -r, 0) // left curve back
-          ctx.fillStyle = tearGrad
+          ctx.arc(0, 0, r, Math.PI, 0)
+          ctx.quadraticCurveTo(r * 0.6, r * 1.2, 0, r * 2.5)
+          ctx.quadraticCurveTo(-r * 0.6, r * 1.2, -r, 0)
+
+          // On mobile: use solid fill (cheaper). On desktop: use gradient.
+          if (s.isMobile) {
+            ctx.fillStyle = col(color, drawOp * 0.7)
+          } else {
+            const tearGrad = ctx.createRadialGradient(0, -r * 0.3, 0, 0, 0, r * 1.2)
+            tearGrad.addColorStop(0, `rgba(255,255,255,${drawOp * 0.85})`)
+            tearGrad.addColorStop(0.25, col(color, drawOp * 0.7))
+            tearGrad.addColorStop(0.6, col(color, drawOp * 0.3))
+            tearGrad.addColorStop(1, col(color, 0))
+            ctx.fillStyle = tearGrad
+          }
           ctx.fill()
 
-          // Trailing drip line below the teardrop
+          // Trailing drip line
           if (dotMeltT > 0.2) {
             const trailLen = (dotMeltT - 0.2) / 0.8 * r * 6
             const trailOp = drawOp * 0.3 * (1 - dotMeltT)
@@ -705,6 +712,27 @@ export default function NeuralBackground({
       s.meltActive = false
     }
   }, [meltActive])
+
+  // Pause RAF when tab is hidden (iOS Safari throttles/pauses RAF in background).
+  // Adjust melt/reassembly timing to prevent desync when returning.
+  useEffect(() => {
+    let hiddenAt = 0
+    const handler = () => {
+      const s = stateRef.current
+      if (document.hidden) {
+        hiddenAt = Date.now()
+      } else if (hiddenAt > 0) {
+        const elapsed = Date.now() - hiddenAt
+        // Shift timing references forward by the hidden duration
+        if (s.meltStartTime > 0) s.meltStartTime += elapsed
+        if (s.reassemblyStartTime > 0) s.reassemblyStartTime += elapsed
+        s.startTime += elapsed
+        hiddenAt = 0
+      }
+    }
+    document.addEventListener('visibilitychange', handler)
+    return () => document.removeEventListener('visibilitychange', handler)
+  }, [])
 
   return (
     <canvas

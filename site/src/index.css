@@ -423,30 +423,29 @@ a { text-decoration: none; color: inherit; }
   }
 }
 
-/* Veil dissolves softly — not a hard cut, a gentle fade with
-   top clearing first (like mist evaporating upward) */
+/* Veil dissolves via opacity fade only — backdrop-filter stays static.
+   Safari cannot animate backdrop-filter in keyframes, so we keep it
+   as a constant property and let opacity control the visual dissolve.
+   When opacity → 0, the backdrop blur naturally disappears with it.
+   This produces identical results on Chrome AND Safari. */
 @keyframes startupVeilDissolve {
   0% {
     opacity: 1;
-    backdrop-filter: blur(28px) saturate(1.18);
-    -webkit-backdrop-filter: blur(28px) saturate(1.18);
+    transform: translateY(0);
   }
-  30% {
-    opacity: 0.7;
-    backdrop-filter: blur(18px) saturate(1.08);
-    -webkit-backdrop-filter: blur(18px) saturate(1.08);
+  40% {
+    opacity: 0.55;
+    transform: translateY(0.5%);
   }
-  60% {
-    opacity: 0.3;
-    backdrop-filter: blur(8px) saturate(1);
-    -webkit-backdrop-filter: blur(8px) saturate(1);
-    filter: blur(2px);
+  70% {
+    opacity: 0.15;
+    transform: translateY(1.5%);
+    filter: blur(3px);
   }
   100% {
     opacity: 0;
-    backdrop-filter: blur(0) saturate(1);
-    -webkit-backdrop-filter: blur(0) saturate(1);
-    filter: blur(6px);
+    transform: translateY(3%);
+    filter: blur(8px);
   }
 }
 
@@ -553,7 +552,7 @@ a { text-decoration: none; color: inherit; }
   content: ''; position: absolute; inset: -0.5px; border-radius: inherit;
   background: conic-gradient(from 0deg, rgba(255,100,100,0.04), rgba(100,255,100,0.04), rgba(100,100,255,0.04), rgba(255,100,100,0.04));
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude; -webkit-mask-composite: xor;
+  mask-composite: exclude; -webkit-mask-composite: destination-out;
   padding: 0.5px; pointer-events: none; z-index: 2;
   opacity: 0; transition: opacity 400ms;
 }
@@ -652,9 +651,16 @@ a { text-decoration: none; color: inherit; }
    TYPOGRAPHY
    =========================================================================== */
 
+/* Safari fallback: use accent → lighter accent via rgba overlay instead of color-mix() */
 .section-title-gradient {
-  background: linear-gradient(135deg, var(--accent-current), color-mix(in srgb, var(--accent-current), white 30%));
+  background: linear-gradient(135deg, var(--accent-current, #6868e0), rgba(255, 255, 255, 0.3));
+  background-blend-mode: lighten;
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+@supports (background: color-mix(in srgb, red, blue)) {
+  .section-title-gradient {
+    background: linear-gradient(135deg, var(--accent-current), color-mix(in srgb, var(--accent-current), white 30%));
+  }
 }
 [data-theme="dark"] .section-title-gradient {
   filter: drop-shadow(0 0 30px rgba(var(--accent-rgb), 0.1));
