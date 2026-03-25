@@ -49,15 +49,11 @@ export default function Footer({ generatedAt, sourceCount }) {
             )}
           </div>
 
-          {/* Traffic stats — only shown if stats.json is available */}
+          {/* View count — from GitHub Traffic API, no client-side tracking */}
           {stats && stats.total_views > 0 && (
-            <div className="mt-1.5 flex items-center justify-center gap-1" style={{ opacity: 0.55 }}>
+            <div className="mt-1.5 flex items-center justify-center gap-1" style={{ opacity: 0.45 }}>
               <Eye size={10} />
               <span>{formatNumber(stats.total_views)} views</span>
-              {stats.unique_visitors > 0 && (
-                <span> · {formatNumber(stats.unique_visitors)} visitors</span>
-              )}
-              <span className="opacity-60"> (14d)</span>
             </div>
           )}
 
