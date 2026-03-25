@@ -117,6 +117,8 @@ subsections_metadata:
   r-quantum: { display_name: "Quantum Computing", section: research, color: "#06b6d4", order: 7 }
   r-software: { display_name: "Software Engineering", section: research, color: "#84cc16", order: 8 }
   r-hpc: { display_name: "HPC & Cloud", section: research, color: "#f97316", order: 9 }
+  r-must-read: { display_name: "Must Read", section: research, color: "#f43f5e", order: 0 }
+  r-frontier: { display_name: "Frontier", section: research, color: "#22d3ee", order: 0 }
   # --- MISC ---
   maker: { display_name: "Maker & DIY", section: misc, color: "#f97316", order: 1 }
   policy: { display_name: "Policy & Geopolitics", section: misc, color: "#64748b", order: 2 }
