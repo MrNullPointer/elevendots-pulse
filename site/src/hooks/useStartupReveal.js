@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export const STARTUP_MIN_DURATION_MS = 2000
-export const STARTUP_REVEAL_DURATION_MS = 800
+export const STARTUP_MIN_DURATION_MS = 3200
+export const STARTUP_REVEAL_DURATION_MS = 1200
 
 /**
  * Startup reveal state machine.

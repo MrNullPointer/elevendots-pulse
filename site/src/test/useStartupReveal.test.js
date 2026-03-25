@@ -1,6 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
-import { useStartupReveal } from '../hooks/useStartupReveal'
+import {
+  useStartupReveal,
+  STARTUP_MIN_DURATION_MS,
+  STARTUP_REVEAL_DURATION_MS,
+} from '../hooks/useStartupReveal'
+
+const MIN = STARTUP_MIN_DURATION_MS
+const REVEAL = STARTUP_REVEAL_DURATION_MS
 
 describe('useStartupReveal', () => {
   beforeEach(() => {
@@ -23,14 +30,14 @@ describe('useStartupReveal', () => {
     expect(result.current.mountContent).toBe(false)
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(2001)
+      await vi.advanceTimersByTimeAsync(MIN + 1)
     })
 
     expect(result.current.mountContent).toBe(true)
     expect(result.current.phase).toBe('revealing')
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(900)
+      await vi.advanceTimersByTimeAsync(REVEAL + 100)
     })
 
     expect(result.current.phase).toBe('done')
@@ -44,7 +51,7 @@ describe('useStartupReveal', () => {
     )
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(2001)
+      await vi.advanceTimersByTimeAsync(MIN + 1)
     })
 
     expect(result.current.phase).toBe('holding')
@@ -53,7 +60,7 @@ describe('useStartupReveal', () => {
     rerender({ loading: false, error: null })
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(900)
+      await vi.advanceTimersByTimeAsync(REVEAL + 100)
     })
 
     expect(result.current.phase).toBe('done')
@@ -68,7 +75,7 @@ describe('useStartupReveal', () => {
     rerender({ loading: false, error: 'HTTP 500' })
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(2001)
+      await vi.advanceTimersByTimeAsync(MIN + 1)
     })
 
     expect(result.current.mountContent).toBe(true)
@@ -82,7 +89,7 @@ describe('useStartupReveal', () => {
     )
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(3001)
+      await vi.advanceTimersByTimeAsync(MIN + REVEAL + 100)
     })
 
     expect(result.current.phase).toBe('done')

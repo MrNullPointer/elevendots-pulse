@@ -190,7 +190,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .startup-content--revealing {
-  animation: startupContentResolve 800ms var(--spring) both;
+  animation: startupContentResolve 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
   transform-origin: 50% 20%;
 }
 
@@ -346,66 +346,129 @@ a { text-decoration: none; color: inherit; }
   animation-duration: 4200ms;
 }
 
+/* ---- Reveal: neuron melt — nodes dissolve into water droplets ---- */
+
+/* Veil dissolves with a soft top-to-bottom gradient wipe */
 .startup-reveal--revealing .startup-reveal__veil {
-  animation: startupGlassTension 800ms var(--spring) forwards;
+  animation: startupVeilDissolve 1300ms cubic-bezier(0.25, 0, 0.1, 1) forwards;
+  transform-origin: 50% 0%;
 }
 
-.startup-reveal--revealing .startup-reveal__specular,
+.startup-reveal--revealing .startup-reveal__specular {
+  animation: startupSpecularFade 1200ms cubic-bezier(0.3, 0, 0.1, 1) forwards;
+}
+
 .startup-reveal--revealing .startup-reveal__noise,
 .startup-reveal--revealing .startup-reveal__ghost,
 .startup-reveal--revealing .startup-reveal__ambient,
 .startup-reveal--revealing .startup-reveal__pulse {
-  animation:
-    startupFlurryDissolve 800ms ease forwards,
-    startupSpecularSweep 800ms ease forwards;
+  animation: startupLayerDissolve 1100ms cubic-bezier(0.3, 0, 0.15, 1) forwards;
 }
 
-.startup-reveal__fragments {
+/* Melt container */
+.startup-reveal__melt {
+  position: absolute;
+  inset: 0;
   opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-.startup-reveal--revealing .startup-reveal__fragments {
+.startup-reveal--revealing .startup-reveal__melt {
   opacity: 1;
 }
 
-.startup-fragment {
-  left: var(--fragment-x);
-  top: var(--fragment-y);
-  width: var(--fragment-width);
-  height: var(--fragment-height);
-  border-radius: 999px;
+/* Neuron drop: starts as a glowing circle, melts into a teardrop,
+   drips downward with organic wobble and trailing glow */
+.startup-neuron-drop {
+  position: absolute;
+  display: block;
+  left: var(--drop-x);
+  top: var(--drop-y);
+  width: var(--drop-radius);
+  height: var(--drop-radius);
+  border-radius: 50%;
+  transform-origin: 50% 0%;
+  opacity: 0;
+
+  /* The neuron glow — accent-colored radial gradient */
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.56), rgba(255,255,255,0.08)),
-    linear-gradient(90deg, rgba(var(--accent-rgb), 0.18), rgba(255,255,255,0.14));
+    radial-gradient(circle at 50% 35%,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(var(--accent-rgb), 0.6) 30%,
+      rgba(var(--accent-rgb), 0.2) 60%,
+      transparent 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.36),
-    0 10px 28px var(--startup-fragment-shadow);
+    0 0 var(--drop-glow) rgba(var(--accent-rgb), 0.3),
+    0 0 calc(var(--drop-glow) * 2) rgba(var(--accent-rgb), 0.1),
+    inset 0 -1px 3px rgba(var(--accent-rgb), 0.2);
+  filter: blur(0.5px);
+}
+
+/* Anchor node: larger, brighter */
+.startup-neuron-drop--anchor {
+  background:
+    radial-gradient(circle at 50% 30%,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(var(--accent-rgb), 0.7) 25%,
+      rgba(var(--accent-rgb), 0.3) 55%,
+      transparent 100%);
+}
+
+/* Domain nodes: medium glow */
+.startup-neuron-drop--domain {
+  box-shadow:
+    0 0 var(--drop-glow) rgba(var(--accent-rgb), 0.35),
+    0 0 calc(var(--drop-glow) * 1.5) rgba(var(--accent-rgb), 0.12);
+}
+
+/* Connection drip: thin vertical trail between nodes */
+.startup-conn-drip {
+  position: absolute;
+  display: block;
+  left: 50%;
+  top: 40%;
+  width: 1px;
+  height: 0;
+  background: linear-gradient(180deg,
+    rgba(var(--accent-rgb), 0.3) 0%,
+    rgba(var(--accent-rgb), 0.08) 60%,
+    transparent 100%);
   opacity: 0;
-  transform: translate3d(0, 0, 0) rotate(var(--fragment-rotation)) scale(var(--fragment-scale));
-  transform-origin: center;
+  filter: blur(0.3px);
 }
 
-.startup-flurry {
-  left: var(--flurry-x);
-  top: var(--flurry-y);
-  width: var(--flurry-size);
-  height: var(--flurry-size);
-  border-radius: 999px;
-  background: rgba(255,255,255,0.82);
-  box-shadow: 0 0 18px rgba(255,255,255,0.34);
-  opacity: 0;
+.startup-reveal--revealing .startup-neuron-drop {
+  animation: startupNeuronMelt var(--drop-duration) cubic-bezier(0.36, 0, 0.12, 1) forwards;
+  animation-delay: var(--drop-delay);
 }
 
-.startup-reveal--revealing .startup-fragment {
-  animation: startupFragmentFall var(--fragment-duration) var(--spring) forwards;
-  animation-delay: var(--fragment-delay);
+.startup-reveal--revealing .startup-conn-drip {
+  animation: startupConnDrip var(--conn-duration) cubic-bezier(0.4, 0, 0.15, 1) forwards;
+  animation-delay: var(--conn-delay);
 }
 
-.startup-reveal--revealing .startup-flurry {
-  animation: startupFlurryDissolve var(--flurry-duration) ease-out forwards;
-  animation-delay: var(--flurry-delay);
+/* Light mode: warmer, softer neuron tones */
+.startup-reveal--light .startup-neuron-drop {
+  background:
+    radial-gradient(circle at 50% 35%,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(var(--accent-rgb), 0.4) 35%,
+      rgba(var(--accent-rgb), 0.12) 65%,
+      transparent 100%);
+  box-shadow:
+    0 0 var(--drop-glow) rgba(var(--accent-rgb), 0.15),
+    0 0 calc(var(--drop-glow) * 2) rgba(var(--accent-rgb), 0.05);
 }
 
+.startup-reveal--light .startup-conn-drip {
+  background: linear-gradient(180deg,
+    rgba(var(--accent-rgb), 0.2) 0%,
+    rgba(var(--accent-rgb), 0.04) 60%,
+    transparent 100%);
+}
+
+/* ---- Reduced motion: simple dissolve ---- */
 .startup-reveal--reduced .startup-reveal__veil {
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -459,60 +522,146 @@ a { text-decoration: none; color: inherit; }
   }
 }
 
-@keyframes startupGlassTension {
+/* Veil dissolves softly — not a hard cut, a gentle fade with
+   top clearing first (like mist evaporating upward) */
+@keyframes startupVeilDissolve {
   0% {
     opacity: 1;
-    transform: scale(1);
+    backdrop-filter: blur(28px) saturate(1.18);
+    -webkit-backdrop-filter: blur(28px) saturate(1.18);
+  }
+  30% {
+    opacity: 0.7;
+    backdrop-filter: blur(18px) saturate(1.08);
+    -webkit-backdrop-filter: blur(18px) saturate(1.08);
+  }
+  60% {
+    opacity: 0.3;
+    backdrop-filter: blur(8px) saturate(1);
+    -webkit-backdrop-filter: blur(8px) saturate(1);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 0;
+    backdrop-filter: blur(0) saturate(1);
+    -webkit-backdrop-filter: blur(0) saturate(1);
+    filter: blur(6px);
+  }
+}
+
+@keyframes startupSpecularFade {
+  0%   { opacity: 0.8; }
+  40%  { opacity: 0.3; filter: blur(4px); }
+  100% { opacity: 0; filter: blur(10px); }
+}
+
+@keyframes startupLayerDissolve {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.3; }
+  100% { opacity: 0; filter: blur(4px); }
+}
+
+/* THE HERO ANIMATION: Neuron node melts into a teardrop water drop.
+   Circle → flash bright → elongate downward → teardrop → drip → dissolve.
+   This is what makes it look organic and premium. */
+@keyframes startupNeuronMelt {
+  /* Phase 1: Neuron flashes bright (0-8%) */
+  0% {
+    opacity: 0;
+    border-radius: 50%;
+    transform: translate3d(0, 0, 0) scaleX(1) scaleY(1);
+    filter: blur(0.5px);
+  }
+  8% {
+    opacity: 1;
+    border-radius: 50%;
+    transform: translate3d(0, 0, 0) scaleX(1.3) scaleY(1.3);
     filter: blur(0);
+    box-shadow:
+      0 0 calc(var(--drop-glow) * 2) rgba(var(--accent-rgb), 0.6),
+      0 0 calc(var(--drop-glow) * 4) rgba(var(--accent-rgb), 0.2);
   }
-  20% {
-    opacity: 1;
-    transform: scale(1.004);
-    filter: blur(0.4px);
+  /* Phase 2: Starts to melt — bottom stretches (8-25%) */
+  25% {
+    opacity: 0.85;
+    border-radius: 50% 50% 40% 40%;
+    transform: translate3d(calc(var(--drop-wobble) * 0.3), 3vh, 0)
+               scaleX(0.8) scaleY(1.6);
+    filter: blur(1px);
   }
+  /* Phase 3: Full teardrop — elongating rapidly (25-50%) */
+  50% {
+    opacity: 0.55;
+    border-radius: 45% 45% 35% 35% / 30% 30% 50% 50%;
+    transform: translate3d(var(--drop-wobble), calc(var(--drop-fall) * 0.35), 0)
+               scaleX(var(--drop-taper)) scaleY(var(--drop-stretch));
+    filter: blur(2px);
+    box-shadow:
+      0 0 var(--drop-glow) rgba(var(--accent-rgb), 0.15),
+      0 calc(var(--drop-glow) * 0.5) calc(var(--drop-glow) * 1.5) rgba(var(--accent-rgb), 0.08);
+  }
+  /* Phase 4: Thinning trail — almost gone (50-80%) */
+  80% {
+    opacity: 0.2;
+    border-radius: 40% 40% 25% 25% / 20% 20% 60% 60%;
+    transform: translate3d(calc(var(--drop-wobble) * 0.5), calc(var(--drop-fall) * 0.75), 0)
+               scaleX(calc(var(--drop-taper) * 0.4)) scaleY(calc(var(--drop-stretch) * 1.6));
+    filter: blur(4px);
+  }
+  /* Phase 5: Dissolved (80-100%) */
   100% {
     opacity: 0;
-    transform: scale(1.016);
-    filter: blur(10px);
+    border-radius: 35% 35% 20% 20% / 15% 15% 70% 70%;
+    transform: translate3d(0, var(--drop-fall), 0)
+               scaleX(calc(var(--drop-taper) * 0.15)) scaleY(calc(var(--drop-stretch) * 2));
+    filter: blur(8px);
+    box-shadow: none;
   }
 }
 
-@keyframes startupFragmentFall {
+/* Connection filaments stretch and snap as nodes separate */
+@keyframes startupConnDrip {
   0% {
     opacity: 0;
-    transform: translate3d(0, 0, 0) rotate(var(--fragment-rotation)) scale(var(--fragment-scale));
+    height: 0;
   }
-  14% {
-    opacity: 0.86;
+  12% {
+    opacity: 0.4;
+    height: 8vh;
+    filter: blur(0.3px);
   }
-  100% {
-    opacity: 0;
-    transform: translate3d(var(--fragment-drift-x), var(--fragment-drift-y), 0) rotate(calc(var(--fragment-rotation) + 14deg)) scale(calc(var(--fragment-scale) * 0.9));
+  40% {
+    opacity: 0.2;
+    height: 20vh;
+    filter: blur(1px);
   }
-}
-
-@keyframes startupFlurryDissolve {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, 0, 0) scale(0.8);
-  }
-  16% {
-    opacity: 0.75;
+  70% {
+    opacity: 0.06;
+    height: 30vh;
+    filter: blur(2px);
   }
   100% {
     opacity: 0;
-    transform: translate3d(var(--flurry-drift-x, 0), var(--flurry-drift-y, 0), 0) scale(1.24);
+    height: 40vh;
+    filter: blur(4px);
   }
 }
 
+/* Content emerges from beneath the dissolving veil */
 @keyframes startupContentResolve {
   0% {
-    opacity: 0.2;
-    transform: scale(0.985);
-    filter: blur(24px);
+    opacity: 0.05;
+    transform: scale(0.995);
+    filter: blur(14px);
   }
-  45% {
-    opacity: 0.72;
+  35% {
+    opacity: 0.55;
+    filter: blur(4px);
+  }
+  70% {
+    opacity: 0.92;
+    transform: scale(1);
+    filter: blur(0.5px);
   }
   100% {
     opacity: 1;
