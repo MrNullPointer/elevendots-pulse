@@ -80,7 +80,8 @@ export const mockSectionsMetadata = {
   tech: { display_name: 'Tech', description: 'Computing and chips.', icon: 'cpu', order: 1, theme_color: '#3b6bdf' },
   science: { display_name: 'Science', description: 'Astronomy and beyond.', icon: 'flask', order: 2, theme_color: '#7c3aed' },
   philosophy: { display_name: 'Philosophy', description: 'Ideas and ethics.', icon: 'book', order: 3, theme_color: '#b45309' },
-  misc: { display_name: 'Miscellaneous', description: 'Long reads.', icon: 'sparkles', order: 4, theme_color: '#525252' },
+  world: { display_name: 'World', description: 'Global news and politics.', icon: 'globe', order: 4, theme_color: '#dc2626' },
+  misc: { display_name: 'Miscellaneous', description: 'Long reads.', icon: 'sparkles', order: 5, theme_color: '#525252' },
 }
 
 export const mockSubsectionsMetadata = {
@@ -92,6 +93,8 @@ export const mockSubsectionsMetadata = {
   consciousness: { display_name: 'Consciousness', section: 'philosophy', color: '#d97706', order: 1 },
   epistemology: { display_name: 'Epistemology', section: 'philosophy', color: '#b45309', order: 2 },
   cybersecurity: { display_name: 'Cybersecurity', section: 'misc', color: '#ef4444', order: 1 },
+  'world-news': { display_name: 'World News', section: 'world', color: '#dc2626', order: 1 },
+  geopolitics: { display_name: 'Geopolitics', section: 'world', color: '#b91c1c', order: 2 },
 }
 
 export const mockSourceHealth = [

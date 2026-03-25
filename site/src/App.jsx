@@ -23,6 +23,7 @@ const ACCENT_MAP = {
   tech:       { color: '#4080ff', rgb: '64,128,255' },
   science:    { color: '#a050ff', rgb: '160,80,255' },
   philosophy: { color: '#e0a030', rgb: '224,160,48' },
+  world:      { color: '#dc2626', rgb: '220,38,38' },
   misc:       { color: '#a0a0c0', rgb: '160,160,192' },
 }
 

@@ -31,9 +31,14 @@ SECTIONS = {
         "description": "Ideas, ethics, mind, knowledge, and meaning. Curated from 100+ sources.",
         "image": "og-section-philosophy.png",
     },
+    "world": {
+        "title": "World — Pulse by elevendots",
+        "description": "Global news, politics, economics, geopolitics, and public policy. Curated from 140+ sources.",
+        "image": "og-homepage.png",  # Reuse homepage OG until dedicated world card is designed
+    },
     "misc": {
         "title": "Miscellaneous — Pulse by elevendots",
-        "description": "Essays, culture, long reads, and uncategorized gems. Curated from 100+ sources.",
+        "description": "Essays, culture, long reads, and uncategorized gems. Curated from 140+ sources.",
         "image": "og-section-misc.png",
     },
 }
