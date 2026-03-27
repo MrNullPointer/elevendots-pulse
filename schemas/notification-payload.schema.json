@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulse.elevendots.dev/schemas/notification-payload.schema.json",
+  "title": "Pulse Push Notification Payload",
+  "description": "Payload structure for push notifications sent via Cloudflare Worker.",
+  "type": "object",
+  "required": ["type", "title", "body", "data"],
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["section_update", "frontier_paper", "must_read"]
+    },
+    "title": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "required": ["section", "deeplink"],
+      "additionalProperties": false,
+      "properties": {
+        "section": {
+          "type": "string",
+          "enum": ["tech", "science", "philosophy", "world", "research", "misc"]
+        },
+        "article_id": {
+          "type": "string",
+          "pattern": "^[a-z]+-[a-f0-9]{12}$"
+        },
+        "deeplink": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    }
+  }
+}

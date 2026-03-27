@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulse.elevendots.dev/schemas/changes.schema.json",
+  "title": "Pulse Mobile Changes Feed",
+  "description": "Diff since the last build. Drives push notification diffing and client refresh.",
+  "type": "object",
+  "required": [
+    "generated_at", "build_id", "previous_build_id",
+    "new_articles", "removed_article_ids", "updated_article_ids", "section_changes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "build_id": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "previous_build_id": {
+      "type": "string",
+      "description": "ISO 8601 date-time of the previous build, or empty string for first build"
+    },
+    "new_articles": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/PartialArticle" }
+    },
+    "removed_article_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z]+-[a-f0-9]{12}$"
+      }
+    },
+    "updated_article_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z]+-[a-f0-9]{12}$"
+      }
+    },
+    "section_changes": {
+      "type": "object",
+      "required": ["tech", "science", "philosophy", "world", "research", "misc"],
+      "additionalProperties": false,
+      "properties": {
+        "tech":       { "$ref": "#/$defs/SectionChange" },
+        "science":    { "$ref": "#/$defs/SectionChange" },
+        "philosophy": { "$ref": "#/$defs/SectionChange" },
+        "world":      { "$ref": "#/$defs/SectionChange" },
+        "research":   { "$ref": "#/$defs/SectionChange" },
+        "misc":       { "$ref": "#/$defs/SectionChange" }
+      }
+    }
+  },
+  "$defs": {
+    "PartialArticle": {
+      "type": "object",
+      "required": ["id", "title", "section", "subsection", "url", "published"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z]+-[a-f0-9]{12}$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "section": {
+          "type": "string",
+          "enum": ["tech", "science", "philosophy", "world", "research", "misc"]
+        },
+        "subsection": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "published": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "SectionChange": {
+      "type": "object",
+      "required": ["added", "removed"],
+      "additionalProperties": false,
+      "properties": {
+        "added": { "type": "integer", "minimum": 0 },
+        "removed": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

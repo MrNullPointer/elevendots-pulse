@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulse.elevendots.dev/schemas/manifest.schema.json",
+  "title": "Pulse Mobile Feed Manifest",
+  "description": "First file fetched on every app launch. Tells the app what changed.",
+  "type": "object",
+  "required": [
+    "feed_schema_version",
+    "build_id",
+    "generated_at",
+    "min_supported_app_version",
+    "sections",
+    "indexes",
+    "total_articles",
+    "crawler_version"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "feed_schema_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Schema version for forward compatibility"
+    },
+    "build_id": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp identifying this build"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when this manifest was generated"
+    },
+    "min_supported_app_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Minimum app version required to consume this feed (semver)"
+    },
+    "sections": {
+      "type": "object",
+      "required": ["tech", "science", "philosophy", "world", "research", "misc"],
+      "additionalProperties": false,
+      "properties": {
+        "tech":       { "$ref": "#/$defs/SectionMeta" },
+        "science":    { "$ref": "#/$defs/SectionMeta" },
+        "philosophy": { "$ref": "#/$defs/SectionMeta" },
+        "world":      { "$ref": "#/$defs/SectionMeta" },
+        "research":   { "$ref": "#/$defs/SectionMeta" },
+        "misc":       { "$ref": "#/$defs/SectionMeta" }
+      }
+    },
+    "indexes": {
+      "type": "object",
+      "required": ["home", "search", "changes"],
+      "additionalProperties": false,
+      "properties": {
+        "home":    { "$ref": "#/$defs/IndexMeta" },
+        "search":  { "$ref": "#/$defs/IndexMeta" },
+        "changes": { "$ref": "#/$defs/IndexMeta" }
+      }
+    },
+    "total_articles": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of articles across all sections"
+    },
+    "crawler_version": {
+      "type": "string",
+      "description": "Version of the crawler that produced this feed"
+    }
+  },
+  "$defs": {
+    "SectionMeta": {
+      "type": "object",
+      "required": ["hash", "count", "updated_at"],
+      "additionalProperties": false,
+      "properties": {
+        "hash": { "type": "string" },
+        "count": { "type": "integer", "minimum": 0 },
+        "updated_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "IndexMeta": {
+      "type": "object",
+      "required": ["hash", "updated_at"],
+      "additionalProperties": false,
+      "properties": {
+        "hash": { "type": "string" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}
