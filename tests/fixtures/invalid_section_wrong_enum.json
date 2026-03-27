@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-03-26T14:07:00Z",
+  "articles": [
+    {
+      "id": "tech-a3f8c2d1e4f7",
+      "title": "Test Article",
+      "source": "Test",
+      "source_url": "https://test.com/",
+      "section": "sports",
+      "subsection": "test",
+      "published": "2026-03-26T12:30:00Z",
+      "published_confidence": "high",
+      "freshness_score": 100,
+      "intro": "Test intro",
+      "url": "https://test.com/article",
+      "access": "free",
+      "tier": 1
+    }
+  ]
+}

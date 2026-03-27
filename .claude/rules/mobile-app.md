@@ -1,0 +1,23 @@
+---
+paths:
+  - "mobile/**/*.ts"
+  - "mobile/**/*.tsx"
+---
+# Mobile App Rules
+- Import order: react → react-native → expo → @shopify → third-party → @/ aliases
+- ALL network requests go through src/lib/api.ts
+- ALL async data uses TanStack Query with proper staleTime/gcTime config
+- NEVER use FlatList — always @shopify/flash-list
+- NEVER use AsyncStorage — always react-native-mmkv
+- NEVER use useEffect + fetch pattern for data loading
+- NEVER hardcode colors — always use theme tokens from src/lib/theme.ts
+- NEVER hardcode spacing — use spacing scale from theme
+- React.memo on all list item components with custom comparator on id + freshness_score
+- useMemo/useCallback for expensive computations and callbacks passed to children
+- accessibilityLabel on every touchable/pressable element
+- accessibilityRole="header" on every screen title
+- accessibilityRole="button" on every custom button component
+- Touch targets: minHeight=44, minWidth=44
+- Test file naming: same directory, same name with .test.tsx suffix
+- Error boundaries on every screen-level component
+- Loading states: skeleton placeholders, never spinners

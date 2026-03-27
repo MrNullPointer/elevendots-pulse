@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-03-26T14:07:00Z",
+  "items": [
+    {
+      "id": "tech-a3f8c2d1e4f7",
+      "title": "TSMC Begins 1.4nm Risk Production",
+      "source": "AnandTech",
+      "section": "tech",
+      "subsection": "semiconductor",
+      "published": "2026-03-26T12:30:00Z",
+      "keywords": ["tsmc", "1.4nm", "n2p", "semiconductor", "fab"],
+      "url": "https://anandtech.com/show/12345"
+    },
+    {
+      "id": "science-b7e1f4a9c2d5",
+      "title": "New CRISPR Variant Achieves 99.9% Precision",
+      "source": "Nature",
+      "section": "science",
+      "subsection": "genetics",
+      "published": "2026-03-26T10:00:00Z",
+      "keywords": ["crispr", "cas12f", "gene-editing", "precision"],
+      "url": "https://nature.com/articles/s41586-026-12345"
+    }
+  ]
+}

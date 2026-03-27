@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pulse.elevendots.dev/schemas/search-index.schema.json",
+  "title": "Pulse Mobile Search Index",
+  "description": "Compact search corpus for fuse.js fuzzy search.",
+  "type": "object",
+  "required": ["generated_at", "items"],
+  "additionalProperties": false,
+  "properties": {
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "items": {
+      "type": "array",
+      "minItems": 0,
+      "items": { "$ref": "#/$defs/SearchItem" }
+    }
+  },
+  "$defs": {
+    "SearchItem": {
+      "type": "object",
+      "required": ["id", "title", "source", "section", "subsection", "published", "keywords", "url"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z]+-[a-f0-9]{12}$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "section": {
+          "type": "string",
+          "enum": ["tech", "science", "philosophy", "world", "research", "misc"]
+        },
+        "subsection": {
+          "type": "string"
+        },
+        "published": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    }
+  }
+}

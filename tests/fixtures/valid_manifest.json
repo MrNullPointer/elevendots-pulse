@@ -1,0 +1,21 @@
+{
+  "feed_schema_version": 1,
+  "build_id": "2026-03-26T14:07:00Z",
+  "generated_at": "2026-03-26T14:07:00Z",
+  "min_supported_app_version": "1.0.0",
+  "sections": {
+    "tech":       { "hash": "a3f8c2d1", "count": 87, "updated_at": "2026-03-26T14:07:00Z" },
+    "science":    { "hash": "b7e1f4a9", "count": 42, "updated_at": "2026-03-26T13:07:00Z" },
+    "philosophy": { "hash": "c2d5e8f3", "count": 18, "updated_at": "2026-03-26T14:07:00Z" },
+    "world":      { "hash": "d9a3b6c1", "count": 55, "updated_at": "2026-03-26T14:07:00Z" },
+    "research":   { "hash": "e4f7a2b5", "count": 63, "updated_at": "2026-03-26T14:07:00Z" },
+    "misc":       { "hash": "f1c8d4e7", "count": 31, "updated_at": "2026-03-26T12:07:00Z" }
+  },
+  "indexes": {
+    "home":    { "hash": "g2h5i8k1", "updated_at": "2026-03-26T14:07:00Z" },
+    "search":  { "hash": "j4k7l0m3", "updated_at": "2026-03-26T14:07:00Z" },
+    "changes": { "hash": "n6o9p2q5", "updated_at": "2026-03-26T14:07:00Z" }
+  },
+  "total_articles": 296,
+  "crawler_version": "2.0.0"
+}

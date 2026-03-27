@@ -1,0 +1,50 @@
+{
+  "generated_at": "2026-03-26T14:07:00Z",
+  "articles": [
+    {
+      "id": "tech-a3f8c2d1e4f7",
+      "title": "TSMC Begins 1.4nm Risk Production",
+      "source": "AnandTech",
+      "source_url": "https://anandtech.com/",
+      "section": "tech",
+      "subsection": "semiconductor",
+      "published": "2026-03-26T12:30:00Z",
+      "published_confidence": "high",
+      "freshness_score": 12300,
+      "intro": "TSMC has officially begun risk production on its N2P process...",
+      "url": "https://anandtech.com/show/12345",
+      "access": "free",
+      "tier": 1
+    },
+    {
+      "id": "science-b7e1f4a9c2d5",
+      "title": "New CRISPR Variant Achieves 99.9% Precision",
+      "source": "Nature",
+      "source_url": "https://nature.com/",
+      "section": "science",
+      "subsection": "genetics",
+      "published": "2026-03-26T10:00:00Z",
+      "published_confidence": "high",
+      "freshness_score": 8500,
+      "intro": "A new CRISPR-Cas12f variant demonstrates near-perfect editing precision...",
+      "url": "https://nature.com/articles/s41586-026-12345",
+      "access": "metered",
+      "tier": 1
+    },
+    {
+      "id": "research-e4f7a2b5d9a3",
+      "title": "Attention Mechanism Alternatives in Subquadratic Transformers",
+      "source": "arXiv",
+      "source_url": "https://arxiv.org/",
+      "section": "research",
+      "subsection": "machine-learning",
+      "published": "2026-03-25T18:00:00Z",
+      "published_confidence": "medium",
+      "freshness_score": 105000,
+      "intro": "We propose a novel subquadratic attention mechanism...",
+      "url": "https://arxiv.org/abs/2603.12345",
+      "access": "free",
+      "tier": 2
+    }
+  ]
+}

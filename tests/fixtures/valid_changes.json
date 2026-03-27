@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-03-26T14:07:00Z",
+  "build_id": "2026-03-26T14:07:00Z",
+  "previous_build_id": "2026-03-26T13:07:00Z",
+  "new_articles": [
+    {
+      "id": "tech-a3f8c2d1e4f7",
+      "title": "TSMC Begins 1.4nm Risk Production",
+      "section": "tech",
+      "subsection": "semiconductor",
+      "url": "https://anandtech.com/show/12345",
+      "published": "2026-03-26T12:30:00Z"
+    }
+  ],
+  "removed_article_ids": ["tech-aaa123abc456"],
+  "updated_article_ids": [],
+  "section_changes": {
+    "tech":       { "added": 3, "removed": 1 },
+    "science":    { "added": 0, "removed": 0 },
+    "philosophy": { "added": 0, "removed": 0 },
+    "world":      { "added": 1, "removed": 0 },
+    "research":   { "added": 5, "removed": 2 },
+    "misc":       { "added": 0, "removed": 0 }
+  }
+}
