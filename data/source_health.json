@@ -1,102 +1,102 @@
 {
-  "crawl_timestamp": "2026-04-12T12:33:43.691475+00:00",
-  "crawl_duration_s": 522,
+  "crawl_timestamp": "2026-04-12T13:43:09.917224+00:00",
+  "crawl_duration_s": 537,
   "total_sources": 194,
   "sources_crawled": 165,
   "sources_failed": 0,
   "sources_skipped": 29,
-  "total_articles": 1803,
+  "total_articles": 1795,
   "sources": [
     {
       "name": "Semiconductor Engineering",
       "url": "https://semiengineering.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 1020
+      "duration_ms": 951
     },
     {
       "name": "EE Times",
       "url": "https://www.eetimes.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 267
+      "duration_ms": 257
     },
     {
       "name": "Tom's Hardware",
       "url": "https://www.tomshardware.com/feeds/all",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 218
+      "duration_ms": 440
     },
     {
       "name": "DigiTimes",
       "url": "https://www.digitimes.com/rss/daily.xml",
       "status": "healthy",
       "articles": 35,
-      "duration_ms": 458
+      "duration_ms": 1675
     },
     {
       "name": "Chips and Cheese",
       "url": "https://chipsandcheese.com/feed/",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 5987
+      "duration_ms": 5270
     },
     {
       "name": "IEEE Spectrum",
       "url": "https://spectrum.ieee.org/customfeeds/feed/all-topics/rss",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 235
+      "duration_ms": 309
     },
     {
       "name": "Electronics Weekly",
       "url": "https://www.electronicsweekly.com/feed/",
-      "status": "healthy",
-      "articles": 10,
-      "duration_ms": 710
+      "status": "empty",
+      "articles": 0,
+      "duration_ms": 711
     },
     {
       "name": "The Register",
       "url": "https://www.theregister.com/headlines.atom",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 374
+      "duration_ms": 1302
     },
     {
       "name": "Hackaday",
       "url": "https://hackaday.com/feed/",
       "status": "healthy",
       "articles": 7,
-      "duration_ms": 335
+      "duration_ms": 440
     },
     {
       "name": "EDN",
       "url": "https://www.edn.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 234
+      "duration_ms": 417
     },
     {
       "name": "SciTechDaily",
       "url": "https://scitechdaily.com/feed/",
       "status": "healthy",
       "articles": 24,
-      "duration_ms": 1803
+      "duration_ms": 1775
     },
     {
       "name": "SemiAnalysis",
       "url": "https://www.semianalysis.com/feed",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 1294
+      "duration_ms": 1139
     },
     {
       "name": "Fabricated Knowledge",
       "url": "https://www.fabricatedknowledge.com/feed",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 1883
+      "duration_ms": 1942
     },
     {
       "name": "The Information",
@@ -111,49 +111,49 @@
       "url": "https://thechipletter.substack.com/feed/",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 65
+      "duration_ms": 88
     },
     {
       "name": "More Than Moore",
       "url": "https://morethanmoore.substack.com/feed/",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 47
+      "duration_ms": 71
     },
     {
       "name": "Chip Strat",
       "url": "https://www.chipstrat.com/feed",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 308
+      "duration_ms": 355
     },
     {
       "name": "NYT Technology",
       "url": "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 149
+      "duration_ms": 375
     },
     {
       "name": "WSJ Tech",
       "url": "https://feeds.a.dj.com/rss/RSSWSJD.xml",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 137
+      "duration_ms": 595
     },
     {
       "name": "Ars Technica",
       "url": "https://feeds.arstechnica.com/arstechnica/index",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 340
+      "duration_ms": 1105
     },
     {
       "name": "TechCrunch",
       "url": "https://techcrunch.com/feed/",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 148
+      "duration_ms": 88
     },
     {
       "name": "Semiconductor Today",
@@ -176,175 +176,175 @@
       "url": "http://rss.sciam.com/ScientificAmerican-Global",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 345
+      "duration_ms": 655
     },
     {
       "name": "ScienceDaily",
       "url": "https://www.sciencedaily.com/rss/all.xml",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 387
+      "duration_ms": 302
     },
     {
       "name": "Science News",
       "url": "https://www.sciencenews.org/feed",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 115
+      "duration_ms": 135
     },
     {
       "name": "New Scientist",
       "url": "https://www.newscientist.com/feed/home/",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 514
+      "duration_ms": 695
     },
     {
       "name": "Live Science",
       "url": "https://www.livescience.com/feeds/all",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 231
+      "duration_ms": 447
     },
     {
       "name": "Phys.org Nano",
       "url": "https://phys.org/rss-feed/nanotech-news/",
       "status": "healthy",
       "articles": 30,
-      "duration_ms": 187
+      "duration_ms": 131
     },
     {
       "name": "MIT News Nano",
       "url": "https://news.mit.edu/topic/mitmitnano-rss.xml",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 529
+      "duration_ms": 482
     },
     {
       "name": "NASA Breaking News",
       "url": "https://www.nasa.gov/rss/dyn/breaking_news.rss",
-      "status": "healthy",
-      "articles": 10,
-      "duration_ms": 200
+      "status": "empty",
+      "articles": 0,
+      "duration_ms": 43
     },
     {
       "name": "Aeon",
       "url": "https://aeon.co/feed.rss",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 243
+      "duration_ms": 459
     },
     {
       "name": "Daily Stoic",
       "url": "https://dailystoic.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 1209
+      "duration_ms": 1517
     },
     {
       "name": "The Brains Blog",
       "url": "https://philosophyofbrains.com/feed",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 892
+      "duration_ms": 601
     },
     {
       "name": "Space.com",
       "url": "https://www.space.com/feeds/all",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 211
+      "duration_ms": 305
     },
     {
       "name": "Krebs on Security",
       "url": "https://krebsonsecurity.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 563
+      "duration_ms": 583
     },
     {
       "name": "The Quantum Insider",
       "url": "https://thequantuminsider.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 176
+      "duration_ms": 189
     },
     {
       "name": "Quantum Computing Report",
       "url": "https://quantumcomputingreport.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 319
+      "duration_ms": 541
     },
     {
       "name": "Quantum Zeitgeist",
       "url": "https://quantumzeitgeist.com/feed/",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 1127
+      "duration_ms": 2654
     },
     {
       "name": "Inside Quantum Technology",
       "url": "https://www.insidequantumtechnology.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 300
+      "duration_ms": 394
     },
     {
       "name": "IBM Quantum Blog",
       "url": "https://www.ibm.com/quantum/blog",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 779
+      "duration_ms": 846
     },
     {
       "name": "Google Quantum AI",
       "url": "https://quantumai.google/",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 1395
+      "duration_ms": 1389
     },
     {
       "name": "IonQ Blog",
       "url": "https://ionq.com/blog/",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 1303
+      "duration_ms": 1032
     },
     {
       "name": "Quantinuum News",
       "url": "https://www.quantinuum.com/news",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 758
+      "duration_ms": 798
     },
     {
       "name": "AWS Quantum Computing Blog",
       "url": "https://aws.amazon.com/blogs/quantum-computing/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 170
+      "duration_ms": 236
     },
     {
       "name": "Microsoft Quantum Blog",
       "url": "https://cloudblogs.microsoft.com/quantum/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 534
+      "duration_ms": 236
     },
     {
       "name": "Shtetl-Optimized (Scott Aaronson)",
       "url": "https://scottaaronson.blog/?feed=rss2",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 257
+      "duration_ms": 242
     },
     {
       "name": "Quantum Frontiers (Caltech)",
       "url": "https://quantumfrontiers.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 480
+      "duration_ms": 717
     },
     {
       "name": "Laser Focus World",
@@ -367,7 +367,7 @@
       "url": "https://optics.org/rss",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 510
+      "duration_ms": 507
     },
     {
       "name": "Lightwave Online",
@@ -382,119 +382,119 @@
       "url": "https://ayarlabs.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 513
+      "duration_ms": 118
     },
     {
       "name": "Lightmatter News",
       "url": "https://lightmatter.co/news/",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 1281
+      "duration_ms": 998
     },
     {
       "name": "Ciena Blog",
       "url": "https://www.ciena.com/insights",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 1174
+      "duration_ms": 1949
     },
     {
       "name": "Canary Media",
       "url": "https://www.canarymedia.com/rss.rss",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 176
+      "duration_ms": 232
     },
     {
       "name": "Utility Dive",
       "url": "https://www.utilitydive.com/feeds/news/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 242
+      "duration_ms": 162
     },
     {
       "name": "Energy Storage News",
       "url": "https://www.energy-storage.news/feed/",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 157
+      "duration_ms": 200
     },
     {
       "name": "Data Center Dynamics",
       "url": "https://www.datacenterdynamics.com/en/rss/",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 1695
+      "duration_ms": 1284
     },
     {
       "name": "Data Center Knowledge",
       "url": "https://www.datacenterknowledge.com/rss.xml",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 1014
+      "duration_ms": 474
     },
     {
       "name": "Data Center Frontier",
       "url": "https://www.datacenterfrontier.com/",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 913
+      "duration_ms": 880
     },
     {
       "name": "Electrek",
       "url": "https://electrek.co/feed/",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 453
+      "duration_ms": 695
     },
     {
       "name": "Navitas Semiconductor News",
       "url": "https://navitassemi.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 1971
+      "duration_ms": 2952
     },
     {
       "name": "The Hacker News",
       "url": "https://feeds.feedburner.com/TheHackersNews",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 513
+      "duration_ms": 280
     },
     {
       "name": "BleepingComputer",
       "url": "https://www.bleepingcomputer.com/feed/",
       "status": "healthy",
       "articles": 15,
-      "duration_ms": 211
+      "duration_ms": 469
     },
     {
       "name": "Dark Reading",
       "url": "https://www.darkreading.com/rss.xml",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 3720
+      "duration_ms": 3787
     },
     {
       "name": "Schneier on Security",
       "url": "https://www.schneier.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 293
+      "duration_ms": 517
     },
     {
       "name": "CISA Advisories",
       "url": "https://www.cisa.gov/cybersecurity-advisories/all.xml",
       "status": "healthy",
       "articles": 30,
-      "duration_ms": 261
+      "duration_ms": 323
     },
     {
       "name": "CrowdStrike Blog",
       "url": "https://www.crowdstrike.com/blog/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 7036
+      "duration_ms": 6531
     },
     {
       "name": "SpaceNews",
@@ -509,49 +509,49 @@
       "url": "https://blogs.nasa.gov/feed/",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 334
+      "duration_ms": 359
     },
     {
       "name": "The Planetary Society",
       "url": "https://www.planetary.org/feed",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 129
+      "duration_ms": 429
     },
     {
       "name": "ESA News",
       "url": "https://www.esa.int/rssfeed/Our_Activities/Space_Science",
       "status": "slow",
       "articles": 15,
-      "duration_ms": 11252
+      "duration_ms": 11461
     },
     {
       "name": "Sky & Telescope",
       "url": "https://skyandtelescope.org/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 923
+      "duration_ms": 1045
     },
     {
       "name": "The Space Review",
       "url": "https://www.thespacereview.com/articles.xml",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 2120
+      "duration_ms": 3373
     },
     {
       "name": "Payload Space",
       "url": "https://payloadspace.com/feed/",
       "status": "healthy",
       "articles": 13,
-      "duration_ms": 170
+      "duration_ms": 237
     },
     {
       "name": "RISC-V International Blog",
       "url": "https://riscv.org/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 165
+      "duration_ms": 1034
     },
     {
       "name": "SiFive Blog",
@@ -566,7 +566,7 @@
       "url": "https://www.cnx-software.com/feed/",
       "status": "healthy",
       "articles": 32,
-      "duration_ms": 466
+      "duration_ms": 450
     },
     {
       "name": "CHIPS Alliance Blog",
@@ -581,7 +581,7 @@
       "url": "https://www.networkworld.com/feed/",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 335
+      "duration_ms": 282
     },
     {
       "name": "SDxCentral",
@@ -596,56 +596,56 @@
       "url": "https://www.lightreading.com/rss.xml",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 1575
+      "duration_ms": 1319
     },
     {
       "name": "STAT News",
       "url": "https://www.statnews.com/feed/",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 122
+      "duration_ms": 224
     },
     {
       "name": "Endpoints News",
       "url": "https://endpts.com/feed/",
       "status": "healthy",
       "articles": 24,
-      "duration_ms": 585
+      "duration_ms": 723
     },
     {
       "name": "Fierce Biotech",
       "url": "https://www.fiercebiotech.com/rss/xml",
       "status": "healthy",
       "articles": 25,
-      "duration_ms": 349
+      "duration_ms": 980
     },
     {
       "name": "Derek Lowe's In The Pipeline",
       "url": "https://www.science.org/blogs/pipeline/feed",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 7835
+      "duration_ms": 8120
     },
     {
       "name": "Zero ASIC Blog",
       "url": "https://www.zeroasic.com/blog",
       "status": "healthy",
       "articles": 30,
-      "duration_ms": 696
+      "duration_ms": 738
     },
     {
       "name": "SIA Blog",
       "url": "https://www.semiconductors.org/category/blog/feed/",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 1520
+      "duration_ms": 1514
     },
     {
       "name": "Carbon Brief",
       "url": "https://www.carbonbrief.org/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 233
+      "duration_ms": 337
     },
     {
       "name": "Yale Environment 360",
@@ -660,70 +660,70 @@
       "url": "https://earthobservatory.nasa.gov/feeds/earth-observatory.rss",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 524
+      "duration_ms": 298
     },
     {
       "name": "RealClimate",
       "url": "https://www.realclimate.org/index.php/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 2012
+      "duration_ms": 3125
     },
     {
       "name": "Mongabay",
       "url": "https://news.mongabay.com/feed/",
       "status": "healthy",
       "articles": 32,
-      "duration_ms": 236
+      "duration_ms": 212
     },
     {
       "name": "AAS Nova",
       "url": "https://aasnova.org/feed/",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 2495
+      "duration_ms": 3020
     },
     {
       "name": "Astrobites",
       "url": "https://astrobites.org/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 181
+      "duration_ms": 287
     },
     {
       "name": "Universe Today",
       "url": "https://www.universetoday.com/feed/",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 151
+      "duration_ms": 112
     },
     {
       "name": "EarthSky",
       "url": "https://earthsky.org/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 444
+      "duration_ms": 524
     },
     {
       "name": "ESO News",
       "url": "https://www.eso.org/public/news/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 3452
+      "duration_ms": 2529
     },
     {
       "name": "JWST Blog",
       "url": "https://blogs.nasa.gov/webb/feed/",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 245
+      "duration_ms": 223
     },
     {
       "name": "Quanta Magazine CS",
       "url": "https://www.quantamagazine.org/computer-science/feed/",
       "status": "healthy",
       "articles": 5,
-      "duration_ms": 59
+      "duration_ms": 233
     },
     {
       "name": "Computational Complexity Blog",
@@ -738,119 +738,119 @@
       "url": "https://terrytao.wordpress.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 151
+      "duration_ms": 162
     },
     {
       "name": "Lawfare",
       "url": "https://www.lawfaremedia.org/",
       "status": "slow",
       "articles": 29,
-      "duration_ms": 30050
+      "duration_ms": 34905
     },
     {
       "name": "War on the Rocks",
       "url": "https://warontherocks.com/feed/",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 755
+      "duration_ms": 1708
     },
     {
       "name": "Rest of World",
       "url": "https://restofworld.org/feed/",
       "status": "healthy",
       "articles": 12,
-      "duration_ms": 413
+      "duration_ms": 778
     },
     {
       "name": "Electronics For You",
       "url": "https://www.electronicsforu.com/feed",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 835
+      "duration_ms": 583
     },
     {
       "name": "Compound Semiconductor",
       "url": "https://compoundsemiconductor.net/news",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 2027
+      "duration_ms": 1035
     },
     {
       "name": "Power Electronics News",
       "url": "https://www.powerelectronicsnews.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 148
+      "duration_ms": 308
     },
     {
       "name": "Julia Evans Blog",
       "url": "https://jvns.ca/atom.xml",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 970
+      "duration_ms": 1530
     },
     {
       "name": "Dan Luu",
       "url": "https://danluu.com/atom.xml",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 2550
+      "duration_ms": 2511
     },
     {
       "name": "Brendan Gregg's Blog",
       "url": "https://www.brendangregg.com/blog/rss.xml",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 510
+      "duration_ms": 885
     },
     {
       "name": "Oxide Computer Blog",
       "url": "https://oxide.computer/blog/feed",
       "status": "healthy",
       "articles": 25,
-      "duration_ms": 2133
+      "duration_ms": 1828
     },
     {
       "name": "Fly.io Blog",
       "url": "https://fly.io/blog/feed.xml",
       "status": "healthy",
       "articles": 40,
-      "duration_ms": 498
+      "duration_ms": 579
     },
     {
       "name": "Tailscale Blog",
       "url": "https://tailscale.com/blog/index.xml",
       "status": "healthy",
       "articles": 15,
-      "duration_ms": 302
+      "duration_ms": 153
     },
     {
       "name": "Psyche (by Aeon)",
       "url": "https://psyche.co/feed",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 248
+      "duration_ms": 923
     },
     {
       "name": "Notre Dame Philosophical Reviews",
       "url": "https://feeds2.feedburner.com/PhilosophicalReviews/News",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 1404
+      "duration_ms": 2591
     },
     {
       "name": "Blog of the APA",
       "url": "https://blog.apaonline.org/feed/",
-      "status": "empty",
-      "articles": 0,
-      "duration_ms": 313
+      "status": "healthy",
+      "articles": 10,
+      "duration_ms": 2071
     },
     {
       "name": "Marginal Revolution",
       "url": "https://marginalrevolution.com/feed",
       "status": "healthy",
       "articles": 15,
-      "duration_ms": 195
+      "duration_ms": 279
     },
     {
       "name": "Asianometry",
@@ -985,49 +985,49 @@
       "url": "https://feeds.transistor.fm/acquired",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 3231
+      "duration_ms": 2718
     },
     {
       "name": "Lex Fridman Podcast",
       "url": "https://lexfridman.com/feed/podcast/",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 3446
+      "duration_ms": 4729
     },
     {
       "name": "The Amp Hour",
       "url": "https://theamphour.com/feed/",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 853
+      "duration_ms": 1636
     },
     {
       "name": "Signals and Threads",
       "url": "https://feeds.simplecast.com/L9810DOa",
       "status": "healthy",
       "articles": 28,
-      "duration_ms": 503
+      "duration_ms": 1830
     },
     {
       "name": "Oxide and Friends",
       "url": "https://oxide.computer/podcasts/oxide-and-friends/feed",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 570
+      "duration_ms": 717
     },
     {
       "name": "Philosophize This!",
       "url": "https://feeds.megaphone.fm/QCD6036500916",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 1655
+      "duration_ms": 4353
     },
     {
       "name": "Sean Carroll's Mindscape",
       "url": "https://www.preposterousuniverse.com/podcast/feed/",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 510
+      "duration_ms": 662
     },
     {
       "name": "Machine Learning Street Talk",
@@ -1042,245 +1042,245 @@
       "url": "https://changelog.com/practicalai/feed",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 2686
+      "duration_ms": 2430
     },
     {
       "name": "LWN.net",
       "url": "https://lwn.net/headlines/rss",
       "status": "healthy",
       "articles": 15,
-      "duration_ms": 341
+      "duration_ms": 159
     },
     {
       "name": "Phoronix",
       "url": "https://www.phoronix.com/rss.php",
       "status": "healthy",
       "articles": 32,
-      "duration_ms": 128
+      "duration_ms": 248
     },
     {
       "name": "DevClass",
       "url": "https://devclass.com/feed/",
       "status": "slow",
       "articles": 50,
-      "duration_ms": 34731
+      "duration_ms": 28273
     },
     {
       "name": "ServeTheHome",
       "url": "https://www.servethehome.com/feed/",
       "status": "healthy",
       "articles": 6,
-      "duration_ms": 331
+      "duration_ms": 876
     },
     {
       "name": "The Next Platform",
       "url": "https://www.nextplatform.com/feed/",
       "status": "slow",
       "articles": 50,
-      "duration_ms": 38179
+      "duration_ms": 34415
     },
     {
       "name": "HPCwire",
       "url": "https://www.hpcwire.com/feed/",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 232
+      "duration_ms": 244
     },
     {
       "name": "Blocks & Files",
       "url": "https://blocksandfiles.com/feed/",
       "status": "slow",
       "articles": 42,
-      "duration_ms": 33032
+      "duration_ms": 28679
     },
     {
       "name": "The New Stack",
       "url": "https://thenewstack.io/feed/",
       "status": "healthy",
       "articles": 26,
-      "duration_ms": 253
+      "duration_ms": 193
     },
     {
       "name": "InfoQ",
       "url": "https://feed.infoq.com/",
       "status": "healthy",
       "articles": 15,
-      "duration_ms": 563
+      "duration_ms": 1468
     },
     {
       "name": "SemiWiki",
       "url": "https://semiwiki.com/feed/",
       "status": "healthy",
       "articles": 5,
-      "duration_ms": 1221
+      "duration_ms": 1289
     },
     {
       "name": "The Robot Report",
       "url": "https://www.therobotreport.com/feed/",
       "status": "healthy",
       "articles": 15,
-      "duration_ms": 174
+      "duration_ms": 195
     },
     {
       "name": "BBC World News",
       "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
       "status": "healthy",
       "articles": 29,
-      "duration_ms": 837
+      "duration_ms": 553
     },
     {
       "name": "Deutsche Welle",
       "url": "https://rss.dw.com/rdf/rss-en-all",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 510
+      "duration_ms": 824
     },
     {
       "name": "Al Jazeera",
       "url": "https://www.aljazeera.com/xml/rss/all.xml",
       "status": "healthy",
       "articles": 25,
-      "duration_ms": 74
+      "duration_ms": 112
     },
     {
       "name": "The Guardian World",
       "url": "https://www.theguardian.com/world/rss",
       "status": "healthy",
       "articles": 45,
-      "duration_ms": 228
+      "duration_ms": 211
     },
     {
       "name": "The Guardian US News",
       "url": "https://www.theguardian.com/us-news/rss",
       "status": "healthy",
       "articles": 33,
-      "duration_ms": 515
+      "duration_ms": 521
     },
     {
       "name": "NPR Politics",
       "url": "https://feeds.npr.org/1014/rss.xml",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 110
+      "duration_ms": 275
     },
     {
       "name": "Politico",
       "url": "https://rss.politico.com/politics-news.xml",
       "status": "healthy",
       "articles": 30,
-      "duration_ms": 205
+      "duration_ms": 315
     },
     {
       "name": "NPR World",
       "url": "https://feeds.npr.org/1004/rss.xml",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 292
+      "duration_ms": 181
     },
     {
       "name": "Foreign Affairs",
       "url": "https://www.foreignaffairs.com/rss.xml",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 1849
+      "duration_ms": 2238
     },
     {
       "name": "International Crisis Group",
       "url": "https://www.crisisgroup.org/rss.xml",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 51
+      "duration_ms": 212
     },
     {
       "name": "NPR Economy",
       "url": "https://feeds.npr.org/1017/rss.xml",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 49
+      "duration_ms": 30
     },
     {
       "name": "Nature",
       "url": "https://www.nature.com/nature.rss",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 394
+      "duration_ms": 587
     },
     {
       "name": "Nature Medicine",
       "url": "https://www.nature.com/nm.rss",
       "status": "healthy",
       "articles": 8,
-      "duration_ms": 219
+      "duration_ms": 63
     },
     {
       "name": "Science / AAAS News",
       "url": "https://www.science.org/rss/news_current.xml",
       "status": "healthy",
       "articles": 10,
-      "duration_ms": 101
+      "duration_ms": 119
     },
     {
       "name": "PNAS",
       "url": "https://www.pnas.org/action/showFeed?type=etoc&feed=rss&jc=pnas",
       "status": "healthy",
       "articles": 50,
-      "duration_ms": 404
+      "duration_ms": 1723
     },
     {
       "name": "The Lancet",
       "url": "https://www.thelancet.com/rssfeed/lancet_current.xml",
       "status": "healthy",
       "articles": 30,
-      "duration_ms": 505
+      "duration_ms": 1419
     },
     {
       "name": "WHO News",
       "url": "https://www.who.int/rss-feeds/news-english.xml",
       "status": "healthy",
       "articles": 25,
-      "duration_ms": 2398
+      "duration_ms": 2481
     },
     {
       "name": "CDC Newsroom",
       "url": "https://tools.cdc.gov/api/v2/resources/media/316422.rss",
       "status": "healthy",
       "articles": 20,
-      "duration_ms": 99
+      "duration_ms": 77
     },
     {
       "name": "medRxiv",
       "url": "https://connect.medrxiv.org/medrxiv_xml.php?subject=all",
       "status": "healthy",
       "articles": 30,
-      "duration_ms": 648
+      "duration_ms": 408
     },
     {
       "name": "bioRxiv",
       "url": "https://connect.biorxiv.org/biorxiv_xml.php?subject=all",
       "status": "healthy",
       "articles": 30,
-      "duration_ms": 577
+      "duration_ms": 547
     },
     {
       "name": "arXiv AI",
       "url": "https://rss.arxiv.org/rss/cs.AI",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 105
+      "duration_ms": 284
     },
     {
       "name": "arXiv Machine Learning",
       "url": "https://rss.arxiv.org/rss/cs.LG",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 503
+      "duration_ms": 505
     },
     {
       "name": "arXiv Computer Vision",
       "url": "https://rss.arxiv.org/rss/cs.CV",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 505
+      "duration_ms": 504
     },
     {
       "name": "arXiv Computation and Language",
@@ -1308,7 +1308,7 @@
       "url": "https://rss.arxiv.org/rss/cs.NI",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 504
+      "duration_ms": 506
     },
     {
       "name": "arXiv Cryptography",
@@ -1329,70 +1329,70 @@
       "url": "https://rss.arxiv.org/rss/cs.SE",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 504
+      "duration_ms": 505
     },
     {
       "name": "arXiv Quantum Physics",
       "url": "https://rss.arxiv.org/rss/quant-ph",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 504
+      "duration_ms": 505
     },
     {
       "name": "arXiv Operating Systems",
       "url": "https://rss.arxiv.org/rss/cs.OS",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 504
+      "duration_ms": 505
     },
     {
       "name": "arXiv Emerging Technologies",
       "url": "https://rss.arxiv.org/rss/cs.ET",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 503
+      "duration_ms": 504
     },
     {
       "name": "arXiv Programming Languages",
       "url": "https://rss.arxiv.org/rss/cs.PL",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 507
+      "duration_ms": 505
     },
     {
       "name": "arXiv Performance",
       "url": "https://rss.arxiv.org/rss/cs.PF",
       "status": "empty",
       "articles": 0,
-      "duration_ms": 504
+      "duration_ms": 505
     },
     {
       "name": "OpenAlex Semiconductor Research",
       "url": "https://api.openalex.org/works",
       "status": "healthy",
       "articles": 30,
-      "duration_ms": 674
+      "duration_ms": 421
     },
     {
       "name": "OpenAlex Computer Architecture",
       "url": "https://api.openalex.org/works",
       "status": "healthy",
       "articles": 30,
-      "duration_ms": 906
+      "duration_ms": 587
     },
     {
       "name": "OpenAlex Power Semiconductor",
       "url": "https://api.openalex.org/works",
       "status": "healthy",
       "articles": 15,
-      "duration_ms": 836
+      "duration_ms": 622
     },
     {
       "name": "OpenAlex EDA",
       "url": "https://api.openalex.org/works",
       "status": "healthy",
       "articles": 15,
-      "duration_ms": 831
+      "duration_ms": 630
     }
   ]
 }
