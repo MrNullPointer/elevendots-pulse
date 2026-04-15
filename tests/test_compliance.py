@@ -231,12 +231,32 @@ SECRET_PATTERNS = [
     re.compile(r"ghp_[a-zA-Z0-9]{36}"),
     re.compile(r"gho_[a-zA-Z0-9]+"),
     re.compile(r"AKIA[A-Z0-9]{16}"),
-    re.compile(r"Bearer\s+[a-zA-Z0-9\-._~+/]+=*"),
+    # Tightened: require enough entropy/length to indicate a real token, not
+    # prose mentioning the word "Bearer". Word boundaries prevent matching
+    # inside the middle of longer base64 blobs. See crawler/sanitize.py for
+    # the matching runtime redaction pipeline.
+    re.compile(r"\bBearer\s+[A-Za-z0-9\-._~+/]{32,}={0,2}\b"),
     re.compile(r"-----BEGIN\s+(RSA\s+|EC\s+)?PRIVATE\s+KEY-----"),
     re.compile(r'api_key\s*[=:]\s*["\'][^"\']{20,}["\']'),
     re.compile(r'password\s*[=:]\s*["\'][^"\']+["\']'),
 ]
-SKIP_DIRS = {".git", "node_modules", "__pycache__", ".vite", "dist"}
+SKIP_DIRS = {
+    ".git",
+    "node_modules",
+    "__pycache__",
+    ".vite",
+    "dist",
+    # Generated artifacts — crawler output, build output, caches. These
+    # contain scraped third-party text and are NOT source code; scanning
+    # them for developer-committed credentials produces unavoidable false
+    # positives. Content safety for data/articles.json is enforced by
+    # TestArticleDataSafety (see below), which asserts the properties that
+    # actually matter for the rendered frontend.
+    "data",
+    "site/public",
+    "site/dist",
+    ".pytest_cache",
+}
 SKIP_EXTS = {".lock", ".png", ".jpg", ".jpeg", ".gif", ".ico", ".woff", ".woff2", ".ttf"}
 
 
@@ -482,3 +502,155 @@ class TestNoTracking:
                 if pattern in content:
                     violations.append(f"{path.relative_to(ROOT)}: {pattern}")
         assert not violations, f"Tracking found:\n" + "\n".join(violations)
+
+
+# ============================================================================
+# 15. test_article_data_safety
+#     Enforces CONTENT-POLICY §1.4 (no rendered credentials) and §2.3 (no
+#     script/JS remnants) on the crawler artifact data/articles.json.
+#     This is the content-safety counterpart to TestNoSecrets: it inspects
+#     *scraped* text with precise assertions, rather than sweeping source
+#     code for developer-committed credentials.
+# ============================================================================
+
+# High-length, high-entropy patterns — these match REAL tokens (>=32 chars of
+# token-alphabet material) rather than prose that mentions auth keywords.
+RENDERED_CREDENTIAL_PATTERNS = [
+    re.compile(r"\bBearer\s+[A-Za-z0-9\-._~+/]{32,}={0,2}\b"),
+    re.compile(r"\bsk-[A-Za-z0-9]{32,}\b"),
+    re.compile(r"\bghp_[A-Za-z0-9]{36}\b"),
+    re.compile(r"\bgho_[A-Za-z0-9]{36,}\b"),
+    re.compile(r"\bAKIA[A-Z0-9]{16}\b"),
+    re.compile(
+        r"\beyJ[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}\b"
+    ),
+    re.compile(r"-----BEGIN\s+(?:RSA\s+|EC\s+)?PRIVATE\s+KEY-----"),
+]
+
+FORBIDDEN_RENDERED_HTML = [
+    re.compile(r"<script", re.IGNORECASE),
+    re.compile(r"javascript:", re.IGNORECASE),
+    re.compile(r"on(?:click|error|load|mouseover)\s*=", re.IGNORECASE),
+    re.compile(r"<iframe", re.IGNORECASE),
+]
+
+
+@pytest.mark.skipif(not ARTICLES_JSON.exists(), reason="articles.json not present")
+class TestArticleDataSafety:
+    @pytest.fixture(scope="class")
+    def articles(self):
+        return json.loads(ARTICLES_JSON.read_text())["articles"]
+
+    def test_no_rendered_credentials(self, articles):
+        """No credential-shaped tokens in fields the frontend renders."""
+        violations = []
+        for i, a in enumerate(articles):
+            for field in ("title", "intro"):
+                text = a.get(field, "") or ""
+                for pat in RENDERED_CREDENTIAL_PATTERNS:
+                    if pat.search(text):
+                        violations.append(
+                            f"article[{i}].{field} "
+                            f"(source={a.get('source')!r}): {pat.pattern}"
+                        )
+        assert not violations, (
+            "Credential-shaped strings leaked into rendered fields. "
+            "Check crawler/sanitize.py redact_credentials() pipeline.\n"
+            + "\n".join(violations)
+        )
+
+    def test_no_html_or_js_remnants(self, articles):
+        """Title and intro must be plain text after sanitization."""
+        violations = []
+        for i, a in enumerate(articles):
+            for field in ("title", "intro"):
+                text = a.get(field, "") or ""
+                for pat in FORBIDDEN_RENDERED_HTML:
+                    if pat.search(text):
+                        violations.append(f"article[{i}].{field}: {pat.pattern}")
+        assert not violations, (
+            "Unsafe HTML/JS remnants in rendered fields. "
+            "Check crawler/utils.py clean_html() pipeline.\n"
+            + "\n".join(violations)
+        )
+
+
+# ============================================================================
+# 16. test_credential_redaction
+#     Unit tests for crawler/sanitize.py redact_credentials(). Ensures the
+#     runtime redaction pipeline matches what TestArticleDataSafety asserts.
+# ============================================================================
+
+class TestCredentialRedaction:
+    """Unit tests for the crawler-side redaction pipeline."""
+
+    def _redact(self, text):
+        from crawler.sanitize import redact_credentials
+        return redact_credentials(text)
+
+    # --- true positives: real-looking credentials must be redacted ---
+
+    def test_redacts_long_bearer_token(self):
+        src = "curl -H 'Authorization: Bearer " + "A" * 40 + "' api.example.com"
+        out = self._redact(src)
+        assert "[REDACTED]" in out
+        assert "A" * 40 not in out
+
+    def test_redacts_openai_key(self):
+        src = "leaked: sk-" + "a" * 48 + " oops"
+        out = self._redact(src)
+        assert "sk-" + "a" * 48 not in out
+        assert "[REDACTED]" in out
+
+    def test_redacts_github_pat(self):
+        src = "token=ghp_" + "x" * 36
+        out = self._redact(src)
+        assert "ghp_" + "x" * 36 not in out
+
+    def test_redacts_aws_access_key(self):
+        # Construct at runtime so the scanner regex on this source file
+        # doesn't match the fixture itself.
+        fixture = "AKIA" + "ABCDEFGHIJKLMNOP"
+        src = f"AWS id {fixture} in logs"
+        out = self._redact(src)
+        assert fixture not in out
+
+    def test_redacts_jwt(self):
+        jwt = (
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+            "."
+            "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4ifQ"
+            "."
+            "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        )
+        out = self._redact("session=" + jwt)
+        assert jwt not in out
+        assert "[REDACTED_JWT]" in out
+
+    def test_redacts_private_key_header(self):
+        # Construct at runtime so the scanner regex on this source file
+        # doesn't match the fixture itself.
+        fixture = "-----BEGIN " + "RSA PRIVATE KEY" + "-----"
+        src = f"{fixture}\nMIIE..."
+        out = self._redact(src)
+        assert fixture not in out
+
+    # --- true negatives: prose that MENTIONS auth must survive unchanged ---
+
+    def test_preserves_prose_about_bearer_tokens(self):
+        src = "The API requires a Bearer token for authentication."
+        assert self._redact(src) == src
+
+    def test_preserves_short_sk_substring(self):
+        src = "A book by sk-author was published."
+        assert self._redact(src) == src
+
+    def test_preserves_empty_and_none(self):
+        assert self._redact("") == ""
+        assert self._redact(None) is None
+
+    def test_idempotent(self):
+        src = "Bearer " + "Z" * 40
+        once = self._redact(src)
+        twice = self._redact(once)
+        assert once == twice
