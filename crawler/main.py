@@ -24,6 +24,7 @@ from .html_scraper import scrape_html_source
 from .intro_fetcher import fetch_intro
 from .openalex_adapter import fetch_openalex_papers
 from .robots_checker import is_crawling_allowed
+from .sanitize import redact_credentials
 from .utils import make_article_id
 
 logger = logging.getLogger(__name__)
@@ -132,12 +133,16 @@ def crawl_source(source: dict, crawl_start: float = 0, max_crawl_time: int = 0) 
             rss_summary=raw.get("summary", ""),
             preview_mode=preview_mode,
         )
-        # Defense-in-depth: final 300-char safety cap (CONTENT-POLICY §1.3)
-        intro = (intro or "")[:300]
+        # Defense-in-depth against upstream credential leaks
+        # (CONTENT-POLICY §1.4, §2.3): redact first, then cap. Redacting
+        # after truncation could split a token and let a partial match
+        # through the downstream compliance scanner.
+        intro = redact_credentials(intro or "")[:300]
+        title = redact_credentials(raw.get("title", "").strip())
 
         articles.append({
             "id": make_article_id(article_url),
-            "title": raw.get("title", "").strip(),
+            "title": title,
             "url": article_url.strip(),
             "intro": intro,
             "source": name,
