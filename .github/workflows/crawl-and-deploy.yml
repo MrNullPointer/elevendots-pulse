@@ -30,8 +30,15 @@ jobs:
           pip install -r crawler/requirements.txt
           pip install -r tests/requirements-test.txt
 
-      - name: Run compliance tests
-        run: python -m pytest tests/test_compliance.py -v --tb=short
+      # Fail-closed gate for CODE-only compliance: clean_html, URL validation,
+      # redaction, frontend scans, user-agent/rate-limit. The DATA-content
+      # tests (TestArticleSchema, TestArticleDataSafety) are deliberately
+      # EXCLUDED here — they run inside the crawl job against freshly-crawled
+      # data before commit, so external content can never block a code deploy.
+      - name: Run code compliance tests
+        run: |
+          python -m pytest tests/test_compliance.py -v --tb=short \
+            -k "not TestArticleSchema and not TestArticleDataSafety"
 
   crawl:
     needs: test
@@ -44,16 +51,29 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install crawler dependencies
-        run: pip install -r crawler/requirements.txt
+      - name: Install crawler + test dependencies
+        run: |
+          pip install -r crawler/requirements.txt
+          pip install -r tests/requirements-test.txt
 
       - name: Run crawler
         env:
           PYTHONUNBUFFERED: "1"
+          GITHUB_ACTIONS: "true"
           CRAWL_TIMEOUT: "15"
           MAX_CRAWL_TIME: "480"
           MAX_ARTICLES_PER_SOURCE: "50"
         run: python -m crawler.main
+
+      # Re-validate the DATA-content gate against the freshly-crawled artifact
+      # BEFORE commit, so the gate validates what is about to be written rather
+      # than last cycle's already-committed data. The record-level admission
+      # gate in crawler.main has already quarantined any unsafe records, so this
+      # should pass; if it fails, something systemic slipped past and we block.
+      - name: Validate freshly-crawled data (content safety + schema)
+        run: |
+          python -m pytest tests/test_compliance.py -v --tb=short \
+            -k "TestArticleSchema or TestArticleDataSafety"
 
       - name: Validate articles.json
         run: |
@@ -81,7 +101,13 @@ jobs:
           git push
 
   deploy:
-    needs: crawl
+    # Decoupled from crawl SUCCESS: deploy runs as long as the code gate (test)
+    # passed and the crawl job has finished its attempt — regardless of whether
+    # the crawl succeeded. When the crawl commits fresh data, deploy ships it;
+    # when the crawl fails, deploy still ships the last-known-good data already
+    # committed on main, so a bad crawl can never freeze the site for days.
+    needs: [test, crawl]
+    if: ${{ always() && needs.test.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment:

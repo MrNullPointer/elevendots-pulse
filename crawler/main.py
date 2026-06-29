@@ -17,6 +17,7 @@ from pathlib import Path
 import requests
 import yaml
 
+from .content_safety import find_unsafe_pattern
 from .deduplicator import deduplicate_articles
 from .feed_parser import parse_rss_feed
 from .freshness import freshness_sort_key, normalize_article_timestamp
@@ -35,6 +36,46 @@ DATA_DIR = ROOT / "data"
 
 _CRAWLER_NAME = "Elevendots-Pulse Crawler"
 MAX_CRAWL_TIME = int(os.environ.get("MAX_CRAWL_TIME", 480))  # 8 min default
+
+# Quarantine rate above which the crawl hard-fails. A handful of odd titles is
+# fail-open (drop them, keep crawling); a large fraction tripping the filter
+# signals something systemic (a broken sanitizer, a poisoned source) that
+# should wedge the pipeline on purpose.
+MAX_QUARANTINE_RATE = float(os.environ.get("MAX_QUARANTINE_RATE", "0.05"))
+
+
+def _gha_warning(message: str) -> None:
+    """Emit a GitHub Actions ``::warning`` annotation (no-op when not in CI)."""
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        print(f"::warning::{message}")
+
+
+def filter_unsafe_articles(articles: list[dict]) -> tuple[list[dict], list[dict]]:
+    """Split articles into (safe, quarantined) by the shared content-safety gate.
+
+    Any article whose rendered ``title``/``intro`` trips a forbidden-HTML or
+    credential pattern is quarantined (dropped) rather than written. Each drop
+    is logged with id + source + the pattern that fired, and surfaced as a
+    GitHub Actions ``::warning`` annotation.
+    """
+    safe: list[dict] = []
+    quarantined: list[dict] = []
+    for article in articles:
+        hit = find_unsafe_pattern(article)
+        if hit is None:
+            safe.append(article)
+            continue
+        field, pattern = hit
+        article_id = article.get("id", "?")
+        source = article.get("source", "?")
+        message = (
+            f"Quarantined article id={article_id} source={source!r}: "
+            f"{field} tripped content-safety pattern {pattern!r}"
+        )
+        print(f"  QUARANTINE: {message}")
+        _gha_warning(message)
+        quarantined.append(article)
+    return safe, quarantined
 
 
 def load_config() -> dict:
@@ -347,6 +388,26 @@ def main() -> None:
 
     # Sort by freshness: bucket → confidence → recency (newest first)
     all_articles.sort(key=freshness_sort_key)
+
+    # ---- Record-level content-safety admission gate (fail-open) ----
+    # Drop any single article whose rendered title/intro trips a content-safety
+    # pattern, so one bad scraped record can never wedge the whole pipeline.
+    # Hard-fail ONLY if the quarantine RATE is systemic (see MAX_QUARANTINE_RATE).
+    crawled_count = len(all_articles)
+    all_articles, quarantined = filter_unsafe_articles(all_articles)
+    if quarantined:
+        quarantine_rate = len(quarantined) / crawled_count if crawled_count else 0.0
+        print(
+            f"Content-safety: quarantined {len(quarantined)}/{crawled_count} "
+            f"articles ({quarantine_rate:.1%}); {len(all_articles)} surviving."
+        )
+        if quarantine_rate > MAX_QUARANTINE_RATE:
+            raise SystemExit(
+                f"Quarantine rate {quarantine_rate:.1%} exceeds "
+                f"{MAX_QUARANTINE_RATE:.1%} threshold — systemic content-safety "
+                f"failure, blocking crawl. {len(quarantined)} of {crawled_count} "
+                f"articles tripped a pattern."
+            )
 
     # ---- Write articles.json (ALWAYS) ----
     output = {
