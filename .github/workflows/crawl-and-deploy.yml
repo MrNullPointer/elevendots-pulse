@@ -117,7 +117,24 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/articles.json data/source_health.json
           git diff --cached --quiet && echo "No changes" || git commit -m "Update articles.json + source_health.json [bot]"
-          git push
+
+          # Retry on a moved main. `git push` with no retry drops a whole
+          # crawl cycle whenever anything else lands on main mid-run.
+          # On conflict the freshest crawl wins: during a rebase our replayed
+          # commit is "theirs" (upstream is "ours"), so -X theirs keeps the
+          # data we just crawled rather than the copy already on main.
+          for attempt in 1 2 3; do
+            if git push; then
+              break
+            fi
+            if [ "$attempt" = "3" ]; then
+              echo "ERROR: could not push after 3 attempts"
+              exit 1
+            fi
+            echo "push rejected (attempt $attempt) — rebasing onto origin/main"
+            git fetch origin main
+            git rebase -X theirs origin/main
+          done
 
   deploy:
     # Decoupled from crawl SUCCESS: deploy runs as long as the code gate (test)
@@ -167,3 +184,31 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # The outage of 2026-08-06 lasted 9 days because nothing ever went red:
+  # a cancelled run is not a failed run, so GitHub never sent a notification
+  # while the published site sat frozen. This job is the alarm that was
+  # missing. It gates nothing — it exists purely to turn silent starvation
+  # into a failed run in your inbox.
+  #
+  # It deliberately does NOT depend on `deploy`. A deploy job parked in
+  # `waiting` on the environment gate would block this job from ever running,
+  # which is precisely the failure it needs to report.
+  freshness-alarm:
+    needs: crawl
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Check crawl and deploy freshness
+        env:
+          MAX_AGE_HOURS: "6"
+        run: python scripts/check_freshness.py
