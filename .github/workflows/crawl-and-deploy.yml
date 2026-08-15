@@ -5,9 +5,21 @@ on:
     - cron: '7 * * * *'  # Every hour (offset from :00 to reduce load)
   workflow_dispatch:        # Manual trigger
 
+# A single wedged run must never starve the hourly schedule.
+#
+# With cancel-in-progress: false, GitHub keeps at most ONE pending run per
+# group and cancels the previously-pending one each time a new run queues. So
+# when run #2709 parked in `waiting` on the github-pages environment gate on
+# 2026-08-06, it held this group indefinitely and every subsequent hourly run
+# was queued then cancelled — ~200 consecutive cancelled runs and 9 days of
+# stale data, with no failure notification because "cancelled" isn't "failed".
+#
+# cancel-in-progress: true makes the newest run win. In healthy operation this
+# never fires: runs are hourly and finish in well under 20 minutes. It only
+# fires when a run is stuck, which is exactly when we want it to.
 concurrency:
   group: crawl-deploy
-  cancel-in-progress: false  # Don't cancel running crawls
+  cancel-in-progress: true
 
 permissions:
   contents: write
