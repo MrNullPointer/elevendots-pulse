@@ -17,8 +17,15 @@ on:
 # cancel-in-progress: true makes the newest run win. In healthy operation this
 # never fires: runs are hourly and finish in well under 20 minutes. It only
 # fires when a run is stuck, which is exactly when we want it to.
+#
+# The group is also renamed off `crawl-deploy`. Run #2709 could not be
+# cancelled — not via the API (403) and not from the UI — because a run parked
+# in `waiting` on a broken environment gate does not always respond to cancel.
+# Since a concurrency group is just a string, renaming it moves all future runs
+# into a fresh, empty group and strands #2709 in the old one where it blocks
+# nothing. That unwedges the schedule without needing to kill the stuck run.
 concurrency:
-  group: crawl-deploy
+  group: crawl-deploy-v2
   cancel-in-progress: true
 
 permissions:
